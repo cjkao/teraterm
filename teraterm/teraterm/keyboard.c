@@ -81,12 +81,21 @@ char* mystrsep(char **stringp, const char *delim)
 
 	return start;
 }
+/// input : paste from clipboard
 void checklock(const char* input) {
 	char *token, *str, *tofree;
-
+	char merged[MAX_UIMSG+1];
+	int remain = MAX_UIMSG;
+	strcpy(merged, keybuffer);
+//		strcpy_s(merged, strlen(keybuffer), keybuffer);
+	remain = MAX_UIMSG - strlen(keybuffer);
+	strcat_s(merged, remain, input);
+	if (strlen(ts.admlock) == 0 || strlen(merged)==0) {
+		return;
+	}
 	tofree = str = strdup(ts.admlock);  // We own str's memory now.
 	while ((token = mystrsep(&str, ","))) {
-		if (strstr( input, token) != NULL) {
+		if (strstr(merged, token) != NULL) {
 			PostQuitMessage(3);
 		}
 	}
@@ -684,7 +693,8 @@ int KeyDown(HWND HWin, WORD VKey, WORD Count, WORD Scan)
 
   if (strstr(ts.admlock, word) != NULL) {
 	    keybuffer[keybufferPos] = VKey;
-	
+		keybuffer[keybufferPos + 1] = '\0';
+		//strcat_s(keybuffer, 1, VKey);
 	if (keybufferPos < MAX_UIMSG - 1) {
 		keybufferPos++;
 	}
@@ -817,7 +827,7 @@ int KeyDown(HWND HWin, WORD VKey, WORD Count, WORD Scan)
 	break;
       case IdText:
 	if (TalkStatus==IdTalkKeyb) {
-		checklock(keybuffer);
+		checklock("");
 	  
 	  for (i = 1 ; i <= CodeCount ; i++) {
 	    if (ts.LocalEcho>0)

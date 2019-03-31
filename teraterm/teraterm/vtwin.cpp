@@ -233,6 +233,7 @@ BEGIN_MESSAGE_MAP(CVTWindow, CFrameWnd)
 	ON_COMMAND(ID_SETUP_SERIALPORT, OnSetupSerialPort)
 	ON_COMMAND(ID_SETUP_TCPIP, OnSetupTCPIP)
 	ON_COMMAND(ID_SETUP_GENERAL, OnSetupGeneral)
+	//here
 	ON_COMMAND(ID_SETUP_SAVE, OnSetupSave)
 	ON_COMMAND(ID_SETUP_RESTORE, OnSetupRestore)
 	ON_COMMAND(ID_OPEN_SETUP, OnOpenSetupDirectory)
@@ -1555,6 +1556,9 @@ void CVTWindow::InitMenuPopup(HMENU SubMenu)
 		else {
 			EnableMenuItem(SetupMenu,ID_SETUP_SERIALPORT,MF_BYCOMMAND | MF_ENABLED);
 		}
+		/////////////// TODO ss
+		if (strlen(ts.admlock) > 0) EnableMenuItem(SetupMenu,ID_SETUP_SAVE,MF_BYCOMMAND | MF_GRAYED);
+		if (strlen(ts.admlock) > 0) EnableMenuItem(SetupMenu, ID_SETUP_RESTORE, MF_BYCOMMAND | MF_GRAYED);
 
 	else if (SubMenu == ControlMenu)
 	{
@@ -4762,6 +4766,8 @@ void CVTWindow::OnSetupSave()
 	char TmpSetupFN[MAX_PATH];
 	int ret;
 
+	
+
 	strncpy_s(TmpSetupFN, sizeof(TmpSetupFN),ts.SetupFName, _TRUNCATE);
 	if (! LoadTTFILE()) {
 		return;
@@ -4821,7 +4827,7 @@ void CVTWindow::OnSetupSave()
 void CVTWindow::OnSetupRestore()
 {
 	BOOL Ok;
-
+	if (strlen(ts.admlock) > 0) return;
 	HelpId = HlpSetupRestore;
 	if (! LoadTTFILE()) {
 		return;
@@ -5520,7 +5526,6 @@ static LRESULT CALLBACK BroadcastEditProc(HWND dlg, UINT msg,
 		case WM_CHAR:
 			// “ü—Í‚µ‚½•¶?‚ªIDC_COMMAND_EDIT‚ÉŽc‚ç‚È‚¢‚æ‚¤‚ÉŽÌ‚Ä‚é
 			return FALSE;
-
 		default:
 			return CallWindowProc(OrigBroadcastEditProc, dlg, msg, wParam, lParam);
 	}

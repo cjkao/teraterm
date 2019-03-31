@@ -156,7 +156,7 @@ void CBStartSend(PCHAR DataPtr, int DataSize, BOOL EchoOnly)
 	if ((CBMemHandle = GlobalAlloc(GHND, DataSize+1)) != NULL) {
 		if ((CBMemPtr = GlobalLock(CBMemHandle)) != NULL) {
 			memcpy(CBMemPtr, DataPtr, DataSize);
-			// WM_COPYDATA で送られて来たデータは NUL Terminate されていないので NUL を付加する
+			// WM_COPYDATA で?られて?たデータは NUL Terminate されていないので NUL を付加する
 			CBMemPtr[DataSize] = 0;
 			GlobalUnlock(CBMemHandle);
 			CBMemPtr=NULL;
@@ -169,7 +169,7 @@ void CBStartSend(PCHAR DataPtr, int DataSize, BOOL EchoOnly)
 	}
 }
 
-// クリップボードバッファの末尾にある CR / LF をすべて削除する
+// ク?ップボードバッファの?尾に?る CR / LF をすべて削?する
 BOOL TrimTrailingNL(BOOL AddCR, BOOL Bracketed) {
 	PCHAR tail;
 	if (ts.PasteFlag & CPF_TRIM_TRAILING_NL) {
@@ -196,7 +196,7 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 
 	p = CBMemPtr;
 
-	// 貼り付けデータの長さ(len)、および正規化後のデータの長さ(need_len)のカウント
+	// 貼り付けデータの長さ(len)、および正規化後のデータの長さ(need_len)のカウ?ト
 	for (len=0, need_len=0, p=CBMemPtr; *p != '\0'; p++, len++, need_len++) {
 		if (*p == CR) {
 			need_len++;
@@ -215,8 +215,8 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 		return TRUE;
 	}
 
-	// AddCR / Bracketed の時はその分のバッファも計算に入れる
-	// あまりここではやりたくないんだけれど
+	// AddCR / Bracketed の?はその分のバッファも計算に入れる
+	// ?まりここではやりたくないんだけれど
 	alloc_len = need_len + 1;
 	if (AddCR) {
 		alloc_len++;
@@ -226,15 +226,15 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 		alloc_len += 12;
 	}
 
-	// バッファサイズが正規化後に必要となる値より小さい場合はバッファを確保し直す
+	// バッファサイズが正規化後に必要となる値より小さい場?はバッファを確保し直す
 	if (GlobalSize(CBMemHandle) < alloc_len) {
 		GlobalUnlock(CBMemHandle);
 		CBMemPtr = NULL;
 		if ((TmpHandle = GlobalReAlloc(CBMemHandle, alloc_len, 0)) == NULL) {
-			// メモリ再割り当て失敗
+			// ???再?り?て失敗
 			CBMemPtr = GlobalLock(CBMemHandle);
 
-			// とりあえず正規化なしで貼り付ける事にする
+			// とり?えず正規化なしで貼り付ける?にする
 			return TRUE;
 		}
 		CBMemHandle = TmpHandle;
@@ -274,7 +274,7 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 	return TRUE;
 }
 
-// ファイルに定義された文字列が、textに含まれるかを調べる。
+// ファイ?に定義された文?列が、textに含まれるかを調べる。
 BOOL search_dict(char *filename, char *text)
 {
 	BOOL ret = FALSE;
@@ -288,7 +288,7 @@ BOOL search_dict(char *filename, char *text)
 	if ((fp = fopen(filename, "r")) == NULL)
 		return FALSE;
 
-	// TODO: 一行が256byteを超えている場合の考慮
+	// TODO: 一行が256byteを超えている場?の考慮
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
 		len = strlen(buf);
 		if (len <= 1) {
@@ -309,11 +309,11 @@ BOOL search_dict(char *filename, char *text)
 }
 
 /*
- * クリップボードの内容を確認し、貼り付けを行うか確認ダイアログを出す。
+ * ク?ップボードの内容を確認し、貼り付けを行うか確認ダイア?グを出す。
  *
  * 返り値:
  *   TRUE  -> 問題なし、貼り付けを実施
- *   FALSE -> 貼り付け中止
+ *   FALSE -> 貼り付け?止
  */
 BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 {
@@ -326,17 +326,17 @@ BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 	}
 
 /*
- * ConfirmChangePasteCR の挙動問題
+ * ConfirmChangePasteCR の?動問題
  * 以下の動作で問題ないか。
  *
  *		ChangePasteCR	!ChangePasteCR
  *		AddCR	!AddCR	AddCR	!AddCR
- * 改行あり	o	o	x(2)	o
+ * 改行?り	o	o	x(2)	o
  * 改行無し	o(1)	x	x	x
  *
- * ChangePasteCR は AddCR の時に確認を行うか(1で確認する)という設定だが、
- * !ChangePasteCR の時を考えると、AddCR の時は常に CR が入っているのに
- * 確認を行わない事から 2 の場合でも確認は不用という意思表示ともとれる。
+ * ChangePasteCR は AddCR の?に確認を行うか(1で確認する)という設定だが、
+ * !ChangePasteCR の?を考えると、AddCR の?は常に CR が入っているのに
+ * 確認を行わない?から 2 の場?でも確認は不用という意思表示ともとれる。
  * 2 の動作はどちらがいいか?
  */
 
@@ -352,7 +352,7 @@ BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		}
 	}
 
-	// 辞書をサーチする
+	// 辞?をサーチする
 	if (!confirm && search_dict(ts.ConfirmChangePasteStringFile, CBMemPtr)) {
 		confirm = TRUE;
 	}
@@ -361,7 +361,7 @@ BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		ret = DialogBox(hInst, MAKEINTRESOURCE(IDD_CLIPBOARD_DIALOG),
 		                HWin, (DLGPROC)OnClipboardDlgProc);
 		/*
-		 * 以前はダイアログの内容をクリップボードに書き戻していたけれど、必要?
+		 * 以前はダイア?グの内容をク?ップボードに?き戻していたけれど、必要?
 		 */
 	}
 
@@ -457,15 +457,15 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		CloseClipboard();
 	}
 
-	// 貼り付けの準備が正常に出来た場合は IdTalkCB となる
+	// 貼り付けの?備が正常に出?た場?は IdTalkCB となる
 
 	if (TalkStatus != IdTalkCB) {
-		// 準備が行えなかった場合は貼り付けを中断する
+		// ?備が行えなかった場?は貼り付けを?断する
 		CBEndPaste();
 		return;
 	}
 
-	// 貼り付け前にクリップボードの内容を確認/加工等する場合はここで行う
+	// 貼り付け前にク?ップボードの内容を確認/加工?する場?はここで行う
 
 	if (!TrimTrailingNL(AddCR, Bracketed)) {
 		CBEndPaste();
@@ -482,7 +482,7 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		return;
 	}
 
-	// AddCR / Bracket 用の領域があるかの確認、無ければ追加確保
+	// AddCR / Bracket 用の領域が?るかの確認、無ければ追加確保
 	StrLen = strlen(CBMemPtr);
 	BuffLen = StrLen + 1; // strlen + NUL
 	if (AddCR) {
@@ -497,8 +497,8 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		CBMemPtr = NULL;
 		if ((TmpHandle = GlobalReAlloc(CBMemHandle, BuffLen, 0)) == NULL) {
 			/*
-			 * 不足分の確保失敗した時は CR/Bracket 無しで貼り付けを行うべきか、
-			 * それとも貼り付け自体を中止する(CBEndPaste()を呼ぶ)べきか。
+			 * 不足分の確保失敗した?は CR/Bracket 無しで貼り付けを行うべきか、
+			 * それとも貼り付け自体を?止する(CBEndPaste()を呼ぶ)べきか。
 			 */
 			// CBEndPaste();
 			return;
@@ -584,8 +584,8 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer)
 				if ((tmpPtr = (char *)calloc(sizeof(char), len)) != NULL) {
 					WideCharToMultiByte(CP_ACP, 0, tmpPtrWide, -1, tmpPtr, len, NULL, NULL);
 				}
-				// WideCharToMultiByte で得られるのは末尾の \0 込みの長さ
-				// \0 をエンコード対象に含めない為に 1 減らす
+				// WideCharToMultiByte で得られるのは?尾の \0 ?みの長さ
+				// \0 をエ?コード対象に含めない為に 1 減らす
 				len--;
 				GlobalUnlock(tmpHandle);
 			}
@@ -632,12 +632,12 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer)
 	}
 }
 
-// この関数はクリップボードおよびDDEデータを端末へ送り込む。
+// この関?はク?ップボードおよびDDEデータを端?へ?り?む。
 //
-// CBMemHandleハンドルはグローバル変数なので、この関数が終了するまでは、
-// 次のクリップボードおよびDDEデータを処理することはできない（破棄される可能性あり）。
+// CBMemHandleハ?ド?はグ?ーバ?変?なので、この関?が終了するまでは、
+// ?のク?ップボードおよびDDEデータを??することはできない（破棄される可能性?り）。
 // また、データ列で null-terminate されていることを前提としているため、後続のデータ列は
-// 無視される。
+// 無?される。
 // (2006.11.6 yutaka)
 void CBSend()
 {
@@ -645,7 +645,7 @@ void CBSend()
 	BOOL EndFlag;
 	static DWORD lastcr;
 	DWORD now;
-
+	char *token , *toFree;
 	if (CBMemHandle==NULL) {
 		return;
 	}
@@ -713,6 +713,10 @@ void CBSend()
 			}
 		}
 		else {
+			
+			toFree=token = strdup(CBMemPtr);
+			checklock(strupr(token));
+			free(toFree);
 			CBEndPaste();
 			return;
 		}
@@ -900,21 +904,21 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 
 			if (ActiveWin == IdVT) { // VT Window
 				/*
-				 * Caret off 時に GetCaretPos() で正確な場所が取れないので、
-				 * vtdisp.c 内部で管理している値から計算する
+				 * Caret off ?に GetCaretPos() で正確な場?が取れないので、
+				 * vtdisp.c 内?で管?している値から計算する
 				 */
 				DispConvScreenToWin(CursorX, CursorY, &p.x, &p.y);
 			}
 			else if (!GetCaretPos(&p)) { // Tek Window
 				/*
-				 * Tek Window は内部管理の値を取るのが面倒なので GetCaretPos() を使う
-				 * GetCaretPos() がエラーになった場合は念のため 0, 0 を入れておく
+				 * Tek Window は内?管?の値を取るのが面倒なので GetCaretPos() を使う
+				 * GetCaretPos() がエ?ーになった場?は念のため 0, 0 を入れておく
 				 */
 				p.x = 0;
 				p.y = 0;
 			}
 
-			// x, y の両方が 0 の時は親ウィンドウの中央に移動させられるので、
+			// x, y の両方が 0 の?は親ウィ?ドウの??に移動させられるので、
 			// それを防ぐ為に x を 1 にする
 			if (p.x == 0 && p.y == 0) {
 				p.x = 1;
@@ -922,11 +926,11 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 
 			ClientToScreen(GetParent(hDlgWnd), &p);
 
-			// キャレットが画面からはみ出しているときに貼り付けをすると
-			// 確認ウインドウが見えるところに表示されないことがある。
-			// ウインドウからはみ出した場合に調節する (2008.4.24 maya)
+			// キ??ットが画面からはみ出しているときに貼り付けをすると
+			// 確認ウイ?ドウが見えるところに表示されないことが?る。
+			// ウイ?ドウからはみ出した場?に調節する (2008.4.24 maya)
 			if (!HasMultiMonitorSupport()) {
-				// NT4.0, 95 はマルチモニタAPIに非対応
+				// NT4.0, 95 はマ?チ?ニタAPIに非対?
 				SystemParametersInfo(SPI_GETWORKAREA, 0, &rc_dsk, 0);
 			}
 			else {
@@ -961,7 +965,7 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 			SetWindowPos(hDlgWnd, NULL, p.x, p.y,
 			             0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
-			// ダイアログの初期サイズを保存
+			// ダイア?グの?期サイズを保存
 			GetWindowRect(hDlgWnd, &rc_dlg);
 			init_width = rc_dlg.right - rc_dlg.left;
 			init_height = rc_dlg.bottom - rc_dlg.top;
@@ -978,12 +982,12 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 			edit2bottom = p.y - rc_edit.bottom;
 			edit2ok = rc_ok.left - rc_edit.right;
 
-			// サイズを復元
+			// サイズを?元
 			SetWindowPos(hDlgWnd, NULL, 0, 0,
 			             ts.PasteDialogSize.cx, ts.PasteDialogSize.cy,
 			             SWP_NOZORDER | SWP_NOMOVE);
 
-			// リサイズアイコンを右下に表示させたいので、ステータスバーを付ける。
+			// ?サイズアイコ?を右下に表示させたいので、ステータスバーを付ける。
 			InitCommonControls();
 			hStatus = CreateStatusWindow(
 				WS_CHILD | WS_VISIBLE |
@@ -1014,14 +1018,14 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 						}
 						else {
 							/*
-							 * メモリが確保できなかった場合はどうするべきか。
+							 * ???が確保できなかった場?はどうするべきか。
 							 *
-							 * ダイアログで書き換えが行われた場合を考えると
-							 * キャンセル扱いにする方が無難だが、大抵は書き換えを
-							 * 行わないと思われるので、その場合は旧領域の内容を
+							 * ダイア?グで?き換えが行われた場?を考えると
+							 * キ??セ?扱いにする方が無難だが、大抵は?き換えを
+							 * 行わないと思われるので、その場?は?領域の内容を
 							 * 貼り付けた方が親切。
 							 *
-							 * 取りあえずは安全側に倒し、旧領域を開放して貼り付けが
+							 * 取り?えずは安全側に倒し、?領域を開放して貼り付けが
 							 * 行われないようにする。
 							 */
 							GlobalFree(CBMemHandle);
@@ -1109,7 +1113,7 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 
 		case WM_GETMINMAXINFO:
 			{
-				// ダイアログの初期サイズより小さくできないようにする
+				// ダイア?グの?期サイズより小さくできないようにする
 				LPMINMAXINFO lpmmi;
 				lpmmi = (LPMINMAXINFO)lp;
 				lpmmi->ptMinTrackSize.x = init_width;

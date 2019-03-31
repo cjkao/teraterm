@@ -42,7 +42,6 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer);
 void CBSend();
 void CBEcho();
 void CBEndPaste();
-
 #ifdef __cplusplus
 }
 #endif

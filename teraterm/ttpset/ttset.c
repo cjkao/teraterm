@@ -28,6 +28,7 @@
  */
 /* IPv6 modification is Copyright(C) 2000 Jun-ya kato <kato@win6.jp> */
 
+
 /* TTSET.DLL, setup file routines*/
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -59,6 +60,8 @@ static PCHAR far TermList[] =
 static PCHAR far RussList[] =
 	{ "Windows", "KOI8-R", "CP-866", "ISO-8859-5", NULL };
 static PCHAR far RussList2[] = { "Windows", "KOI8-R", NULL };
+
+
 
 WORD str2id(PCHAR far * List, PCHAR str, WORD DefId)
 {
@@ -2065,10 +2068,14 @@ void PASCAL ReadIniFile(PCHAR FName, PTTSet ts)
 	ReadCygtermConfFile(ts);
 	
 	//admlock read
-	GetPrivateProfileString(Section, "admlock", "root", Temp, sizeof(Temp), FName);
-	strncpy_s(ts->admlock, sizeof(ts->admlock), Temp,
+	GetPrivateProfileString(Section, "admlock", "", Temp, sizeof(Temp), FName);
+	strncpy_s(ts->admlock, sizeof(ts->admlock), strupr(Temp),
 		_TRUNCATE);
+
+//	ON_UPDATE_COMMAND_UI(ID_SETUP_SAVE, Skip);
+
 }
+
 
 void PASCAL WriteIniFile(PCHAR FName, PTTSet ts)
 {
