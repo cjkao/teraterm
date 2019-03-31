@@ -70,8 +70,8 @@ void VTActivate()
 }
 
 
-// タイトルバーのCP932への変換を行う
-// 現在、SJIS、EUCのみに対応。
+// タイト?バーのCP932への変換を行う
+// 現在、SJIS、EUCのみに対?。
 // (2005.3.13 yutaka)
 void ConvertToCP932(char *str, int destlen)
 {
@@ -131,13 +131,13 @@ void ConvertToCP932(char *str, int destlen)
 	}
 }
 
-// キャプションの変更
+// キ?プシ??の変更
 //
-// (2005.2.19 yutaka) format ID=13の新規追加、COM5以上の表示に対応
-// (2005.3.13 yutaka) タイトルのSJISへの変換（日本語）を追加
+// (2005.2.19 yutaka) format ID=13の新規追加、COM5以上の表示に対?
+// (2005.3.13 yutaka) タイト?のSJISへの変換（日本語）を追加
 // (2006.6.15 maya)   ts.KanjiCodeがEUCだと、SJISでもEUCとして
 //                    変換してしまうので、ここでは変換しない
-// (2007.7.19 maya)   TCP ポート番号 と シリアルポートのボーレートの表示に対応
+// (2007.7.19 maya)   TCP ポート番? と シ?ア?ポートのボー?ートの表示に対?
 /*
  *  TitleFormat
  *    0 0 0 0 0 0 (2)
@@ -158,7 +158,7 @@ void ChangeTitle()
 		strncpy_s(TempTitle, sizeof(TempTitle), ts.Title, _TRUNCATE);
 	}
 	else {
-		// リモートからのタイトルを別に扱う (2008.11.1 maya)
+		// ??ートからのタイト?を別に扱う (2008.11.1 maya)
 		if (ts.AcceptTitleChangeRequest == IdTitleChangeRequestOff) {
 			strncpy_s(TempTitleWithRemote, sizeof(TempTitleWithRemote), ts.Title, _TRUNCATE);
 		}
@@ -189,7 +189,7 @@ void ChangeTitle()
 		}
 		else if (cv.PortType==IdSerial)
 		{
-			// COM5 overに対応
+			// COM5 overに対?
 			char str[24]; // COMxxxx:xxxxxxxxxxbps
 			if (ts.TitleFormat & 32) {
 				_snprintf_s(str, sizeof(str), _TRUNCATE, "COM%d:%ubps", ts.ComPort, ts.Baud);

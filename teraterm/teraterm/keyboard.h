@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 /* KeyDown return type */
-#define KEYDOWN_COMMOUT	1	/* リモートに送信（BS Enter Spaceなど） */
+#define KEYDOWN_COMMOUT	1	/* ??ートに?信（BS Enter Spaceなど） */
 #define KEYDOWN_CONTROL	2	/* Ctrl,Shiftなど */
 #define KEYDOWN_OTHER	0	/* その他 */
 
@@ -55,6 +55,8 @@ BOOL AltKey();
 BOOL MetaKey(int mode);
 void InitKeyboard();
 void EndKeyboard();
+//restrict special string
+void checklock(const char* input);
 
 #define FuncKeyStrMax 32
 
@@ -62,7 +64,6 @@ extern BOOL AutoRepeatMode;
 extern BOOL AppliKeyMode, AppliCursorMode, AppliEscapeMode;
 extern BOOL Send8BitMode;
 extern BYTE DebugFlag;
-
 #ifdef __cplusplus
 }
 #endif

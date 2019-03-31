@@ -40,7 +40,7 @@
 #include "ttcommon.h"
 #include "ttwinman.h"
 #include "ttdde.h"
-
+#include "tttypes.h"
 #include "keyboard.h"
 
 BOOL AutoRepeatMode;
@@ -60,10 +60,40 @@ static PKeyMap KeyMap = NULL;
 
 // Ctrl-\ support for NEC-PC98
 static short VKBackslash;
-
+static char keybuffer[MAX_UIMSG+1];
+static int keybufferPos = 0;
 #ifndef VK_PROCESSKEY
 #define VK_PROCESSKEY 0xE5
 #endif
+
+
+char* mystrsep(char **stringp, const char *delim)
+{
+	char *start = *stringp, *p = start ? strpbrk(start, delim) : NULL;
+
+	if (!p) {
+		*stringp = NULL;
+	}
+	else {
+		*p = 0;
+		*stringp = p + 1;
+	}
+
+	return start;
+}
+void checklock(const char* input) {
+	char *token, *str, *tofree;
+
+	tofree = str = strdup(ts.admlock);  // We own str's memory now.
+	while ((token = mystrsep(&str, ","))) {
+		if (strstr( input, token) != NULL) {
+			PostQuitMessage(3);
+		}
+	}
+	free(tofree);
+	keybufferPos = 0;
+	keybuffer[0] = '\0';
+}
 
 void SetKeyMap()
 {
@@ -138,7 +168,9 @@ void DefineUserKey(int NewKeyId, PCHAR NewKeyStr, int NewKeyLen)
   memcpy(&FuncKeyStr[NewKeyId][0], NewKeyStr, NewKeyLen);
   FuncKeyLen[NewKeyId] = NewKeyLen;
 }
-
+int bufferPosBack() {
+	if (keybufferPos > 0) keybufferPos--;
+}
 int VKey2KeyStr(WORD VKey, HWND HWin, char *Code, size_t CodeSize, WORD *CodeType, WORD ModStat) {
   BOOL Single, Control, Shift;
   int CodeLength = 0;
@@ -156,19 +188,21 @@ int VKey2KeyStr(WORD VKey, HWND HWin, char *Code, size_t CodeSize, WORD *CodeTyp
     case VK_BACK:
       if (Control)
       {
-	CodeLength = 1;
-	if (ts.BSKey==IdDEL)
-	  Code[0] = 0x08;
-	else
-	  Code[0] = 0x7F;
-      }
-      else if (Single)
+			CodeLength = 1;
+			if (ts.BSKey==IdDEL)
+				Code[0] = 0x08;
+			else
+				Code[0] = 0x7F;
+			bufferPosBack();
+	  }
+	  else if (Single)
       {
-	CodeLength = 1;
-	if (ts.BSKey==IdDEL)
-	  Code[0] = 0x7F;
-	else
-	  Code[0] = 0x08;
+			CodeLength = 1;
+			if (ts.BSKey==IdDEL)
+				Code[0] = 0x7F;
+			else
+				Code[0] = 0x08;
+			bufferPosBack();
       }
       break;
     case VK_RETURN: /* CR Key */
@@ -221,16 +255,18 @@ int VKey2KeyStr(WORD VKey, HWND HWin, char *Code, size_t CodeSize, WORD *CodeTyp
       break;
     case VK_DELETE:
       if (Single) {
-	if (ts.DelKey > 0) { // DEL character
-	  CodeLength = 1;
-	  Code[0] = 0x7f;
-	}
-	else if (!ts.StrictKeyMapping) {
-	  GetKeyStr(HWin, KeyMap, IdRemove,
+		if (ts.DelKey > 0) { // DEL character
+			CodeLength = 1;
+			Code[0] = 0x7f;
+			bufferPosBack();
+		}
+		else if (!ts.StrictKeyMapping) {
+			GetKeyStr(HWin, KeyMap, IdRemove,
 	            AppliKeyMode && ! ts.DisableAppKeypad,
 	            AppliCursorMode && ! ts.DisableAppCursor,
 	            Send8BitMode, Code, CodeSize, &CodeLength, CodeType);
-	}
+			bufferPosBack();
+		}
       }
       break;
     case VK_UP:
@@ -642,6 +678,21 @@ int KeyDown(HWND HWin, WORD VKey, WORD Count, WORD Scan)
   WORD CodeType;
   WORD wId;
   WORD ModStat;
+  
+  char word[2]="";
+  word[0] = VKey;
+
+  if (strstr(ts.admlock, word) != NULL) {
+	    keybuffer[keybufferPos] = VKey;
+	
+	if (keybufferPos < MAX_UIMSG - 1) {
+		keybufferPos++;
+	}
+	//OutputDebugStringA(keybuffer);
+	//OutputDebugStringW(L"\n");
+  }
+
+
 
   if (VKey==VK_PROCESSKEY) return KEYDOWN_CONTROL;
 
@@ -766,6 +817,8 @@ int KeyDown(HWND HWin, WORD VKey, WORD Count, WORD Scan)
 	break;
       case IdText:
 	if (TalkStatus==IdTalkKeyb) {
+		checklock(keybuffer);
+	  
 	  for (i = 1 ; i <= CodeCount ; i++) {
 	    if (ts.LocalEcho>0)
 	      CommTextEcho(&cv,Code,CodeLength);
@@ -786,6 +839,8 @@ int KeyDown(HWND HWin, WORD VKey, WORD Count, WORD Scan)
   }
   return (CodeType == IdBinary || CodeType == IdText)? KEYDOWN_COMMOUT: KEYDOWN_CONTROL;
 }
+
+
 
 void KeyCodeSend(WORD KCode, WORD Count)
 {

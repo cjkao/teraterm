@@ -92,12 +92,12 @@ DEFINE_GUID(GUID_DEVINTERFACE_USB_DEVICE, 0xA5DCBF10L, 0x6530, 0x11D2, 0x90, 0x1
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// ウィンドウ最大化ボタンを有効にする (2005.1.15 yutaka)
+// ウィ?ドウ最大化ボタ?を有効にする (2005.1.15 yutaka)
 #define WINDOW_MAXMIMUM_ENABLED 1
 
-// WM_COPYDATAによるプロセス間通信の種別 (2005.1.22 yutaka)
-#define IPC_BROADCAST_COMMAND 1      // 全端末へ送信
-#define IPC_MULTICAST_COMMAND 2      // 任意の端末群へ送信
+// WM_COPYDATAによるプ?セス間通信の種別 (2005.1.22 yutaka)
+#define IPC_BROADCAST_COMMAND 1      // 全端?へ?信
+#define IPC_MULTICAST_COMMAND 2      // 任意の端?群へ?信
 
 #define BROADCAST_LOGFILE "broadcast.log"
 
@@ -292,7 +292,7 @@ static BOOL MySetLayeredWindowAttributes(HWND hwnd, COLORREF crKey, BYTE bAlpha,
 }
 
 
-// Tera Term起動時とURL文字列mouse over時に呼ばれる (2005.4.2 yutaka)
+// Tera Term起動?とURL文?列mouse over?に呼ばれる (2005.4.2 yutaka)
 void SetMouseCursor(char *cursor)
 {
 	HCURSOR hc;
@@ -332,14 +332,14 @@ void CVTWindow::SetWindowAlpha(BYTE alpha)
 
 	// 2006/03/16 by 337: BGUseAlphaBlendAPIがOnならばLayered属性とする
 	//if (ts->EtermLookfeel.BGUseAlphaBlendAPI) {
-	// アルファ値が255の場合、画面のちらつきを抑えるため何もしないこととする。(2006.4.1 yutaka)
+	// ア?ファ値が255の場?、画面のちらつきを抑えるため何もしないこととする。(2006.4.1 yutaka)
 	// 呼び出し元で、値が変更されたときのみ設定を反映する。(2007.10.19 maya)
 	if (alpha < 255) {
 		::SetWindowLongPtr(HVTWin, GWL_EXSTYLE, lp | WS_EX_LAYERED);
 		MySetLayeredWindowAttributes(HVTWin, 0, alpha, LWA_ALPHA);
 	}
 	else {
-		// アルファ値が 255 の場合、透明化属性を削除して再描画する。(2007.10.22 maya)
+		// ア?ファ値が 255 の場?、透明化属性を削?して再描画する。(2007.10.22 maya)
 		::SetWindowLongPtr(HVTWin, GWL_EXSTYLE, lp & ~WS_EX_LAYERED);
 		::RedrawWindow(HVTWin, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME);
 	}
@@ -385,12 +385,12 @@ void SetAutoConnectPort(int port)
 }
 
 //
-// 例外ハンドラのフック（スタックトレースのダンプ）
+// 例外ハ?ド?のフック（スタックト?ースのダ?プ）
 //
 // cf. http://svn.collab.net/repos/svn/trunk/subversion/libsvn_subr/win32_crashrpt.c
 // (2007.9.30 yutaka)
 //
-// 例外コードを文字列へ変換する
+// 例外コードを文?列へ変換する
 static char *GetExceptionString(int exception)
 {
 #define EXCEPTION(x) case EXCEPTION_##x: return (#x);
@@ -429,7 +429,7 @@ static char *GetExceptionString(int exception)
 #undef EXCEPTION
 }
 
-/* 例外発生時に関数の呼び出し履歴を表示する、例外フィルタ関数 */
+/* 例外発生?に関?の呼び出し?歴を表示する、例外フィ?タ関? */
 static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 {
 	HGLOBAL gptr;
@@ -457,7 +457,7 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 	}
 	FreeLibrary(h2);
 
-	/* シンボル情報格納用バッファの初期化 */
+	/* シ?ボ?情報格納用バッファの?期化 */
 	gptr = GlobalAlloc(GMEM_FIXED, 10000);
 	if (gptr == NULL) {
 		goto error;
@@ -467,7 +467,7 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 	pSym->SizeOfStruct = 10000;
 	pSym->MaxNameLength = 10000 - sizeof(IMAGEHLP_SYMBOL);
 
-	/* スタックフレームの初期化 */
+	/* スタックフ?ー?の?期化 */
 	ZeroMemory(&sf, sizeof(sf));
 	sf.AddrPC.Offset = ExInfo->ContextRecord->Eip;
 	sf.AddrStack.Offset = ExInfo->ContextRecord->Esp;
@@ -476,10 +476,10 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 	sf.AddrStack.Mode = AddrModeFlat;
 	sf.AddrFrame.Mode = AddrModeFlat;
 
-	/* シンボルハンドラの初期化 */
+	/* シ?ボ?ハ?ド?の?期化 */
 	SymInitialize(hProcess, NULL, TRUE);
 
-	// レジスタダンプ
+	// ?ジスタダ?プ
 	msg[0] = '\0';
 	_snprintf_s(buf, sizeof(buf), _TRUNCATE, "eax=%08X ebx=%08X ecx=%08X edx=%08X esi=%08X edi=%08X\r\n"
 		   "ebp=%08X esp=%08X eip=%08X efl=%08X\r\n"
@@ -508,10 +508,10 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 		strncat_s(msg, sizeof(msg), buf, _TRUNCATE);
 	}
 
-	/* スタックフレームを順に表示していく */
+	/* スタックフ?ー?を?に表示していく */
 	frame = 0;
 	for (;;) {
-		/* 次のスタックフレームの取得 */
+		/* ?のスタックフ?ー?の取得 */
 		bResult = StackWalk(
 			IMAGE_FILE_MACHINE_I386,
 			hProcess,
@@ -523,16 +523,16 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 			SymGetModuleBase,
 			NULL);
 
-		/* 失敗ならば、ループを抜ける */
+		/* 失敗ならば、?ープを抜ける */
 		if (!bResult || sf.AddrFrame.Offset == 0)
 			break;
 
 		frame++;
 
-		/* プログラムカウンタ（仮想アドレス）から関数名とオフセットを取得 */
+		/* プ?グ??カウ?タ（仮想アド?ス）から関?名とオフセットを取得 */
 		bResult = SymGetSymFromAddr(hProcess, sf.AddrPC.Offset, &Disp, pSym);
 
-		/* 取得結果を表示 */
+		/* 取得?果を表示 */
 		_snprintf_s(buf, sizeof(buf), _TRUNCATE, "#%d  0x%08x in ", frame, sf.AddrPC.Offset);
 		strncat_s(msg, sizeof(msg), buf, _TRUNCATE);
 		if (bResult) {
@@ -543,7 +543,7 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 			strncat_s(msg, sizeof(msg), buf, _TRUNCATE);
 		}
 
-		// 実行ファイル名の取得
+		// 実行ファイ?名の取得
 		ZeroMemory( &(ih_module), sizeof(ih_module) );
 		ih_module.SizeOfStruct = sizeof(ih_module);
 		bResult = SymGetModuleInfo( hProcess, sf.AddrPC.Offset, &(ih_module) );
@@ -556,7 +556,7 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 			strncat_s(msg, sizeof(msg), buf, _TRUNCATE);
 		}
 
-		// ファイル名と行番号の取得
+		// ファイ?名と行番?の取得
 		ZeroMemory( &(ih_line), sizeof(ih_line) );
 		ih_line.SizeOfStruct = sizeof(ih_line);
 		bResult = SymGetLineFromAddr( hProcess, sf.AddrPC.Offset, &Disp, &ih_line );
@@ -569,7 +569,7 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 		strncat_s(msg, sizeof(msg), "\n", _TRUNCATE);
 	}
 
-	/* 後処理 */
+	/* 後?? */
 	SymCleanup(hProcess);
 	GlobalUnlock(pSym);
 	GlobalFree(pSym);
@@ -577,12 +577,12 @@ static LONG CALLBACK ApplicationFaultHandler(EXCEPTION_POINTERS *ExInfo)
 	MessageBox(NULL, msg, "Tera Term: Application fault", MB_OK | MB_ICONEXCLAMATION);
 
 error:
-//	return (EXCEPTION_EXECUTE_HANDLER);  /* そのままプロセスを終了させる */
-	return (EXCEPTION_CONTINUE_SEARCH);  /* 引き続き［アプリケーションエラー］ポップアップメッセージボックスを呼び出す */
+//	return (EXCEPTION_EXECUTE_HANDLER);  /* そのままプ?セスを終了させる */
+	return (EXCEPTION_CONTINUE_SEARCH);  /* 引き続き［アプ?ケーシ??エ?ー］ポップアップ?ッセージボックスを呼び出す */
 }
 
 
-// Virtual Storeが有効であるかどうかを判別する。
+// Virtual Storeが有効で?るかどうかを判別する。
 //
 // [Windows 95-XP]
 // return FALSE (always)
@@ -611,7 +611,7 @@ BOOL GetVirtualStoreEnvironment(void)
 	DWORD dwType;
 	BYTE bValue;
 
-	// Windows Vista以前は無視する。
+	// Windows Vista以前は無?する。
 	if (!IsWindowsVistaOrLater())
 		goto error;
 
@@ -634,7 +634,7 @@ BOOL GetVirtualStoreEnvironment(void)
 		if (lRet == ERROR_SUCCESS) {
 			bValue = ((LPBYTE)lpData)[0];
 			if (bValue == 1)
-				// UACが有効の場合、Virtual Storeが働く。
+				// UACが有効の場?、Virtual Storeが働く。
 				flag = 1;
 		}
 		RegCloseKey(hKey);
@@ -642,13 +642,13 @@ BOOL GetVirtualStoreEnvironment(void)
 	if (flag == 0)
 		goto error;
 
-	// UACが有効時、プロセスが管理者権限に昇格しているか。
+	// UACが有効?、プ?セスが管?者?限に昇格しているか。
 	flag = 0;
 	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_ADJUST_DEFAULT, &hToken)) {
 		if (GetTokenInformation(hToken, (TOKEN_INFORMATION_CLASS)TokenElevation, &tokenElevation, sizeof(TOKEN_ELEVATION), &dwLength)) {
 			// (0は昇格していない、非0は昇格している)。
 			if (tokenElevation.TokenIsElevated == 0) {
-				// 管理者権限を持っていなければ、Virtual Storeが働く。
+				// 管?者?限を?っていなければ、Virtual Storeが働く。
 				flag = 1;
 			}
 		}
@@ -688,7 +688,7 @@ CVTWindow::CVTWindow()
   ::_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	// 例外ハンドラのフック (2007.9.30 yutaka)
+	// 例外ハ?ド?のフック (2007.9.30 yutaka)
 	SetUnhandledExceptionFilter(ApplicationFaultHandler);
 
 	CommInit(&cv);
@@ -729,7 +729,7 @@ CVTWindow::CVTWindow()
 		}
 
 	} else {
-		// 2つめ以降のプロセスにおいても、ディスクから TERATERM.INI を読む。(2004.11.4 yutaka)
+		// 2つめ以降のプ?セスにおいても、ディスクから TERATERM.INI を読む。(2004.11.4 yutaka)
 		if (LoadTTSET()) {
 			/* read setup info from "teraterm.ini" */
 			(*ReadIniFile)(ts.SetupFName, &ts);
@@ -757,15 +757,15 @@ CVTWindow::CVTWindow()
 	}
 
 	/* Parse command line parameters*/
-	// 256バイト以上のコマンドラインパラメータ指定があると、BOF(Buffer Over Flow)で
-	// 落ちるバグを修正。(2007.6.12 maya)
+	// 256バイト以上のコマ?ド?イ?パ??ータ指定が?ると、BOF(Buffer Over Flow)で
+	// ?ちるバグを修正。(2007.6.12 maya)
 	Param = GetCommandLine();
 	if (LoadTTSET()) {
 		(*ParseParam)(Param, &ts, &(TopicName[0]));
 	}
 	FreeTTSET();
 
-	// duplicate sessionの指定があるなら、共有メモリからコピーする (2004.12.7 yutaka)
+	// duplicate sessionの指定が?るなら、共有???からコピーする (2004.12.7 yutaka)
 	if (ts.DuplicateSession == 1) {
 		CopyShmemToTTSet(&ts);
 	}
@@ -784,7 +784,7 @@ CVTWindow::CVTWindow()
 	TplClk = FALSE;
 	Hold = FALSE;
 	FirstPaint = TRUE;
-	ScrollLock = FALSE;  // 初期値は無効 (2006.11.14 yutaka)
+	ScrollLock = FALSE;  // ?期値は無効 (2006.11.14 yutaka)
 	Alpha = 255;
 	MySetLayeredWindowAttributes_init();
 
@@ -820,7 +820,7 @@ CVTWindow::CVTWindow()
 	wc.hInstance = AfxGetInstanceHandle();
 	wc.hIcon = NULL;
 	//wc.hCursor = LoadCursor(NULL,IDC_IBEAM);
-	wc.hCursor = NULL; // マウスカーソルは動的に変更する (2005.4.2 yutaka)
+	wc.hCursor = NULL; // マウスカーソ?は動的に変更する (2005.4.2 yutaka)
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = VTClassName;
@@ -847,7 +847,7 @@ CVTWindow::CVTWindow()
 
 	logfile_lock_initialize();
 	SetMouseCursor(ts.MouseCursorName);
-	// ロケールの設定
+	// ?ケー?の設定
 	// wctomb のため
 	setlocale(LC_ALL, ts.Locale);
 
@@ -871,8 +871,8 @@ CVTWindow::CVTWindow()
 	              (LPARAM)LoadImage(AfxGetInstanceHandle(),
 	                                MAKEINTRESOURCE((ts.VTIcon!=IdIconDefault)?ts.VTIcon:IDI_VT),
 	                                IMAGE_ICON,16,16,fuLoad));
-	// Vista の Aero において Alt+Tab 切り替えで表示されるアイコンが
-	// 16x16 アイコンの拡大になってしまうので、大きいアイコンも
+	// Vista の Aero において Alt+Tab 切り替えで表示されるアイコ?が
+	// 16x16 アイコ?の拡大になってしまうので、大きいアイコ?も
 	// セットする (2008.9.3 maya)
 	::PostMessage(HVTWin,WM_SETICON,ICON_BIG,
 	              (LPARAM)LoadImage(AfxGetInstanceHandle(),
@@ -926,7 +926,7 @@ CVTWindow::CVTWindow()
 	ShowWindow(CmdShow);
 	ChangeCaret();
 
-	// Tera Termの起動時、Virtual Storeが働くかどうかを覚えておく。
+	// Tera Termの起動?、Virtual Storeが働くかどうかを覚えておく。
 	// (2015.11.14 yutaka)
 	cv.VirtualStoreEnabled = GetVirtualStoreEnvironment();
 
@@ -979,8 +979,8 @@ void CVTWindow::ButtonUp(BOOL Paste)
 	TplClk = FALSE;
 	CaretOn();
 
-	// SelectOnlyByLButton が on で 中・右クリックしたときに
-	// バッファが選択状態だったら、選択内容がクリップボードに
+	// SelectOnlyByLButton が on で ?・右ク?ックしたときに
+	// バッファが選択状態だったら、選択内容がク?ップボードに
 	// コピーされてしまう問題を修正 (2007.12.6 maya)
 	if (!disableBuffEndSelect) {
 		BuffEndSelect();
@@ -988,7 +988,7 @@ void CVTWindow::ButtonUp(BOOL Paste)
 
 	if (Paste) {
 		CBStartPaste(HVTWin, FALSE, BracketedPasteMode());
-		// スクロール位置をリセット
+		// スク?ー?位置を?セット
 		if (WinOrgY != 0) {
 			DispVScroll(SCROLL_BOTTOM, 0);
 		}
@@ -1143,7 +1143,7 @@ void CVTWindow::ButtonDown(POINT p, int LMR)
 	}
 }
 
-// LogMeIn.exe -> LogMeTT.exe へリネーム (2005.2.21 yutaka)
+// LogMeIn.exe -> LogMeTT.exe へ?ネー? (2005.2.21 yutaka)
 static char LogMeTTMenuString[] = "Log&MeTT";
 static char LogMeTT[MAX_PATH];
 
@@ -1158,7 +1158,7 @@ static BOOL isLogMeTTExist()
 	DWORD dwDisposition;
 	char *path;
 
-	/* LogMeTT 2.9.6からはレジストリにインストールパスが含まれる。*/
+	/* LogMeTT 2.9.6からは?ジスト?にイ?ストー?パスが含まれる。*/
 	result = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\LogMeTT", 0, NULL,
 				REG_OPTION_NON_VOLATILE, KEY_READ, NULL, &key, &dwDisposition);
 	if (result == ERROR_SUCCESS) {
@@ -1203,7 +1203,7 @@ void CVTWindow::InitMenu(HMENU *Menu)
 	ControlMenu = GetSubMenu(*Menu,ID_CONTROL);
 	HelpMenu = GetSubMenu(*Menu,ID_HELPMENU);
 
-	/* LogMeTT の存在を確認してメニューを追加する */
+	/* LogMeTT の存在を確認して?ニ?ーを追加する */
 	if (isLogMeTTExist()) {
 		::InsertMenu(FileMenu, ID_FILE_PRINT2, MF_STRING | MF_ENABLED | MF_BYCOMMAND,
 		             ID_FILE_LOGMEIN, LogMeTTMenuString);
@@ -1483,13 +1483,13 @@ void CVTWindow::InitMenuPopup(HMENU SubMenu)
 			}
 		}
 
-		// 新規メニューを追加 (2004.12.5 yutaka)
+		// 新規?ニ?ーを追加 (2004.12.5 yutaka)
 		EnableMenuItem(FileMenu,ID_FILE_CYGWINCONNECTION,MF_BYCOMMAND | MF_ENABLED);
 		EnableMenuItem(FileMenu,ID_FILE_TERATERMMENU,MF_BYCOMMAND | MF_ENABLED);
 		EnableMenuItem(FileMenu,ID_FILE_LOGMEIN,MF_BYCOMMAND | MF_ENABLED);
 
-		// XXX: この位置にしないと、logがグレイにならない。 (2005.2.1 yutaka)
-		if (LogVar!=NULL) { // ログ採取モードの場合
+		// XXX: この位置にしないと、logがグ?イにならない。 (2005.2.1 yutaka)
+		if (LogVar!=NULL) { // ?グ採取?ードの場?
 			EnableMenuItem(FileMenu,ID_FILE_LOG,MF_BYCOMMAND | MF_GRAYED);
 			EnableMenuItem(FileMenu,ID_FILE_COMMENTTOLOG, MF_BYCOMMAND | MF_ENABLED);
 			EnableMenuItem(FileMenu,ID_FILE_VIEWLOG, MF_BYCOMMAND | MF_ENABLED);
@@ -1648,10 +1648,10 @@ void CVTWindow::ResetSetup()
 #ifdef ALPHABLEND_TYPE2
 	BGInitialize();
 	BGSetupPrimary(TRUE);
-	// 2006/03/17 by 337 : Alpha値も即時変更
-	// Layered窓になっていない場合は効果が無い
+	// 2006/03/17 by 337 : Alpha値も即?変更
+	// Layered?になっていない場?は効果が無い
 	//
-	// AlphaBlend を即時反映できるようにする。
+	// AlphaBlend を即?反映できるようにする。
 	// (2016.12.24 yutaka)
 	SetWindowAlpha(ts.AlphaBlendActive);
 #else
@@ -1920,7 +1920,7 @@ void CVTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 	}
 
-	// スクロール位置をリセット
+	// スク?ー?位置を?セット
 	if (WinOrgY != 0) {
 		DispVScroll(SCROLL_BOTTOM, 0);
 	}
@@ -1973,7 +1973,7 @@ void CVTWindow::OnClose()
 // 全Tera Termの終了を指示する
 void CVTWindow::OnAllClose()
 {
-	// 突然終了させると危険なので、かならずユーザに問い合わせを出すようにする。
+	// 突然終了させると危険なので、かならず?ーザに問い?わせを出すようにする。
 	// (2013.8.17 yutaka)
 	get_lang_msg("MSG_ALL_TERMINATE_CONF", ts.UIMsg, sizeof(ts.UIMsg),
 	             "Terminate ALL Tera Term(s)?", ts.UILanguageFile);
@@ -1984,10 +1984,10 @@ void CVTWindow::OnAllClose()
 	BroadcastClosingMessage(HVTWin);
 }
 
-// 終了問い合わせなしにTera Termを終了する。OnAllClose()受信用。
+// 終了問い?わせなしにTera Termを終了する。OnAllClose()受信用。
 LONG CVTWindow::OnNonConfirmClose(UINT wParam, LONG lParam)
 {
-	// ここで ts の内容を意図的に書き換えても、終了時に自動セーブされるわけではないので、特に問題なし。
+	// ここで ts の内容を意図的に?き換えても、終了?に自動セーブされるわけではないので、特に問題なし。
 	ts.PortFlag &= ~PF_CONFIRMDISCONN;
 	OnClose();
 	return 1;
@@ -1998,7 +1998,7 @@ void CVTWindow::OnDestroy()
 	// remove this window from the window list
 	UnregWin(HVTWin);
 
-	// USBデバイス変化通知解除
+	// USBデバイス変化通知解?
 	UnRegDeviceNotify(HVTWin);
 
 	EndKeyboard();
@@ -2055,7 +2055,7 @@ static void EscapeFilename(const char *src, char *dest)
 			// パスの区切りを \ -> / へ
 			*d = '/';
 		} else if (strchr(ESCAPE_CHARS, c) != NULL) {
-			// エスケープが必要な文字
+			// エスケープが必要な文?
 			*d++ = '\\';
 			*d = c;
 		} else {
@@ -2077,7 +2077,7 @@ static void PasteString(PComVar cv, const char *str, bool escape)
 		ptr = tmpbuf;
 	}
 
-	// consoleへ送信
+	// consoleへ?信
 	while (*ptr) {
 		CommTextOut(cv, ptr, 1);
 		if (ts.LocalEcho > 0) {
@@ -2089,7 +2089,7 @@ static void PasteString(PComVar cv, const char *str, bool escape)
 	if (tmpbuf != NULL) free(tmpbuf);
 }
 
-/* 入力はファイルのみ(フォルダは含まれない) */
+/* 入力はファイ?のみ(フォ?ダは含まれない) */
 static bool SendScp(char *Filenames[], int FileCount, const char *SendDir)
 {
 	typedef int (CALLBACK *PSSH_start_scp)(char *, char *);
@@ -2212,7 +2212,7 @@ LONG CVTWindow::OnDropNotify(UINT ShowDialog, LONG lParam)
 			(DefaultDropType == DROP_TYPE_SEND_FILE ||
 			 DefaultDropType == DROP_TYPE_SEND_FILE_BINARY ||
 			 DefaultDropType == DROP_TYPE_SCP))
-		{	// デフォルトのままでは処理できない組み合わせ
+		{	// デフォ?トのままでは??できない組み?わせ
 			DropType = DROP_TYPE_PASTE_FILENAME;
 			DropTypePaste = DefaultDropTypePaste;
 			DoSameProcess = false;
@@ -2399,7 +2399,7 @@ void CVTWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	case KEYDOWN_CONTROL:
 		return;
 	case KEYDOWN_COMMOUT:
-		// スクロール位置をリセット
+		// スク?ー?位置を?セット
 		if (WinOrgY != 0) {
 			DispVScroll(SCROLL_BOTTOM, 0);
 		}
@@ -2451,7 +2451,7 @@ void CVTWindow::OnLButtonDblClk(UINT nFlags, CPoint point)
 		return;
 	}
 
-	if (BuffUrlDblClk(DblClkX, DblClkY)) { // ブラウザ呼び出しの場合は何もしない。 (2005.4.3 yutaka)
+	if (BuffUrlDblClk(DblClkX, DblClkY)) { // ブ?ウザ呼び出しの場?は何もしない。 (2005.4.3 yutaka)
 		return;
 	}
 
@@ -2564,7 +2564,7 @@ void CVTWindow::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (!ts.SelectOnlyByLButton ||
 	    (ts.SelectOnlyByLButton && LButton) ) {
-		// SelectOnlyByLButton == TRUE のときは、左ボタンダウン時のみ選択する (2007.11.21 maya)
+		// SelectOnlyByLButton == TRUE のときは、左ボタ?ダウ??のみ選択する (2007.11.21 maya)
 		BuffChangeSelect(point.x, point.y,i);
 	}
 }
@@ -2574,11 +2574,11 @@ void CVTWindow::OnMove(int x, int y)
 	DispSetWinPos();
 }
 
-// マウスホイールの回転
+// マウスホイー?の回転
 BOOL CVTWindow::OnMouseWheel(
 	UINT nFlags,   // 仮想キー
-	short zDelta,  // 回転距離
-	CPoint pt      // カーソル位置
+	short zDelta,  // 回転?離
+	CPoint pt      // カーソ?位置
 )
 {
 	int line, i;
@@ -2603,10 +2603,10 @@ BOOL CVTWindow::OnMouseWheel(
 
 	::ScreenToClient(HVTWin, &pt);
 
-	line = abs(zDelta) / WHEEL_DELTA; // ライン数
+	line = abs(zDelta) / WHEEL_DELTA; // ?イ??
 	if (line < 1) line = 1;
 
-	// 一スクロールあたりの行数に変換する (2008.4.6 yutaka)
+	// 一スク?ー??たりの行?に変換する (2008.4.6 yutaka)
 	if (line == 1 && ts.MouseWheelScrollLine > 0)
 		line *= ts.MouseWheelScrollLine;
 
@@ -2720,10 +2720,10 @@ void CVTWindow::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 
 	/*
-	 *  ペースト条件:
-	 *  ・ts.PasteFlag & CPF_DISABLE_RBUTTON -> 右ボタンによるペースト無効
-	 *  ・ts.PasteFlag & CPF_CONFIRM_RBUTTON -> 表示されたメニューからペーストを行うので、
-	 *                                          右ボタンアップによるペーストは行わない
+	 *  ペースト条?:
+	 *  ・ts.PasteFlag & CPF_DISABLE_RBUTTON -> 右ボタ?によるペースト無効
+	 *  ・ts.PasteFlag & CPF_CONFIRM_RBUTTON -> 表示された?ニ?ーからペーストを行うので、
+	 *                                          右ボタ?アップによるペーストは行わない
 	 */
 	if ((ts.PasteFlag & CPF_DISABLE_RBUTTON) || (ts.PasteFlag & CPF_CONFIRM_RBUTTON)) {
 		ButtonUp(FALSE);
@@ -2821,9 +2821,9 @@ void CVTWindow::OnSize(UINT nType, int cx, int cy)
 #endif
 }
 
-// リサイズ中の処理として、以下の二つを行う。
-// ・ツールチップで新しい端末サイズを表示する
-// ・フォントサイズと端末サイズに合わせて、ウィンドウ位置・サイズを調整する
+// ?サイズ?の??として、以下の二つを行う。
+// ・ツー?チップで新しい端?サイズを表示する
+// ・フォ?トサイズと端?サイズに?わせて、ウィ?ドウ位置・サイズを調整する
 void CVTWindow::OnSizing(UINT fwSide, LPRECT pRect)
 {
 	int nWidth;
@@ -2845,15 +2845,15 @@ void CVTWindow::OnSizing(UINT fwSide, LPRECT pRect)
 	h = nHeight / FontHeight;
 
 	if (!ts.TermIsWin) {
-		// TermIsWin=off の時はリサイズでは端末サイズが変わらないので
-		// 現在の端末サイズを上限とする。
+		// TermIsWin=off の?は?サイズでは端?サイズが変わらないので
+		// 現在の端?サイズを上限とする。
 		if (w > ts.TerminalWidth)
 			w = ts.TerminalWidth;
 		if (h > ts.TerminalHeight)
 			h = ts.TerminalHeight;
 	}
 
-	// 最低でも 1x1 の端末サイズを保障する。
+	// 最低でも 1x1 の端?サイズを保障する。
 	if (w <= 0)
 		w = 1;
 	if (h <= 0)
@@ -2864,7 +2864,7 @@ void CVTWindow::OnSizing(UINT fwSide, LPRECT pRect)
 	fixed_width = w * FontWidth + margin_width;
 	fixed_height = h * FontHeight + margin_height;
 
-	switch (fwSide) { // 幅調整
+	switch (fwSide) { // ?調整
 	case 1: // 左
 	case 4: // 左上
 	case 7: // 左下
@@ -2877,7 +2877,7 @@ void CVTWindow::OnSizing(UINT fwSide, LPRECT pRect)
 		break;
 	}
 
-	switch (fwSide) { // 高さ調整
+	switch (fwSide) { // ?さ調整
 	case 3: // 上
 	case 4: // 左上
 	case 5: // 右上
@@ -2900,8 +2900,8 @@ void CVTWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	unsigned int i;
 
 #ifdef WINDOW_MAXMIMUM_ENABLED
-	// ALT + xを押下すると WM_SYSCHAR が飛んでくる。
-	// ALT + Enterでウィンドウの最大化 (2005.4.24 yutaka)
+	// ALT + xを?下すると WM_SYSCHAR が飛んでくる。
+	// ALT + Enterでウィ?ドウの最大化 (2005.4.24 yutaka)
 	if ((nFlags&0x2000) != 0 && nChar == CR) {
 		if (IsZoomed()) { // window is maximum
 			ShowWindow(SW_RESTORE);
@@ -3014,8 +3014,8 @@ void CVTWindow::OnTimer(UINT nIDEvent)
 		return;
 	}
 	else if (nIDEvent == IdCancelConnectTimer) {
-		// まだ接続が完了していなければ、ソケットを強制クローズ。
-		// CloseSocket()を呼びたいが、ここからは呼べないので、直接Win32APIをコールする。
+		// まだ接続が完了していなければ、ソケットを強制ク?ーズ。
+		// CloseSocket()を呼びたいが、ここからは呼べないので、直接Win32APIをコー?する。
 		if (!cv.Ready) {
 			closesocket(cv.s);
 			cv.s = INVALID_SOCKET;  /* ソケット無効の印を付ける。(2010.8.6 yutaka) */
@@ -3107,7 +3107,7 @@ void CVTWindow::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	// スクロールレンジを 16bit から 32bit へ拡張した (2005.10.4 yutaka)
+	// スク?ー???ジを 16bit から 32bit へ拡張した (2005.10.4 yutaka)
 	ZeroMemory(&si, sizeof(SCROLLINFO));
 	si.cbSize = sizeof(SCROLLINFO);
 	si.fMask = SIF_TRACKPOS;
@@ -3132,7 +3132,7 @@ BOOL CVTWindow::OnDeviceChange(UINT nEventType, DWORD_PTR dwData)
 #ifdef DEBUG
 		OutputDebugPrintf("DBT_DEVICEARRIVAL devicetype=%d PortType=%d AutoDisconnectedPort=%d\n", pDevHdr->dbch_devicetype, ts.PortType, AutoDisconnectedPort);
 #endif
-		// DBT_DEVTYP_PORT を投げず DBT_DEVTYP_DEVICEINTERFACE しか投げないドライバがあるため
+		// DBT_DEVTYP_PORT を?げず DBT_DEVTYP_DEVICEINTERFACE しか?げないド?イバが?るため
 		if ((pDevHdr->dbch_devicetype == DBT_DEVTYP_PORT || pDevHdr->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE) &&
 		    ts.PortType == IdSerial &&
 		    ts.AutoComPortReconnect &&
@@ -3174,7 +3174,7 @@ BOOL CVTWindow::OnDeviceChange(UINT nEventType, DWORD_PTR dwData)
 			}
 #endif
 			if (cv.Open) {
-				/* Tera Term 接続中 */
+				/* Tera Term 接続? */
 				if (CheckComPort(cv.ComPort) == 0) {
 					/* ポートが無効 */
 					AutoDisconnectedPort = cv.ComPort;
@@ -3323,7 +3323,7 @@ LONG CVTWindow::OnIMENotify(UINT wParam, LONG lParam)
 	return CFrameWnd::DefWindowProc(WM_IME_NOTIFY,wParam,lParam);
 }
 
-// IMEの前後参照変換機能への対応
+// IMEの前後参照変換機能への対?
 // MSからちゃんと仕様が提示されていないので、アドホックにやるしかないらしい。
 // cf. http://d.hatena.ne.jp/topiyama/20070703
 //     http://ice.hotmint.com/putty/#DOWNLOAD
@@ -3338,10 +3338,10 @@ LONG CVTWindow::OnIMERequest(UINT wParam, LONG lParam)
 	char buf[512], newbuf[1024];
 	HIMC hIMC;
 
-	// "IME=off"の場合は、何もしない。
+	// "IME=off"の場?は、何もしない。
 	if (ts.UseIME > 0 &&
 		wParam == IMR_DOCUMENTFEED) {
-		size = NumOfColumns + 1;   // カーソルがある行の長さ+null
+		size = NumOfColumns + 1;   // カーソ?が?る行の長さ+null
 
 		if (lParam == 0) {  // 1回目の呼び出し
 			// バッファのサイズを返すのみ。
@@ -3357,22 +3357,22 @@ LONG CVTWindow::OnIMERequest(UINT wParam, LONG lParam)
 				complen = strlen(comp);  // w/o null
 				ImmReleaseContext(HVTWin, hIMC);
 			}
-			newsize = size + complen;  // 変換文字も含めた全体の長さ(including null)
+			newsize = size + complen;  // 変換文?も含めた全体の長さ(including null)
 
 		} else {  // 2回目の呼び出し
-			//lParam を RECONVERTSTRING と 文字列格納バッファに使用する
+			//lParam を RECONVERTSTRING と 文?列格納バッファに使用する
 			RECONVERTSTRING *pReconv   = (RECONVERTSTRING*)lParam;
 			char*  pszParagraph        = (char*)pReconv + sizeof(RECONVERTSTRING);
 			int cx;
 
 			cx = BuffGetCurrentLineData(buf, sizeof(buf));
 
-			// カーソル位置に変換文字列を挿入する。
+			// カーソ?位置に変換文?列を挿入する。
 			memset(newbuf, 0, sizeof(newbuf));
 			memcpy(newbuf, buf, cx);
 			memcpy(newbuf + cx, comp, complen);
 			memcpy(newbuf + cx + complen, buf + cx, size - cx);
-			newsize = size + complen;  // 変換文字も含めた全体の長さ(including null)
+			newsize = size + complen;  // 変換文?も含めた全体の長さ(including null)
 
 			pReconv->dwSize            = sizeof(RECONVERTSTRING);
 			pReconv->dwVersion         = 0;
@@ -3492,7 +3492,7 @@ LONG CVTWindow::OnChangeMenu(UINT wParam, LONG lParam)
 
 	Show = (ts.PopupMenu==0) && (ts.HideTitle==0);
 
-// TTXKanjiMenu のために、メニューが表示されていても
+// TTXKanjiMenu のために、?ニ?ーが表示されていても
 // 再描画するようにした。 (2007.7.14 maya)
 	if (Show != (MainMenu!=NULL)) {
 		AdjustSize = TRUE;
@@ -3660,7 +3660,7 @@ LONG CVTWindow::OnCommOpen(UINT wParam, LONG lParam)
 	if (ts.LogAutoStart && ts.LogFN[0]==0) {
 		strncpy_s(ts.LogFN, sizeof(ts.LogFN), ts.LogDefaultName, _TRUNCATE);
 	}
-	/* ログ採取が有効で開始していなければ開始する (2006.9.18 maya) */
+	/* ?グ採取が有効で開始していなければ開始する (2006.9.18 maya) */
 	if ((ts.LogFN[0]!=0) && (LogVar==NULL) && NewFileVar(&LogVar)) {
 		LogVar->DirLen = 0;
 		strncpy_s(LogVar->FullName, sizeof(LogVar->FullName), ts.LogFN, _TRUNCATE);
@@ -3736,7 +3736,7 @@ LONG CVTWindow::OnCommOpen(UINT wParam, LONG lParam)
 
 LONG CVTWindow::OnCommStart(UINT wParam, LONG lParam)
 {
-	// 自動接続が無効のときも接続ダイアログを出すようにした (2006.9.15 maya)
+	// 自動接続が無効のときも接続ダイア?グを出すようにした (2006.9.15 maya)
 	if (((ts.PortType!=IdSerial) && (ts.HostName[0]==0)) ||
 	    ((ts.PortType==IdSerial) && (ts.ComAutoConnect == FALSE))) {
 		if (ts.HostDialogOnStartup) {
@@ -3919,7 +3919,7 @@ void CVTWindow::OnFileNewConnection()
 					strncat_s(Command,sizeof(Command),tcpport,_TRUNCATE);
 				}
 				/********************************/
-				/* ここにプロトコル処理を入れる */
+				/* ここにプ?トコ???を入れる */
 				/********************************/
 				if (GetHNRec.ProtocolFamily == AF_INET) {
 					strncat_s(Command,sizeof(Command)," /4",_TRUNCATE);
@@ -3943,7 +3943,7 @@ void CVTWindow::OnFileNewConnection()
 }
 
 
-// すでに開いているセッションの複製を作る
+// すでに開いているセッシ??の複製を作る
 // (2004.12.6 yutaka)
 void CVTWindow::OnDuplicateSession()
 {
@@ -3958,10 +3958,10 @@ void CVTWindow::OnDuplicateSession()
 	int cygterm_PORT_RANGE = 40;
 	int is_cygwin_port = 0;
 
-	// 現在の設定内容を共有メモリへコピーしておく
+	// 現在の設定内容を共有???へコピーしておく
 	CopyTTSetToShmem(&ts);
 
-	// cygterm.cfg を読み込む
+	// cygterm.cfg を読み?む
 	strncpy_s(cygterm_cfg, sizeof(cygterm_cfg), ts.HomeDir, _TRUNCATE);
 	AppendSlash(cygterm_cfg, sizeof(cygterm_cfg));
 	strncat_s(cygterm_cfg, sizeof(cygterm_cfg), "cygterm.cfg", _TRUNCATE);
@@ -3993,7 +3993,7 @@ void CVTWindow::OnDuplicateSession()
 
 	if (is_cygwin_port && (strcmp(ts.HostName, "127.0.0.1") == 0 ||
 	    strcmp(ts.HostName, "localhost") == 0)) {
-		// localhostへの接続でポートがcygterm.cfgの範囲内の時はcygwin接続とみなす。
+		// localhostへの接続でポートがcygterm.cfgの範囲内の?はcygwin接続とみなす。
 		OnCygwinConnection();
 		return;
 	} else if (cv.TelFlag) { // telnet
@@ -4002,8 +4002,8 @@ void CVTWindow::OnDuplicateSession()
 		            exec, ts.HostName, ts.TCPPort);
 
 	} else if (cv.isSSH) { // SSH
-		// ここの処理は TTSSH 側にやらせるべき (2004.12.7 yutaka)
-		// TTSSH側でのオプション生成を追加。(2005.4.8 yutaka)
+		// ここの??は TTSSH 側にやらせるべき (2004.12.7 yutaka)
+		// TTSSH側でのオプシ??生成を追加。(2005.4.8 yutaka)
 		_snprintf_s(Command, sizeof(Command), _TRUNCATE,
 		            "%s %s:%d /DUPLICATE",
 		            exec, ts.HostName, ts.TCPPort);
@@ -4015,7 +4015,7 @@ void CVTWindow::OnDuplicateSession()
 		return;
 	}
 
-	// セッション複製を行う際、/K= があれば引き継ぎを行うようにする。
+	// セッシ??複製を行う際、/K= が?れば引き継ぎを行うようにする。
 	// cf. http://sourceforge.jp/ticket/browse.php?group_id=1412&tid=24682
 	// (2011.3.27 yutaka)
 	if (strlen(ts.KeyCnfFN) > 0) {
@@ -4199,8 +4199,8 @@ static LRESULT CALLBACK OnCommentDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LPAR
 
 	switch (msg) {
 		case WM_INITDIALOG:
-			//SetDlgItemText(hDlgWnd, IDC_EDIT_COMMENT, "サンプル");
-			// エディットコントロールにフォーカスをあてる
+			//SetDlgItemText(hDlgWnd, IDC_EDIT_COMMENT, "サ?プ?");
+			// エディットコ?ト?ー?にフォーカスを?てる
 			SetFocus(GetDlgItem(hDlgWnd, IDC_EDIT_COMMENT));
 
 			font = (HFONT)SendMessage(hDlgWnd, WM_GETFONT, 0, 0);
@@ -4253,7 +4253,7 @@ void CVTWindow::OnCommentToLog()
 {
 	DWORD ret;
 
-	// ログファイルへコメントを追加する (2004.8.6 yutaka)
+	// ?グファイ?へコ??トを追加する (2004.8.6 yutaka)
 	ret = DialogBox(hInst, MAKEINTRESOURCE(IDD_COMMENT_DIALOG),
 	                HVTWin, (DLGPROC)OnCommentDlgProc);
 	if (ret == 0 || ret == -1) {
@@ -4263,7 +4263,7 @@ void CVTWindow::OnCommentToLog()
 }
 
 
-// ログの閲覧 (2005.1.29 yutaka)
+// ?グの閲? (2005.1.29 yutaka)
 void CVTWindow::OnViewLog()
 {
 	char command[MAX_PATH*2+3]; // command "filename"
@@ -4296,14 +4296,14 @@ void CVTWindow::OnViewLog()
 }
 
 
-// 隠しているログダイアログを表示する (2008.2.3 maya)
+// 隠している?グダイア?グを表示する (2008.2.3 maya)
 void CVTWindow::OnShowLogDialog()
 {
 	ShowFTDlg(OpLog);
 }
 
 
-// ログの再生 (2006.12.13 yutaka)
+// ?グの再生 (2006.12.13 yutaka)
 void CVTWindow::OnReplayLog()
 {
 	OPENFILENAME ofn;
@@ -4314,7 +4314,7 @@ void CVTWindow::OnReplayLog()
 	PROCESS_INFORMATION pi;
 	char uimsg[MAX_UIMSG];
 
-	// バイナリモードで採取したログファイルを選択する
+	// バイナ??ードで採取した?グファイ?を選択する
 	memset(&ofn, 0, sizeof(OPENFILENAME));
 	memset(szFile, 0, sizeof(szFile));
 	ofn.lStructSize = get_OPENFILENAME_SIZE();
@@ -4333,7 +4333,7 @@ void CVTWindow::OnReplayLog()
 		return;
 
 
-	// "/R"オプション付きでTera Termを起動する（ログが再生される）
+	// "/R"オプシ??付きでTera Termを起動する（?グが再生される）
 	_snprintf_s(Command, sizeof(Command), _TRUNCATE,
 	            "%s /R=\"%s\"", exec, szFile);
 
@@ -4500,7 +4500,7 @@ void CVTWindow::OnEditPaste()
 {
 	// add confirm (2008.2.4 yutaka)
 	CBStartPaste(HVTWin, FALSE, BracketedPasteMode());
-	// スクロール位置をリセット
+	// スク?ー?位置を?セット
 	if (WinOrgY != 0) {
 		DispVScroll(SCROLL_BOTTOM, 0);
 	}
@@ -4510,7 +4510,7 @@ void CVTWindow::OnEditPasteCR()
 {
 	// add confirm (2008.3.11 maya)
 	CBStartPaste(HVTWin, TRUE, BracketedPasteMode());
-	// スクロール位置をリセット
+	// スク?ー?位置を?セット
 	if (WinOrgY != 0) {
 		DispVScroll(SCROLL_BOTTOM, 0);
 	}
@@ -4657,14 +4657,14 @@ void CVTWindow::OnSetupWindow()
 	FreeTTDLG();
 
 	if (Ok) {
-		// Eterm lookfeelの画面情報も更新することで、リアルタイムでの背景色変更が
+		// Eterm lookfeelの画面情報も更新することで、?ア?タイ?での背景色変更が
 		// 可能となる。(2006.2.24 yutaka)
 #ifdef ALPHABLEND_TYPE2
 		BGInitialize();
 		BGSetupPrimary(TRUE);
 #endif
 
-		// タイトルが変更されていたら、リモートタイトルをクリアする
+		// タイト?が変更されていたら、??ートタイト?をク?アする
 		if ((ts.AcceptTitleChangeRequest == IdTitleChangeRequestOverwrite) &&
 		    (strcmp(orgTitle, ts.Title) != 0)) {
 			cv.TitleRemote[0] = '\0';
@@ -4773,9 +4773,9 @@ void CVTWindow::OnSetupSave()
 		return;
 	}
 
-	// 書き込みできるかの判別を追加 (2005.11.3 yutaka)
+	// ?き?みできるかの判別を追加 (2005.11.3 yutaka)
 	if ((ret = _access(ts.SetupFName, 0x02)) != 0) {
-		if (errno != ENOENT) {  // ファイルがすでに存在する場合のみエラーとする (2005.12.13 yutaka)
+		if (errno != ENOENT) {  // ファイ?がすでに存在する場?のみエ?ーとする (2005.12.13 yutaka)
 			char uimsg[MAX_UIMSG];
 			get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: ERROR", ts.UILanguageFile);
 			get_lang_msg("MSG_SAVESETUP_PERMISSION_ERROR", ts.UIMsg, sizeof(ts.UIMsg),
@@ -4835,7 +4835,7 @@ void CVTWindow::OnSetupRestore()
 
 
 //
-// 指定したアプリケーションでファイルを開く。
+// 指定したアプ?ケーシ??でファイ?を開く。
 //
 // return TRUE: success
 //        FALSE: failure
@@ -4853,7 +4853,7 @@ static BOOL openFileWithApplication(char *pathname, char *filename, char *editor
 	SetLastError(NO_ERROR);
 
 	_snprintf_s(fullpath, sizeof(fullpath), "%s\\%s", pathname, filename);
-	if (_access(fullpath, 0) != 0) { // ファイルが存在しない
+	if (_access(fullpath, 0) != 0) { // ファイ?が存在しない
 		DWORD no = GetLastError();
 		get_lang_msg("MSG_ERROR", uimsg, sizeof(uimsg), "ERROR", ts.UILanguageFile);
 		get_lang_msg("DLG_SETUPDIR_NOFILE_ERROR", ts.UIMsg, sizeof(ts.UIMsg),
@@ -4888,7 +4888,7 @@ error:;
 
 
 //
-// エクスプローラでパスを開く。
+// エクスプ?ー?でパスを開く。
 //
 // return TRUE: success
 //        FALSE: failure
@@ -4935,7 +4935,7 @@ static BOOL openDirectoryWithExplorer(char *path)
 
 
 //
-// フォルダもしくはファイルを開く。
+// フォ?ダもしくはファイ?を開く。
 //
 static void openFileDirectory(char *path, char *filename, BOOL open_directory_only, char *open_editor)
 {
@@ -4980,7 +4980,7 @@ static BOOL convertVirtualStore(char *path, char *filename, char *vstore_path, i
 	if (cv.VirtualStoreEnabled == FALSE)
 		goto error;
 
-	// Virtual Store対象となるフォルダか。
+	// Virtual Store対象となるフォ?ダか。
 	p = virstore_env;
 	while (*p) {
 		s = getenv(*p);
@@ -5002,14 +5002,14 @@ static BOOL convertVirtualStore(char *path, char *filename, char *vstore_path, i
 	// Virtual Storeパスを作る。
 	strncat_s(shPath, sizeof(shPath), "\\VirtualStore", _TRUNCATE);
 
-	// 不要なドライブレターを除去する。
-	// ドライブレターは一文字とは限らない点に注意。
+	// 不要なド?イブ?ターを??する。
+	// ド?イブ?ターは一文?とは限らない点に?意。
 	s = strstr(path, ":\\");
 	if (s != NULL) {
 		strncat_s(shPath, sizeof(shPath), s + 1, _TRUNCATE);
 	}
 
-	// 最後に、Virtual Storeにファイルがあるかどうかを調べる。
+	// 最後に、Virtual Storeにファイ?が?るかどうかを調べる。
 	_snprintf_s(shFullPath, sizeof(shFullPath), "%s\\%s", shPath, filename);
 	if (_access(shFullPath, 0) != 0) {
 		goto error;
@@ -5105,7 +5105,7 @@ static LRESULT CALLBACK OnSetupDirectoryDlgProc(HWND hDlgWnd, UINT msg, WPARAM w
 			ExtractDirName(temp, teratermexepath);
 		}
 
-		// 設定ファイル(teraterm.ini)のパスを取得する。
+		// 設定ファイ?(teraterm.ini)のパスを取得する。
 		/// (1)
 		ExtractFileName(ts.SetupFName, inifilename, sizeof(inifilename));
 		ExtractDirName(ts.SetupFName, inipath);
@@ -5130,7 +5130,7 @@ static LRESULT CALLBACK OnSetupDirectoryDlgProc(HWND hDlgWnd, UINT msg, WPARAM w
 			SetDlgItemText(hDlgWnd, IDC_INI_SETUPDIR_EDIT_VSTORE, "");
 		}
 
-		// 設定ファイル(KEYBOARD.CNF)のパスを取得する。
+		// 設定ファイ?(KEYBOARD.CNF)のパスを取得する。
 		/// (1)
 		ExtractFileName(ts.KeyCnfFN, keycnffilename, sizeof(keycnfpath));
 		ExtractDirName(ts.KeyCnfFN, keycnfpath);
@@ -5348,8 +5348,8 @@ static LRESULT CALLBACK OnSetupDirectoryDlgProc(HWND hDlgWnd, UINT msg, WPARAM w
 }
 
 //
-// 現在読み込まれている teraterm.ini ファイルが格納されている
-// フォルダをエクスプローラで開く。
+// 現在読み?まれている teraterm.ini ファイ?が格納されている
+// フォ?ダをエクスプ?ー?で開く。
 //
 // (2015.2.28 yutaka)
 //
@@ -5417,7 +5417,7 @@ void CVTWindow::OnControlSendBreak()
 	if (cv.Ready)
 		switch (cv.PortType) {
 			case IdTCPIP:
-				// SSH2接続の場合、専用のブレーク信号を送信する。(2010.9.28 yutaka)
+				// SSH2接続の場?、専用のブ?ーク信?を?信する。(2010.9.28 yutaka)
 				if (cv.isSSH == 2) {
 					if (TTXProcessCommand(HVTWin, ID_CONTROL_SENDBREAK)) {
 						break;
@@ -5461,8 +5461,8 @@ void ApplyBroadCastCommandHisotry(HWND Dialog, char *historyfile)
 	SendDlgItemMessage(Dialog, IDC_COMMAND_EDIT, CB_SETCURSEL,0,0);
 }
 
-// ドロップダウンの中のエディットコントロールを
-// サブクラス化するためのウインドウプロシージャ
+// ド?ップダウ?の?のエディットコ?ト?ー?を
+// サブク?ス化するためのウイ?ドウプ?シージ?
 static WNDPROC OrigBroadcastEditProc; // Original window procedure
 static HWND BroadcastWindowList;
 static LRESULT CALLBACK BroadcastEditProc(HWND dlg, UINT msg,
@@ -5479,7 +5479,7 @@ static LRESULT CALLBACK BroadcastEditProc(HWND dlg, UINT msg,
 			break;
 
 		case WM_LBUTTONUP:
-			// すでにテキストが入力されている場合は、カーソルを末尾へ移動させる。
+			// すでにテキストが入力されている場?は、カーソ?を?尾へ移動させる。
 			len = GetWindowText(dlg, buf, sizeof(buf));
 			SendMessage(dlg, EM_SETSEL, len, len);
 			SetFocus(dlg);
@@ -5518,7 +5518,7 @@ static LRESULT CALLBACK BroadcastEditProc(HWND dlg, UINT msg,
 			break;
 
 		case WM_CHAR:
-			// 入力した文字がIDC_COMMAND_EDITに残らないように捨てる
+			// 入力した文?がIDC_COMMAND_EDITに残らないように捨てる
 			return FALSE;
 
 		default:
@@ -5549,8 +5549,8 @@ static void UpdateBroadcastWindowList(HWND hWnd)
 }
 
 /*
- * ダイアログで選択されたウィンドウのみ、もしくは親ウィンドウのみに送るブロードキャストモード。
- * リアルタイムモードが off の時に利用される。
+ * ダイア?グで選択されたウィ?ドウのみ、もしくは親ウィ?ドウのみに?るブ?ードキ?スト?ード。
+ * ?ア?タイ??ードが off の?に?用される。
  */
 void SendBroadcastMessageToSelected(HWND HVTWin, HWND hWnd, int parent_only, char *buf, int buflen)
 {
@@ -5565,17 +5565,17 @@ void SendBroadcastMessageToSelected(HWND HVTWin, HWND hWnd, int parent_only, cha
 	cds.lpData = buf;
 
 	if (parent_only) {
-		// 親ウィンドウのみに WM_COPYDATA メッセージを送る
+		// 親ウィ?ドウのみに WM_COPYDATA ?ッセージを?る
 		SendMessage(GetParent(hWnd), WM_COPYDATA, (WPARAM)HVTWin, (LPARAM)&cds);
 	}
 	else {
-		// ダイアログで選択されたウィンドウにメッセージを送る
+		// ダイア?グで選択されたウィ?ドウに?ッセージを?る
 		count = SendMessage(BroadcastWindowList, LB_GETCOUNT, 0, 0);
 		for (i = 0 ; i < count ; i++) {
-			// リストボックスで選択されているか
+			// ?ストボックスで選択されているか
 			if (SendMessage(BroadcastWindowList, LB_GETSEL, i, 0)) {
 				if ((hd = GetNthWin(i)) != NULL) {
-					// WM_COPYDATAを使って、プロセス間通信を行う。
+					// WM_COPYDATAを使って、プ?セス間通信を行う。
 					SendMessage(hd, WM_COPYDATA, (WPARAM)HVTWin, (LPARAM)&cds);
 				}
 			}
@@ -5584,8 +5584,8 @@ void SendBroadcastMessageToSelected(HWND HVTWin, HWND hWnd, int parent_only, cha
 }
 
 /*
- * 全 Tera Term へメッセージを送信するブロードキャストモード。
- * "sendbroadcast"マクロコマンドからのみ利用される。
+ * 全 Tera Term へ?ッセージを?信するブ?ードキ?スト?ード。
+ * "sendbroadcast"マク?コマ?ドからのみ?用される。
  */
 void SendBroadcastMessage(HWND HVTWin, HWND hWnd, char *buf, int buflen)
 {
@@ -5600,21 +5600,21 @@ void SendBroadcastMessage(HWND HVTWin, HWND hWnd, char *buf, int buflen)
 
 	count = GetRegisteredWindowCount();
 
-	// 全 Tera Term へメッセージを送る。
+	// 全 Tera Term へ?ッセージを?る。
 	for (i = 0 ; i < count ; i++) {
 		if ((hd = GetNthWin(i)) == NULL) {
 			break;
 		}
-		// WM_COPYDATAを使って、プロセス間通信を行う。
+		// WM_COPYDATAを使って、プ?セス間通信を行う。
 		SendMessage(hd, WM_COPYDATA, (WPARAM)HVTWin, (LPARAM)&cds);
 	}
 }
 
 
 /*
- * 任意の Tera Term 群へメッセージを送信するマルチキャストモード。厳密には、
- * ブロードキャスト送信を行い、受信側でメッセージを取捨選択する。
- * "sendmulticast"マクロコマンドからのみ利用される。
+ * 任意の Tera Term 群へ?ッセージを?信するマ?チキ?スト?ード。厳密には、
+ * ブ?ードキ?スト?信を行い、受信側で?ッセージを取捨選択する。
+ * "sendmulticast"マク?コマ?ドからのみ?用される。
  */
 void SendMulticastMessage(HWND HVTWin, HWND hWnd, char *name, char *buf, int buflen)
 {
@@ -5624,7 +5624,7 @@ void SendMulticastMessage(HWND HVTWin, HWND hWnd, char *name, char *buf, int buf
 	char *msg = NULL;
 	int msglen, nlen;
 
-	/* 送信メッセージを構築する。
+	/* ?信?ッセージを構築する。
 	 *
 	 * msg
 	 * +------+--------------+--+
@@ -5649,13 +5649,13 @@ void SendMulticastMessage(HWND HVTWin, HWND hWnd, char *name, char *buf, int buf
 
 	count = GetRegisteredWindowCount();
 
-	// すべてのTera Termにメッセージとデータを送る
+	// すべてのTera Termに?ッセージとデータを?る
 	for (i = 0 ; i < count ; i++) {
 		if ((hd = GetNthWin(i)) == NULL) {
 			break;
 		}
 
-		// WM_COPYDATAを使って、プロセス間通信を行う。
+		// WM_COPYDATAを使って、プ?セス間通信を行う。
 		SendMessage(hd, WM_COPYDATA, (WPARAM)HVTWin, (LPARAM)&cds);
 	}
 
@@ -5673,7 +5673,7 @@ static int CompareMulticastName(char *name)
 }
 
 //
-// すべてのターミナルへ同一コマンドを送信するモードレスダイアログの表示
+// すべてのターミナ?へ同一コマ?ドを?信する?ード?スダイア?グの表示
 // (2005.1.22 yutaka)
 //
 static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
@@ -5710,9 +5710,9 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 			break;
 
 		case WM_INITDIALOG:
-			// ラジオボタンのデフォルトは CR にする。
+			// ?ジオボタ?のデフォ?トは CR にする。
 			SendMessage(GetDlgItem(hWnd, IDC_RADIO_CR), BM_SETCHECK, BST_CHECKED, 0);
-			// デフォルトでチェックボックスを checked 状態にする。
+			// デフォ?トでチェックボックスを checked 状態にする。
 			SendMessage(GetDlgItem(hWnd, IDC_ENTERKEY_CHECK), BM_SETCHECK, BST_CHECKED, 0);
 			// history を反映する (2007.3.3 maya)
 			if (ts.BroadcastCommandHistory) {
@@ -5721,15 +5721,15 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 			GetDefaultFName(ts.HomeDir, BROADCAST_LOGFILE, historyfile, sizeof(historyfile));
 			ApplyBroadCastCommandHisotry(hWnd, historyfile);
 
-			// エディットコントロールにフォーカスをあてる
+			// エディットコ?ト?ー?にフォーカスを?てる
 			SetFocus(GetDlgItem(hWnd, IDC_COMMAND_EDIT));
 
-			// サブクラス化させてリアルタイムモードにする (2008.1.21 yutaka)
+			// サブク?ス化させて?ア?タイ??ードにする (2008.1.21 yutaka)
 			hwndBroadcast = GetDlgItem(hWnd, IDC_COMMAND_EDIT);
 			hwndBroadcastEdit = GetWindow(hwndBroadcast, GW_CHILD);
 			OrigBroadcastEditProc = (WNDPROC)GetWindowLong(hwndBroadcastEdit, GWL_WNDPROC);
 			SetWindowLong(hwndBroadcastEdit, GWL_WNDPROC, (LONG)BroadcastEditProc);
-			// デフォルトはon。残りはdisable。
+			// デフォ?トはon。残りはdisable。
 			SendMessage(GetDlgItem(hWnd, IDC_REALTIME_CHECK), BM_SETCHECK, BST_CHECKED, 0);  // default on
 			EnableWindow(GetDlgItem(hWnd, IDC_HISTORY_CHECK), FALSE);
 			EnableWindow(GetDlgItem(hWnd, IDC_RADIO_CRLF), FALSE);
@@ -5781,7 +5781,7 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 			get_lang_msg("BTN_CLOSE", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
 			SetDlgItemText(hWnd, IDCANCEL, ts.UIMsg);
 
-			// ダイアログの初期サイズを保存
+			// ダイア?グの?期サイズを保存
 			GetWindowRect(hWnd, &rc_dlg);
 			init_width = rc_dlg.right - rc_dlg.left;
 			init_height = rc_dlg.bottom - rc_dlg.top;
@@ -5805,13 +5805,13 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 			list2bottom = p.y - rc.bottom;
 			list2right = p.x - rc.right;
 
-			// リサイズアイコンを右下に表示させたいので、ステータスバーを付ける。
+			// ?サイズアイコ?を右下に表示させたいので、ステータスバーを付ける。
 			InitCommonControls();
 			hStatus = CreateStatusWindow(
 				WS_CHILD | WS_VISIBLE |
 				CCS_BOTTOM | SBARS_SIZEGRIP, NULL, hWnd, 1);
 
-			// リスト更新タイマーの開始
+			// ?スト更新タイマーの開始
 			SetTimer(hWnd, list_timer_id, list_timer_tick, NULL);
 
 			return FALSE;
@@ -5819,9 +5819,9 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 		case WM_COMMAND:
 			switch (wp) {
 			case IDC_ENTERKEY_CHECK | (BN_CLICKED << 16):
-				// チェックの有無により、ラジオボタンの有効・無効を決める。
+				// チェックの有無により、?ジオボタ?の有効・無効を?める。
 				checked = SendMessage(GetDlgItem(hWnd, IDC_ENTERKEY_CHECK), BM_GETCHECK, 0, 0);
-				if (checked & BST_CHECKED) { // 改行コードあり
+				if (checked & BST_CHECKED) { // 改行コード?り
 					EnableWindow(GetDlgItem(hWnd, IDC_RADIO_CRLF), TRUE);
 					EnableWindow(GetDlgItem(hWnd, IDC_RADIO_CR), TRUE);
 					EnableWindow(GetDlgItem(hWnd, IDC_RADIO_LF), TRUE);
@@ -5835,7 +5835,7 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 
 			case IDC_REALTIME_CHECK | (BN_CLICKED << 16):
 				checked = SendMessage(GetDlgItem(hWnd, IDC_REALTIME_CHECK), BM_GETCHECK, 0, 0);
-				if (checked & BST_CHECKED) { // checkあり
+				if (checked & BST_CHECKED) { // check?り
 					// new handler
 					hwndBroadcast = GetDlgItem(hWnd, IDC_COMMAND_EDIT);
 					hwndBroadcastEdit = GetWindow(hwndBroadcast, GW_CHILD);
@@ -5869,11 +5869,11 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 					{
 						memset(buf, 0, sizeof(buf));
 
-						// realtime modeの場合、Enter keyのみ送る。
+						// realtime modeの場?、Enter keyのみ?る。
 						// cf. http://logmett.com/forum/viewtopic.php?f=8&t=1601
 						// (2011.3.14 hirata)
 						checked = SendMessage(GetDlgItem(hWnd, IDC_REALTIME_CHECK), BM_GETCHECK, 0, 0);
-						if (checked & BST_CHECKED) { // checkあり
+						if (checked & BST_CHECKED) { // check?り
 							strncpy_s(buf, sizeof(buf), "\n", _TRUNCATE);
 							SetDlgItemText(hWnd, IDC_COMMAND_EDIT, "");
 							goto skip;
@@ -5884,7 +5884,7 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 							memset(buf, 0, sizeof(buf));
 						}
 
-						// ブロードキャストコマンドの履歴を保存 (2007.3.3 maya)
+						// ブ?ードキ?ストコマ?ドの?歴を保存 (2007.3.3 maya)
 						history = SendMessage(GetDlgItem(hWnd, IDC_HISTORY_CHECK), BM_GETCHECK, 0, 0);
 						if (history) {
 							GetDefaultFName(ts.HomeDir, BROADCAST_LOGFILE, historyfile, sizeof(historyfile));
@@ -5900,7 +5900,7 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 							ts.BroadcastCommandHistory = FALSE;
 						}
 						checked = SendMessage(GetDlgItem(hWnd, IDC_ENTERKEY_CHECK), BM_GETCHECK, 0, 0);
-						if (checked & BST_CHECKED) { // 改行コードあり
+						if (checked & BST_CHECKED) { // 改行コード?り
 							if (SendMessage(GetDlgItem(hWnd, IDC_RADIO_CRLF), BM_GETCHECK, 0, 0) & BST_CHECKED) {
 								strncat_s(buf, sizeof(buf), "\r\n", _TRUNCATE);
 
@@ -5917,14 +5917,14 @@ static LRESULT CALLBACK BroadcastCommandDlgProc(HWND hWnd, UINT msg, WPARAM wp, 
 						}
 
 skip:;
-						// 337: 2007/03/20 チェックされていたら親ウィンドウにのみ送信
+						// 337: 2007/03/20 チェックされていたら親ウィ?ドウにのみ?信
 						checked = SendMessage(GetDlgItem(hWnd, IDC_PARENT_ONLY), BM_GETCHECK, 0, 0);
 
 						SendBroadcastMessageToSelected(HVTWin, hWnd, checked, buf, strlen(buf));
 					}
 
-					// モードレスダイアログは一度生成されると、アプリケーションが終了するまで
-					// 破棄されないので、以下の「ウィンドウプロシージャ戻し」は不要と思われる。(yutaka)
+					// ?ード?スダイア?グは一度生成されると、アプ?ケーシ??が終了するまで
+					// 破棄されないので、以下の「ウィ?ドウプ?シージ?戻し」は不要と思われる。(yutaka)
 #if 0
 					SetWindowLong(hwndBroadcastEdit, GWL_WNDPROC, (LONG)OrigBroadcastEditProc);
 #endif
@@ -5946,8 +5946,8 @@ skip:;
 					return FALSE;
 
 				case IDC_LIST:
-					// 一般的なアプリケーションと同じ操作感を持たせるため、
-					// 「SHIFT+クリック」による連続的な選択をサポートする。
+					// 一般的なアプ?ケーシ??と同じ?作感を?たせるため、
+					// 「SHIFT+ク?ック」による連続的な選択をサポートする。
 					// (2009.9.28 yutaka)
 					if (HIWORD(wp) == LBN_SELCHANGE && ShiftKey()) {
 						int i, cur, prev;
@@ -5961,7 +5961,7 @@ skip:;
 							}
 						}
 						if (prev != -1) {
-							// すでに選択済みの箇所があれば、そこから連続選択する。
+							// すでに選択済みの箇?が?れば、そこから連続選択する。
 							for (i = prev ; i < cur ; i++) {
 								ListBox_SetSel(BroadcastWindowList, TRUE, i);
 							}
@@ -5991,7 +5991,7 @@ skip:;
 				RECT rc;
 				POINT p;
 
-				// 新しいダイアログのサイズを得る
+				// 新しいダイア?グのサイズを得る
 				GetClientRect(hWnd, &rc_dlg);
 				dlg_w = rc_dlg.right;
 				dlg_h = rc_dlg.bottom;
@@ -6039,7 +6039,7 @@ skip:;
 
 		case WM_GETMINMAXINFO:
 			{
-				// ダイアログの初期サイズより小さくできないようにする
+				// ダイア?グの?期サイズより小さくできないようにする
 				LPMINMAXINFO lpmmi;
 				lpmmi = (LPMINMAXINFO)lp;
 				lpmmi->ptMinTrackSize.x = init_width;
@@ -6063,7 +6063,7 @@ skip:;
 			return TRUE;
 
 		case WM_VKEYTOITEM:
-			// リストボックスでキー押下(CTRL+A)されたら、全選択。
+			// ?ストボックスでキー?下(CTRL+A)されたら、全選択。
 			if ((HWND)lp == BroadcastWindowList) {
 				if (ControlKey() && LOWORD(wp) == 'A') {
 					int i, n;
@@ -6086,8 +6086,8 @@ skip:;
 
 void CVTWindow::OnControlBroadcastCommand(void)
 {
-	// TODO: モードレスダイアログのハンドルは、親プロセスが DestroyWindow() APIで破棄する
-	// 必要があるが、ここはOS任せとする。
+	// TODO: ?ード?スダイア?グのハ?ド?は、親プ?セスが DestroyWindow() APIで破棄する
+	// 必要が?るが、ここはOS任せとする。
 	static HWND hDlgWnd = NULL;
 	RECT prc, rc;
 	LONG x, y;
@@ -6103,7 +6103,7 @@ void CVTWindow::OnControlBroadcastCommand(void)
 		return;
 	}
 
-	// ダイアログをウィンドウの真上に配置する (2008.1.25 yutaka)
+	// ダイア?グをウィ?ドウの真上に配置する (2008.1.25 yutaka)
 	GetWindowRect(&prc);
 	::GetWindowRect(hDlgWnd, &rc);
 	x = prc.left;
@@ -6133,12 +6133,12 @@ LONG CVTWindow::OnReceiveIpcMessage(UINT wParam, LONG lParam)
 		return 0;
 	}
 
-	// 未送信データがある場合は先に送信する
-	// データ量が多い場合は送信しきれない可能性がある
+	// 未?信データが?る場?は先に?信する
+	// データ量が多い場?は?信しきれない可能性が?る
 	if (TalkStatus == IdTalkCB) {
 		CBSend();
 	}
-	// 送信可能な状態でなければエラー
+	// ?信可能な状態でなければエ?ー
 	if (TalkStatus != IdTalkKeyb) {
 		return 0;
 	}
@@ -6157,30 +6157,30 @@ LONG CVTWindow::OnReceiveIpcMessage(UINT wParam, LONG lParam)
 		buf = msg + nlen;
 		buflen = msglen - nlen;
 
-		// マルチキャスト名をチェックする
+		// マ?チキ?スト名をチェックする
 		if (CompareMulticastName(name) == 0) {  // 同じ
 			sending = 1;
 		}
 	}
 
 	if (sending) {
-		// 端末へ文字列を送り込む
-		// DDE通信に使う関数に変更。(2006.2.7 yutaka)
+		// 端?へ文?列を?り?む
+		// DDE通信に使う関?に変更。(2006.2.7 yutaka)
 		CBStartSend(buf, buflen, FALSE);
-		// 送信データがある場合は送信する
+		// ?信データが?る場?は?信する
 		if (TalkStatus == IdTalkCB) {
 			CBSend();
 		}
 	}
 
-	// CBStartSend(), CBSend() では送信用バッファにデータを書き込むだけで、
-	// 実際の送信は teraterm.cpp:OnIdle() で CommSend() が呼ばれる事に
+	// CBStartSend(), CBSend() では?信用バッファにデータを?き?むだけで、
+	// 実際の?信は teraterm.cpp:OnIdle() で CommSend() が呼ばれる?に
 	// よって行われる。
-	// しかし非アクティブなウィンドウでは OnIdle() が呼ばれないので、
-	// 空のメッセージを送って OnIdle() が呼ばれるようにする。
+	// しかし非アクティブなウィ?ドウでは OnIdle() が呼ばれないので、
+	// 空の?ッセージを?って OnIdle() が呼ばれるようにする。
 	PostMessage(WM_NULL, 0, 0);
 
-	return 1; // 送信できた場合は1を返す
+	return 1; // ?信できた場?は1を返す
 }
 
 void CVTWindow::OnControlOpenTEK()

@@ -2063,8 +2063,9 @@ void PASCAL ReadIniFile(PCHAR FName, PTTSet ts)
 
 	// CygTerm Configuration File
 	ReadCygtermConfFile(ts);
-
+	
 	//admlock read
+	GetPrivateProfileString(Section, "admlock", "root", Temp, sizeof(Temp), FName);
 	strncpy_s(ts->admlock, sizeof(ts->admlock), Temp,
 		_TRUNCATE);
 }
@@ -3408,6 +3409,11 @@ void PASCAL WriteIniFile(PCHAR FName, PTTSet ts)
 
 	// CygTerm Configuration File
 	WriteCygtermConfFile(ts);
+
+
+
+	WritePrivateProfileString(Section, "admlock", ts->admlock,
+		FName);
 }
 
 #define VTEditor "VT editor keypad"

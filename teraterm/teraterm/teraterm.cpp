@@ -72,12 +72,12 @@ CTeraApp::CTeraApp()
 
 	if ((module = GetModuleHandle("kernel32.dll")) != NULL) {
 		if ((setDefDllDir = (pSetDefDllDir)GetProcAddress(module, "SetDefaultDllDirectories")) != NULL) {
-			// SetDefaultDllDirectories() が使える場合は、検索パスを %WINDOWS%\system32 のみに設定する
+			// SetDefaultDllDirectories() が使える場?は、?索パスを %WINDOWS%\system32 のみに設定する
 			(*setDefDllDir)((DWORD)0x00000800); // LOAD_LIBRARY_SEARCH_SYSTEM32
 		}
 		else if ((setDllDir = (pSetDllDir)GetProcAddress(module, "SetDllDirectoryA")) != NULL) {
-			// SetDefaultDllDirectories() が使えなくても、SetDllDirectory() が使える場合は
-			// カレントディレクトリだけでも検索パスからはずしておく。
+			// SetDefaultDllDirectories() が使えなくても、SetDllDirectory() が使える場?は
+			// カ??トディ?クト?だけでも?索パスからはずしておく。
 			(*setDllDir)("");
 		}
 	}
@@ -143,17 +143,17 @@ BOOL CTeraApp::OnIdle(LONG lCount)
 				switch (ActiveWin) {
 				case IdVT:
 					Change =  ((CVTWindow*)pVTWin)->Parse();
-					// TEK windowのアクティブ中に pause を使うと、CPU使用率100%となる
-					// 現象への暫定対処。(2006.2.6 yutaka)
-					// 待ち時間をなくし、コンテキストスイッチだけにする。(2006.3.20 yutaka)
+					// TEK windowのアクティブ?に pause を使うと、CPU使用率100%となる
+					// 現象への暫定対?。(2006.2.6 yutaka)
+					// 待ち?間をなくし、コ?テキストスイッチだけにする。(2006.3.20 yutaka)
 					Sleep(0);
 					break;
 
 				case IdTEK:
 					if (pTEKWin != NULL) {
 						Change = ((CTEKWindow*)pTEKWin)->Parse();
-						// TEK windowのアクティブ中に pause を使うと、CPU使用率100%となる
-						// 現象への暫定対処。(2006.2.6 yutaka)
+						// TEK windowのアクティブ?に pause を使うと、CPU使用率100%となる
+						// 現象への暫定対?。(2006.2.6 yutaka)
 						Sleep(1);
 					}
 					else {
@@ -209,10 +209,10 @@ BOOL CTeraApp::OnIdle(LONG lCount)
 
 		/* Receiver */
 		if (DDELog && cv.DCount >0) {
-			// ログバッファがまだDDEクライアントへ送られていない場合は、
+			// ?グバッファがまだDDEク?イア?トへ?られていない場?は、
 			// TCPパケットの受信を行わない。
-			// 連続して受信を行うと、ログバッファがラウンドロビンにより未送信のデータを
-			// 上書きしてしまう可能性がある。(2007.6.14 yutaka)
+			// 連続して受信を行うと、?グバッファが?ウ?ド?ビ?により未?信のデータを
+			// 上?きしてしまう可能性が?る。(2007.6.14 yutaka)
 
 		} else {
 			CommReceive(&cv);
