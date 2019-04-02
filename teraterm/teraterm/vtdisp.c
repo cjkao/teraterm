@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2005-2018 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* TERATERM.EXE, VT terminal display routines */
+ /* TERATERM.EXE, VT terminal display routines */
 #include "teraterm.h"
 #include "tttypes.h"
 #include "string.h"
@@ -82,10 +82,10 @@ static const BYTE DefaultColorTable[256][3] = {
 int WinWidth, WinHeight;
 static BOOL Active = FALSE;
 static BOOL CompletelyVisible;
-HFONT VTFont[AttrFontMask+1];
+HFONT VTFont[AttrFontMask + 1];
 int FontHeight, FontWidth, ScreenWidth, ScreenHeight;
 BOOL AdjustSize;
-BOOL DontChangeSize=FALSE;
+BOOL DontChangeSize = FALSE;
 #ifdef ALPHABLEND_TYPE2
 static int CRTWidth, CRTHeight;
 #endif
@@ -138,21 +138,21 @@ static int SRegionBottom;
 #include <stdio.h>
 #include <time.h>
 
-typedef enum _BG_TYPE    {BG_COLOR = 0,BG_PICTURE,BG_WALLPAPER} BG_TYPE;
-typedef enum _BG_PATTERN {BG_STRETCH = 0,BG_TILE,BG_CENTER,BG_FIT_WIDTH,BG_FIT_HEIGHT,BG_AUTOFIT,BG_AUTOFILL} BG_PATTERN;
+typedef enum _BG_TYPE { BG_COLOR = 0, BG_PICTURE, BG_WALLPAPER } BG_TYPE;
+typedef enum _BG_PATTERN { BG_STRETCH = 0, BG_TILE, BG_CENTER, BG_FIT_WIDTH, BG_FIT_HEIGHT, BG_AUTOFIT, BG_AUTOFILL } BG_PATTERN;
 
 typedef struct _BGSrc
 {
-  HDC        hdc;
-  BG_TYPE    type;
-  BG_PATTERN pattern;
-  BOOL       antiAlias;
-  COLORREF   color;
-  int        alpha;
-  int        width;
-  int        height;
-  char       file[MAX_PATH];
-  char       fileTmp[MAX_PATH];
+	HDC        hdc;
+	BG_TYPE    type;
+	BG_PATTERN pattern;
+	BOOL       antiAlias;
+	COLORREF   color;
+	int        alpha;
+	int        width;
+	int        height;
+	char       file[MAX_PATH];
+	char       fileTmp[MAX_PATH];
 }BGSrc;
 
 BGSrc BGDest;
@@ -188,32 +188,32 @@ HDC hdcBG;
 
 typedef struct tagWallpaperInfo
 {
-  char filename[MAX_PATH];
-  int  pattern;
+	char filename[MAX_PATH];
+	int  pattern;
 }WallpaperInfo;
 
 typedef struct _BGBLENDFUNCTION
 {
-    BYTE     BlendOp;
-    BYTE     BlendFlags;
-    BYTE     SourceConstantAlpha;
-    BYTE     AlphaFormat;
+	BYTE     BlendOp;
+	BYTE     BlendFlags;
+	BYTE     SourceConstantAlpha;
+	BYTE     AlphaFormat;
 }BGBLENDFUNCTION;
 
-BOOL (WINAPI *BGAlphaBlend)(HDC,int,int,int,int,HDC,int,int,int,int,BGBLENDFUNCTION);
-BOOL (WINAPI *BGEnumDisplayMonitors)(HDC,LPCRECT,MONITORENUMPROC,LPARAM);
+BOOL(WINAPI *BGAlphaBlend)(HDC, int, int, int, int, HDC, int, int, int, int, BGBLENDFUNCTION);
+BOOL(WINAPI *BGEnumDisplayMonitors)(HDC, LPCRECT, MONITORENUMPROC, LPARAM);
 
 static HBITMAP GetBitmapHandle(char *File);
 
 
-//ï÷óòä÷êîÅô
+//‰æøÂà©Èñ¢Êï∞‚òÜ
 
-// LoadImage() ÇµÇ©égÇ¶Ç»Ç¢ä¬ã´Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
-// LoadImage()Ç≈ÇÕ .bmp à»äOÇÃâÊëúÉtÉ@ÉCÉãÇ™àµÇ¶Ç»Ç¢ÇÃÇ≈óvíçà”ÅB
+// LoadImage() „Åó„Åã‰Ωø„Åà„Å™„ÅÑÁí∞Â¢É„Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
+// LoadImage()„Åß„ÅØ .bmp ‰ª•Â§ñ„ÅÆÁîªÂÉè„Éï„Ç°„Ç§„É´„ÅåÊâ±„Åà„Å™„ÅÑ„ÅÆ„ÅßË¶ÅÊ≥®ÊÑè„ÄÇ
 // (2014.4.20 yutaka)
 static BOOL IsLoadImageOnlyEnabled(void)
 {
-	// Vista ñ¢ñûÇÃèÍçáÇ…ÇÕÅAç°Ç‹Ç≈í ÇËÇÃì«Ç›çûÇ›ÇÇ∑ÇÈÇÊÇ§Ç…ÇµÇΩ
+	// Vista Êú™Ê∫Ä„ÅÆÂ†¥Âêà„Å´„ÅØ„ÄÅ‰ªä„Åæ„ÅßÈÄö„Çä„ÅÆË™≠„ÅøËæº„Åø„Çí„Åô„Çã„Çà„ÅÜ„Å´„Åó„Åü
 	// cf. SVN#4571(2011.8.4)
 	return !IsWindowsVistaOrLater();
 }
@@ -221,673 +221,676 @@ static BOOL IsLoadImageOnlyEnabled(void)
 
 void dprintf(char *format, ...)
 {
-  va_list args;
-  char    buffer[1024];
+	va_list args;
+	char    buffer[1024];
 
-  va_start(args,format);
+	va_start(args, format);
 
-  _vsnprintf_s(buffer,sizeof(buffer),_TRUNCATE,format,args);
-  strncat_s(buffer,sizeof(buffer),"\n",_TRUNCATE);
+	_vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, args);
+	strncat_s(buffer, sizeof(buffer), "\n", _TRUNCATE);
 
-  OutputDebugString(buffer);
+	OutputDebugString(buffer);
 }
 
-HBITMAP CreateScreenCompatibleBitmap(int width,int height)
+HBITMAP CreateScreenCompatibleBitmap(int width, int height)
 {
-  HDC     hdc;
-  HBITMAP hbm;
+	HDC     hdc;
+	HBITMAP hbm;
 
-  #ifdef _DEBUG
-    dprintf("CreateScreenCompatibleBitmap : width = %d height = %d",width,height);
-  #endif
+#ifdef _DEBUG
+	dprintf("CreateScreenCompatibleBitmap : width = %d height = %d", width, height);
+#endif
 
-  hdc = GetDC(NULL);
+	hdc = GetDC(NULL);
 
-  hbm = CreateCompatibleBitmap(hdc,width,height);
+	hbm = CreateCompatibleBitmap(hdc, width, height);
 
-  ReleaseDC(NULL,hdc);
+	ReleaseDC(NULL, hdc);
 
-  #ifdef _DEBUG
-    if(!hbm)
-      dprintf("CreateScreenCompatibleBitmap : fail in CreateCompatibleBitmap");
-  #endif
+#ifdef _DEBUG
+	if (!hbm)
+		dprintf("CreateScreenCompatibleBitmap : fail in CreateCompatibleBitmap");
+#endif
 
-  return hbm;
+	return hbm;
 }
 
-HBITMAP CreateDIB24BPP(int width,int height,unsigned char **buf,int *lenBuf)
+HBITMAP CreateDIB24BPP(int width, int height, unsigned char **buf, int *lenBuf)
 {
-  HDC        hdc;
-  HBITMAP    hbm;
-  BITMAPINFO bmi;
+	HDC        hdc;
+	HBITMAP    hbm;
+	BITMAPINFO bmi;
 
-  #ifdef _DEBUG
-    dprintf("CreateDIB24BPP : width = %d height = %d",width,height);
-  #endif
+#ifdef _DEBUG
+	dprintf("CreateDIB24BPP : width = %d height = %d", width, height);
+#endif
 
-  if(!width || !height)
-    return NULL;
+	if (!width || !height)
+		return NULL;
 
-  ZeroMemory(&bmi,sizeof(bmi));
+	ZeroMemory(&bmi, sizeof(bmi));
 
-  *lenBuf = ((width * 3 + 3) & ~3) * height;
+	*lenBuf = ((width * 3 + 3) & ~3) * height;
 
-  bmi.bmiHeader.biSize        = sizeof(bmi.bmiHeader);
-  bmi.bmiHeader.biWidth       = width;
-  bmi.bmiHeader.biHeight      = height;
-  bmi.bmiHeader.biPlanes      = 1;
-  bmi.bmiHeader.biBitCount    = 24;
-  bmi.bmiHeader.biSizeImage   = *lenBuf;
-  bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+	bmi.bmiHeader.biWidth = width;
+	bmi.bmiHeader.biHeight = height;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 24;
+	bmi.bmiHeader.biSizeImage = *lenBuf;
+	bmi.bmiHeader.biCompression = BI_RGB;
 
-  hdc = GetDC(NULL);
+	hdc = GetDC(NULL);
 
-  hbm = CreateDIBSection(hdc,&bmi,DIB_RGB_COLORS,(void**)buf,NULL,0);
+	hbm = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, (void**)buf, NULL, 0);
 
-  ReleaseDC(NULL,hdc);
+	ReleaseDC(NULL, hdc);
 
-  return hbm;
+	return hbm;
 }
 
 HDC  CreateBitmapDC(HBITMAP hbm)
 {
-  HDC hdc;
+	HDC hdc;
 
-  #ifdef _DEBUG
-    dprintf("CreateBitmapDC : hbm = %x",hbm);
-  #endif
+#ifdef _DEBUG
+	dprintf("CreateBitmapDC : hbm = %x", hbm);
+#endif
 
-  hdc = CreateCompatibleDC(NULL);
+	hdc = CreateCompatibleDC(NULL);
 
-  SaveDC(hdc);
-  SelectObject(hdc,hbm);
+	SaveDC(hdc);
+	SelectObject(hdc, hbm);
 
-  return hdc;
+	return hdc;
 }
 
 void DeleteBitmapDC(HDC *hdc)
 {
-  HBITMAP hbm;
+	HBITMAP hbm;
 
-  #ifdef _DEBUG
-    dprintf("DeleteBitmapDC : *hdc = %x",hdc);
-  #endif
+#ifdef _DEBUG
+	dprintf("DeleteBitmapDC : *hdc = %x", hdc);
+#endif
 
-  if(!hdc)
-    return;
+	if (!hdc)
+		return;
 
-  if(!(*hdc))
-    return;
+	if (!(*hdc))
+		return;
 
-  hbm = GetCurrentObject(*hdc,OBJ_BITMAP);
+	hbm = GetCurrentObject(*hdc, OBJ_BITMAP);
 
-  RestoreDC(*hdc,-1);
-  DeleteObject(hbm);
-  DeleteDC(*hdc);
+	RestoreDC(*hdc, -1);
+	DeleteObject(hbm);
+	DeleteDC(*hdc);
 
-  *hdc = 0;
+	*hdc = 0;
 }
 
-void FillBitmapDC(HDC hdc,COLORREF color)
+void FillBitmapDC(HDC hdc, COLORREF color)
 {
-  HBITMAP hbm;
-  BITMAP  bm;
-  RECT    rect;
-  HBRUSH  hBrush;
+	HBITMAP hbm;
+	BITMAP  bm;
+	RECT    rect;
+	HBRUSH  hBrush;
 
-  #ifdef _DEBUG
-    dprintf("FillBitmapDC : hdc = %x color = %x",hdc,color);
-  #endif
+#ifdef _DEBUG
+	dprintf("FillBitmapDC : hdc = %x color = %x", hdc, color);
+#endif
 
-  if(!hdc)
-    return;
+	if (!hdc)
+		return;
 
-  hbm = GetCurrentObject(hdc,OBJ_BITMAP);
-  GetObject(hbm,sizeof(bm),&bm);
+	hbm = GetCurrentObject(hdc, OBJ_BITMAP);
+	GetObject(hbm, sizeof(bm), &bm);
 
-  SetRect(&rect,0,0,bm.bmWidth,bm.bmHeight);
-  hBrush = CreateSolidBrush(color);
-  FillRect(hdc,&rect,hBrush);
-  DeleteObject(hBrush);
+	SetRect(&rect, 0, 0, bm.bmWidth, bm.bmHeight);
+	hBrush = CreateSolidBrush(color);
+	FillRect(hdc, &rect, hBrush);
+	DeleteObject(hBrush);
 }
 
-FARPROC GetProcAddressWithDllName(char *dllName,char *procName)
+FARPROC GetProcAddressWithDllName(char *dllName, char *procName)
 {
-  HINSTANCE hDll;
+	HINSTANCE hDll;
 
-  hDll = LoadLibrary(dllName);
+	hDll = LoadLibrary(dllName);
 
-  if(hDll)
-    return GetProcAddress(hDll,procName);
-  else
-    return 0;
+	if (hDll)
+		return GetProcAddress(hDll, procName);
+	else
+		return 0;
 }
 
-void RandomFile(char *filespec_src,char *filename, int destlen)
+void RandomFile(char *filespec_src, char *filename, int destlen)
 {
-  int    i;
-  int    file_num;
-  char   fullpath[1024];
-  char   *filePart;
-  char filespec[1024];
-  HANDLE hFind;
-  WIN32_FIND_DATA fd;
+	int    i;
+	int    file_num;
+	char   fullpath[1024];
+	char   *filePart;
+	char filespec[1024];
+	HANDLE hFind;
+	WIN32_FIND_DATA fd;
 
-  ExpandEnvironmentStrings(filespec_src, filespec, sizeof(filespec));
+	ExpandEnvironmentStrings(filespec_src, filespec, sizeof(filespec));
 
-  //ê‚ëŒÉpÉXÇ…ïœä∑
-  if(!GetFullPathName(filespec,MAX_PATH,fullpath,&filePart))
-    return;
+	//Áµ∂ÂØæ„Éë„Çπ„Å´Â§âÊèõ
+	if (!GetFullPathName(filespec, MAX_PATH, fullpath, &filePart))
+		return;
 
-  //ÉtÉ@ÉCÉãÇêîÇ¶ÇÈ
-  hFind = FindFirstFile(fullpath,&fd);
+	//„Éï„Ç°„Ç§„É´„ÇíÊï∞„Åà„Çã
+	hFind = FindFirstFile(fullpath, &fd);
 
-  file_num = 0;
+	file_num = 0;
 
-  if(hFind != INVALID_HANDLE_VALUE && filePart)
-  {
+	if (hFind != INVALID_HANDLE_VALUE && filePart)
+	{
 
-    do{
+		do {
 
-      if(!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        file_num ++;
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				file_num++;
 
-    }while(FindNextFile(hFind,&fd));
+		} while (FindNextFile(hFind, &fd));
 
-  }
+	}
 
-  if(!file_num)
-    return;
+	if (!file_num)
+		return;
 
-  FindClose(hFind);
+	FindClose(hFind);
 
-  //âΩî‘ñ⁄ÇÃÉtÉ@ÉCÉãÇ…Ç∑ÇÈÇ©åàÇﬂÇÈÅB
-  file_num = rand()%file_num + 1;
+	//‰ΩïÁï™ÁõÆ„ÅÆ„Éï„Ç°„Ç§„É´„Å´„Åô„Çã„ÅãÊ±∫„ÇÅ„Çã„ÄÇ
+	file_num = rand() % file_num + 1;
 
-  hFind = FindFirstFile(fullpath,&fd);
+	hFind = FindFirstFile(fullpath, &fd);
 
-  if(hFind != INVALID_HANDLE_VALUE)
-  {
-    i = 0;
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		i = 0;
 
-    do{
+		do {
 
-      if(!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        i ++;
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				i++;
 
-    }while(i < file_num && FindNextFile(hFind,&fd));
+		} while (i < file_num && FindNextFile(hFind, &fd));
 
-  }else{
-    return;
-  }
+	}
+	else {
+		return;
+	}
 
-  FindClose(hFind);
+	FindClose(hFind);
 
-  //ÉfÉBÉåÉNÉgÉäéÊìæ
-  ZeroMemory(filename,destlen);
-  {
-    int tmplen;
-    char *tmp;
-    tmplen = filePart - fullpath + 1;
-    tmp = (char *)_alloca(tmplen);
-    strncpy_s(tmp,tmplen,fullpath,filePart - fullpath);
-    strncpy_s(filename,destlen,tmp,_TRUNCATE);
-  }
-  strncat_s(filename,destlen,fd.cFileName,_TRUNCATE);
+	//„Éá„Ç£„É¨„ÇØ„Éà„É™ÂèñÂæó
+	ZeroMemory(filename, destlen);
+	{
+		int tmplen;
+		char *tmp;
+		tmplen = filePart - fullpath + 1;
+		tmp = (char *)_alloca(tmplen);
+		strncpy_s(tmp, tmplen, fullpath, filePart - fullpath);
+		strncpy_s(filename, destlen, tmp, _TRUNCATE);
+	}
+	strncat_s(filename, destlen, fd.cFileName, _TRUNCATE);
 }
 
-BOOL LoadPictureWithSPI(char *nameSPI,char *nameFile,unsigned char *bufFile,long sizeFile,HLOCAL *hbuf,HLOCAL *hbmi)
+BOOL LoadPictureWithSPI(char *nameSPI, char *nameFile, unsigned char *bufFile, long sizeFile, HLOCAL *hbuf, HLOCAL *hbmi)
 {
-  HINSTANCE hSPI;
-  char spiVersion[8];
-  int (PASCAL *SPI_IsSupported)(LPSTR,DWORD);
-  int (PASCAL *SPI_GetPicture)(LPSTR,long,unsigned int,HANDLE *,HANDLE *,FARPROC,long);
-  int (PASCAL *SPI_GetPluginInfo)(int,LPSTR,int);
-  int ret;
+	HINSTANCE hSPI;
+	char spiVersion[8];
+	int (PASCAL *SPI_IsSupported)(LPSTR, DWORD);
+	int (PASCAL *SPI_GetPicture)(LPSTR, long, unsigned int, HANDLE *, HANDLE *, FARPROC, long);
+	int (PASCAL *SPI_GetPluginInfo)(int, LPSTR, int);
+	int ret;
 
-  ret  = FALSE;
-  hSPI = NULL;
+	ret = FALSE;
+	hSPI = NULL;
 
-  //SPI ÇÉçÅ[Éh
-  hSPI = LoadLibrary(nameSPI);
+	//SPI „Çí„É≠„Éº„Éâ
+	hSPI = LoadLibrary(nameSPI);
 
-  if(!hSPI)
-    goto error;
+	if (!hSPI)
+		goto error;
 
-  (FARPROC)SPI_GetPluginInfo = GetProcAddress(hSPI,"GetPluginInfo");
-  (FARPROC)SPI_IsSupported   = GetProcAddress(hSPI,"IsSupported");
-  (FARPROC)SPI_GetPicture    = GetProcAddress(hSPI,"GetPicture");
+	(FARPROC)SPI_GetPluginInfo = GetProcAddress(hSPI, "GetPluginInfo");
+	(FARPROC)SPI_IsSupported = GetProcAddress(hSPI, "IsSupported");
+	(FARPROC)SPI_GetPicture = GetProcAddress(hSPI, "GetPicture");
 
-  if(!SPI_GetPluginInfo || !SPI_IsSupported || !SPI_GetPicture)
-    goto error;
+	if (!SPI_GetPluginInfo || !SPI_IsSupported || !SPI_GetPicture)
+		goto error;
 
-  //ÉoÅ[ÉWÉáÉìÉ`ÉFÉbÉN
-  SPI_GetPluginInfo(0,spiVersion,8);
+	//„Éê„Éº„Ç∏„Éß„É≥„ÉÅ„Çß„ÉÉ„ÇØ
+	SPI_GetPluginInfo(0, spiVersion, 8);
 
-  if(spiVersion[2] != 'I' || spiVersion[3] != 'N')
-    goto error;
+	if (spiVersion[2] != 'I' || spiVersion[3] != 'N')
+		goto error;
 
-  if(!(SPI_IsSupported)(nameFile,(unsigned long)bufFile))
-    goto error;
+	if (!(SPI_IsSupported)(nameFile, (unsigned long)bufFile))
+		goto error;
 
-  if((SPI_GetPicture)(bufFile,sizeFile,1,hbmi,hbuf,NULL,0))
-    goto error;
+	if ((SPI_GetPicture)(bufFile, sizeFile, 1, hbmi, hbuf, NULL, 0))
+		goto error;
 
-  ret = TRUE;
+	ret = TRUE;
 
-  error :
+error:
 
-  if(hSPI)
-    FreeLibrary(hSPI);
+	if (hSPI)
+		FreeLibrary(hSPI);
 
-  return ret;
+	return ret;
 }
 
-BOOL SaveBitmapFile(char *nameFile,unsigned char *pbuf,BITMAPINFO *pbmi)
+BOOL SaveBitmapFile(char *nameFile, unsigned char *pbuf, BITMAPINFO *pbmi)
 {
-  int    bmiSize;
-  DWORD  writtenByte;
-  HANDLE hFile;
-  BITMAPFILEHEADER bfh;
+	int    bmiSize;
+	DWORD  writtenByte;
+	HANDLE hFile;
+	BITMAPFILEHEADER bfh;
 
-  hFile = CreateFile(nameFile,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
+	hFile = CreateFile(nameFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
-  if(hFile == INVALID_HANDLE_VALUE)
-    return FALSE;
+	if (hFile == INVALID_HANDLE_VALUE)
+		return FALSE;
 
-  bmiSize = pbmi->bmiHeader.biSize;
+	bmiSize = pbmi->bmiHeader.biSize;
 
-  switch(pbmi->bmiHeader.biBitCount)
-  {
-    case 1:
-      bmiSize += pbmi->bmiHeader.biClrUsed ? sizeof(RGBQUAD) * 2 : 0;
-      break;
+	switch (pbmi->bmiHeader.biBitCount)
+	{
+	case 1:
+		bmiSize += pbmi->bmiHeader.biClrUsed ? sizeof(RGBQUAD) * 2 : 0;
+		break;
 
-    case 2 :
-      bmiSize += sizeof(RGBQUAD) * 4;
-      break;
+	case 2:
+		bmiSize += sizeof(RGBQUAD) * 4;
+		break;
 
-    case 4 :
-      bmiSize += sizeof(RGBQUAD) * 16;
-      break;
+	case 4:
+		bmiSize += sizeof(RGBQUAD) * 16;
+		break;
 
-    case 8 :
-      bmiSize += sizeof(RGBQUAD) * 256;
-      break;
-  }
+	case 8:
+		bmiSize += sizeof(RGBQUAD) * 256;
+		break;
+	}
 
-  ZeroMemory(&bfh,sizeof(bfh));
-  bfh.bfType    = MAKEWORD('B','M');
-  bfh.bfOffBits = sizeof(bfh) + bmiSize;
-  bfh.bfSize    = bfh.bfOffBits + pbmi->bmiHeader.biSizeImage;
+	ZeroMemory(&bfh, sizeof(bfh));
+	bfh.bfType = MAKEWORD('B', 'M');
+	bfh.bfOffBits = sizeof(bfh) + bmiSize;
+	bfh.bfSize = bfh.bfOffBits + pbmi->bmiHeader.biSizeImage;
 
-  WriteFile(hFile,&bfh,sizeof(bfh)                ,&writtenByte,0);
-  WriteFile(hFile,pbmi,bmiSize                    ,&writtenByte,0);
-  WriteFile(hFile,pbuf,pbmi->bmiHeader.biSizeImage,&writtenByte,0);
+	WriteFile(hFile, &bfh, sizeof(bfh), &writtenByte, 0);
+	WriteFile(hFile, pbmi, bmiSize, &writtenByte, 0);
+	WriteFile(hFile, pbuf, pbmi->bmiHeader.biSizeImage, &writtenByte, 0);
 
-  CloseHandle(hFile);
+	CloseHandle(hFile);
 
-  return TRUE;
+	return TRUE;
 }
 
-BOOL WINAPI AlphaBlendWithoutAPI(HDC hdcDest,int dx,int dy,int width,int height,HDC hdcSrc,int sx,int sy,int sw,int sh,BGBLENDFUNCTION bf)
+BOOL WINAPI AlphaBlendWithoutAPI(HDC hdcDest, int dx, int dy, int width, int height, HDC hdcSrc, int sx, int sy, int sw, int sh, BGBLENDFUNCTION bf)
 {
-  HDC hdcDestWork,hdcSrcWork;
-  int i,invAlpha,alpha;
-  int lenBuf;
-  unsigned char *bufDest;
-  unsigned char *bufSrc;
+	HDC hdcDestWork, hdcSrcWork;
+	int i, invAlpha, alpha;
+	int lenBuf;
+	unsigned char *bufDest;
+	unsigned char *bufSrc;
 
-  if(dx != 0 || dy != 0 || sx != 0 || sy != 0 || width != sw || height != sh)
-    return FALSE;
+	if (dx != 0 || dy != 0 || sx != 0 || sy != 0 || width != sw || height != sh)
+		return FALSE;
 
-  hdcDestWork = CreateBitmapDC(CreateDIB24BPP(width,height,&bufDest,&lenBuf));
-  hdcSrcWork  = CreateBitmapDC(CreateDIB24BPP(width,height,&bufSrc ,&lenBuf));
+	hdcDestWork = CreateBitmapDC(CreateDIB24BPP(width, height, &bufDest, &lenBuf));
+	hdcSrcWork = CreateBitmapDC(CreateDIB24BPP(width, height, &bufSrc, &lenBuf));
 
-  if(!bufDest || !bufSrc)
-    return FALSE;
+	if (!bufDest || !bufSrc)
+		return FALSE;
 
-  BitBlt(hdcDestWork,0,0,width,height,hdcDest,0,0,SRCCOPY);
-  BitBlt(hdcSrcWork ,0,0,width,height,hdcSrc ,0,0,SRCCOPY);
+	BitBlt(hdcDestWork, 0, 0, width, height, hdcDest, 0, 0, SRCCOPY);
+	BitBlt(hdcSrcWork, 0, 0, width, height, hdcSrc, 0, 0, SRCCOPY);
 
-  alpha = bf.SourceConstantAlpha;
-  invAlpha = 255 - alpha;
+	alpha = bf.SourceConstantAlpha;
+	invAlpha = 255 - alpha;
 
-  for(i = 0;i < lenBuf;i++,bufDest++,bufSrc++)
-    *bufDest = (*bufDest * invAlpha + *bufSrc * alpha)>>8;
+	for (i = 0; i < lenBuf; i++, bufDest++, bufSrc++)
+		*bufDest = (*bufDest * invAlpha + *bufSrc * alpha) >> 8;
 
-  BitBlt(hdcDest,0,0,width,height,hdcDestWork,0,0,SRCCOPY);
+	BitBlt(hdcDest, 0, 0, width, height, hdcDestWork, 0, 0, SRCCOPY);
 
-  DeleteBitmapDC(&hdcDestWork);
-  DeleteBitmapDC(&hdcSrcWork);
+	DeleteBitmapDC(&hdcDestWork);
+	DeleteBitmapDC(&hdcSrcWork);
 
-  return TRUE;
+	return TRUE;
 }
 
-// âÊëúì«Ç›çûÇ›ä÷åW
+// ÁîªÂÉèË™≠„ÅøËæº„ÅøÈñ¢‰øÇ
 
 void BGPreloadPicture(BGSrc *src)
 {
-  char  spiPath[MAX_PATH];
-  char  filespec[MAX_PATH];
-  char *filePart;
-  int   fileSize;
-  int   readByte;
-  unsigned char *fileBuf;
+	char  spiPath[MAX_PATH];
+	char  filespec[MAX_PATH];
+	char *filePart;
+	int   fileSize;
+	int   readByte;
+	unsigned char *fileBuf;
 
-  HBITMAP hbm;
-  HANDLE  hPictureFile;
-  HANDLE  hFind;
-  WIN32_FIND_DATA fd;
+	HBITMAP hbm;
+	HANDLE  hPictureFile;
+	HANDLE  hFind;
+	WIN32_FIND_DATA fd;
 
-  #ifdef _DEBUG
-    dprintf("Preload Picture : %s",src->file);
-  #endif
+#ifdef _DEBUG
+	dprintf("Preload Picture : %s", src->file);
+#endif
 
-  //ÉtÉ@ÉCÉãÇì«Ç›çûÇﬁ
-  hPictureFile = CreateFile(src->file,GENERIC_READ,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+	//„Éï„Ç°„Ç§„É´„ÇíË™≠„ÅøËæº„ÇÄ
+	hPictureFile = CreateFile(src->file, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-  if(hPictureFile == INVALID_HANDLE_VALUE)
-    return;
+	if (hPictureFile == INVALID_HANDLE_VALUE)
+		return;
 
-  fileSize = GetFileSize(hPictureFile,0);
+	fileSize = GetFileSize(hPictureFile, 0);
 
-  //ç≈í· 2kb ÇÕämï€ (Susie plugin ÇÃédólÇÊÇË)
-  fileBuf  = GlobalAlloc(GPTR,fileSize + 2048);
+	//ÊúÄ‰Ωé 2kb „ÅØÁ¢∫‰øù (Susie plugin „ÅÆ‰ªïÊßò„Çà„Çä)
+	fileBuf = GlobalAlloc(GPTR, fileSize + 2048);
 
-  //ì™ÇÃ 2kb ÇÕÇOÇ≈èâä˙âª
-  ZeroMemory(fileBuf,2048);
+	//È†≠„ÅÆ 2kb „ÅØÔºê„ÅßÂàùÊúüÂåñ
+	ZeroMemory(fileBuf, 2048);
 
-  ReadFile(hPictureFile,fileBuf,fileSize,&readByte,0);
+	ReadFile(hPictureFile, fileBuf, fileSize, &readByte, 0);
 
-  CloseHandle(hPictureFile);
+	CloseHandle(hPictureFile);
 
-  // SPIPath Çê‚ëŒÉpÉXÇ…ïœä∑
-  if(!GetFullPathName(BGSPIPath,MAX_PATH,filespec,&filePart))
-    return;
+	// SPIPath „ÇíÁµ∂ÂØæ„Éë„Çπ„Å´Â§âÊèõ
+	if (!GetFullPathName(BGSPIPath, MAX_PATH, filespec, &filePart))
+		return;
 
-  //ÉvÉâÉOÉCÉìÇìñÇΩÇ¡ÇƒÇ¢Ç≠
-  hFind = FindFirstFile(filespec,&fd);
+	//„Éó„É©„Ç∞„Ç§„É≥„ÇíÂΩì„Åü„Å£„Å¶„ÅÑ„Åè
+	hFind = FindFirstFile(filespec, &fd);
 
-  if(hFind != INVALID_HANDLE_VALUE && filePart)
-  {
-    //ÉfÉBÉåÉNÉgÉäéÊìæ
-    ExtractDirName(filespec, spiPath);
-    AppendSlash(spiPath, sizeof(spiPath));
+	if (hFind != INVALID_HANDLE_VALUE && filePart)
+	{
+		//„Éá„Ç£„É¨„ÇØ„Éà„É™ÂèñÂæó
+		ExtractDirName(filespec, spiPath);
+		AppendSlash(spiPath, sizeof(spiPath));
 
-    do{
-      HLOCAL hbuf,hbmi;
-      BITMAPINFO *pbmi;
-      char       *pbuf;
-      char spiFileName[MAX_PATH];
+		do {
+			HLOCAL hbuf, hbmi;
+			BITMAPINFO *pbmi;
+			char       *pbuf;
+			char spiFileName[MAX_PATH];
 
-      if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-        continue;
+			if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+				continue;
 
-      strncpy_s(spiFileName, sizeof(spiFileName), spiPath, _TRUNCATE);
-      strncat_s(spiFileName, sizeof(spiFileName), fd.cFileName, _TRUNCATE);
+			strncpy_s(spiFileName, sizeof(spiFileName), spiPath, _TRUNCATE);
+			strncat_s(spiFileName, sizeof(spiFileName), fd.cFileName, _TRUNCATE);
 
-      if(LoadPictureWithSPI(spiFileName,src->file,fileBuf,fileSize,&hbuf,&hbmi))
-      {
-        pbuf = LocalLock(hbuf);
-        pbmi = LocalLock(hbmi);
+			if (LoadPictureWithSPI(spiFileName, src->file, fileBuf, fileSize, &hbuf, &hbmi))
+			{
+				pbuf = LocalLock(hbuf);
+				pbmi = LocalLock(hbmi);
 
-        SaveBitmapFile(src->fileTmp,pbuf,pbmi);
+				SaveBitmapFile(src->fileTmp, pbuf, pbmi);
 
-        LocalUnlock(hbmi);
-        LocalUnlock(hbuf);
+				LocalUnlock(hbmi);
+				LocalUnlock(hbuf);
 
-        LocalFree(hbmi);
-        LocalFree(hbuf);
+				LocalFree(hbmi);
+				LocalFree(hbuf);
 
-        strncpy_s(src->file, sizeof(src->file),src->fileTmp, _TRUNCATE);
+				strncpy_s(src->file, sizeof(src->file), src->fileTmp, _TRUNCATE);
 
-        break;
-      }
-    }while(FindNextFile(hFind,&fd));
+				break;
+			}
+		} while (FindNextFile(hFind, &fd));
 
-    FindClose(hFind);
-  }
+		FindClose(hFind);
+	}
 
-  GlobalFree(fileBuf);
+	GlobalFree(fileBuf);
 
-  if (IsLoadImageOnlyEnabled()) {
-    //âÊëúÇÉrÉbÉgÉ}ÉbÉvÇ∆ÇµÇƒì«Ç›çûÇ›
-    hbm = LoadImage(0,src->file,IMAGE_BITMAP,0,0,LR_LOADFROMFILE);
+	if (IsLoadImageOnlyEnabled()) {
+		//ÁîªÂÉè„Çí„Éì„ÉÉ„Éà„Éû„ÉÉ„Éó„Å®„Åó„Å¶Ë™≠„ÅøËæº„Åø
+		hbm = LoadImage(0, src->file, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-  } else {
-	  // Susie pluginÇ≈ì«Ç›çûÇﬂÇ»Ç¢JPEGÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇΩèÍçáÅA
-	  // OLE ÇóòópÇµÇƒì«ÇﬁÅB
-    hbm = GetBitmapHandle(src->file);
+	}
+	else {
+		// Susie plugin„ÅßË™≠„ÅøËæº„ÇÅ„Å™„ÅÑJPEG„Éï„Ç°„Ç§„É´„ÅåÂ≠òÂú®„Åó„ÅüÂ†¥Âêà„ÄÅ
+		// OLE „ÇíÂà©Áî®„Åó„Å¶Ë™≠„ÇÄ„ÄÇ
+		hbm = GetBitmapHandle(src->file);
 
-  }
+	}
 
-  if(hbm)
-  {
-    BITMAP bm;
+	if (hbm)
+	{
+		BITMAP bm;
 
-    GetObject(hbm,sizeof(bm),&bm);
+		GetObject(hbm, sizeof(bm), &bm);
 
-    src->hdc    = CreateBitmapDC(hbm);
-    src->width  = bm.bmWidth;
-    src->height = bm.bmHeight;
-  }else{
-    src->type = BG_COLOR;
-  }
+		src->hdc = CreateBitmapDC(hbm);
+		src->width = bm.bmWidth;
+		src->height = bm.bmHeight;
+	}
+	else {
+		src->type = BG_COLOR;
+	}
 }
 
 void BGGetWallpaperInfo(WallpaperInfo *wi)
 {
-  int  length;
-  int style;
-  int  tile;
-  char str[256];
-  HKEY hKey;
+	int  length;
+	int style;
+	int  tile;
+	char str[256];
+	HKEY hKey;
 
-  wi->pattern = BG_CENTER;
-  strncpy_s(wi->filename, sizeof(wi->filename),"", _TRUNCATE);
+	wi->pattern = BG_CENTER;
+	strncpy_s(wi->filename, sizeof(wi->filename), "", _TRUNCATE);
 
-  //ÉåÉWÉXÉgÉäÉLÅ[ÇÃÉIÅ[ÉvÉì
-  if(RegOpenKeyEx(HKEY_CURRENT_USER, "Control Panel\\Desktop", 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-    return;
+	//„É¨„Ç∏„Çπ„Éà„É™„Ç≠„Éº„ÅÆ„Ç™„Éº„Éó„É≥
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, "Control Panel\\Desktop", 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+		return;
 
-  //ï«éÜñºÉQÉbÉg
-  length = MAX_PATH;
-  RegQueryValueEx(hKey,"Wallpaper"     ,NULL,NULL,(BYTE*)(wi->filename),&length);
+	//Â£ÅÁ¥ôÂêç„Ç≤„ÉÉ„Éà
+	length = MAX_PATH;
+	RegQueryValueEx(hKey, "Wallpaper", NULL, NULL, (BYTE*)(wi->filename), &length);
 
-  //ï«éÜÉXÉ^ÉCÉãÉQÉbÉg
-  length = 256;
-  RegQueryValueEx(hKey,"WallpaperStyle",NULL,NULL,(BYTE*)str,&length);
-  style = atoi(str);
+	//Â£ÅÁ¥ô„Çπ„Çø„Ç§„É´„Ç≤„ÉÉ„Éà
+	length = 256;
+	RegQueryValueEx(hKey, "WallpaperStyle", NULL, NULL, (BYTE*)str, &length);
+	style = atoi(str);
 
-  //ï«éÜÉXÉ^ÉCÉãÉQÉbÉg
-  length = 256;
-  RegQueryValueEx(hKey,"TileWallpaper" ,NULL,NULL,(BYTE*)str,&length);
-  tile = atoi(str);
+	//Â£ÅÁ¥ô„Çπ„Çø„Ç§„É´„Ç≤„ÉÉ„Éà
+	length = 256;
+	RegQueryValueEx(hKey, "TileWallpaper", NULL, NULL, (BYTE*)str, &length);
+	tile = atoi(str);
 
-  //Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÅH
-  if(tile)
-    wi->pattern = BG_TILE;
-  else {
-    switch (style) {
-    case 0: // Center(íÜâõÇ…ï\é¶)
-      wi->pattern = BG_CENTER;
-      break;
-    case 2: // Stretch(âÊñ Ç…çáÇÌÇπÇƒêLèk) ÉAÉXÉyÉNÉgî‰ÇÕñ≥éãÇ≥ÇÍÇÈ
-      wi->pattern = BG_STRETCH;
-      break;
-    case 10: // Fill(ÉyÅ[ÉWâ°ïùÇ…çáÇÌÇπÇÈ) Ç∆Ç†ÇÈÇ™ÅAòañÛÇ™Ç®Ç©ÇµÇ¢
-             // ÉAÉXÉyÉNÉgî‰Çà€éùÇµÇƒÅAÇÕÇ›èoÇµÇƒÇ≈Ç‡ç≈ëÂï\é¶Ç∑ÇÈ
-      wi->pattern = BG_AUTOFILL;
-      break;
-    case 6: // Fit(ÉyÅ[ÉWècïùÇ…çáÇÌÇπÇÈ) Ç∆Ç†ÇÈÇ™ÅAòañÛÇ™Ç®Ç©ÇµÇ¢
-      // ÉAÉXÉyÉNÉgî‰Çà€éùÇµÇƒÅAÇÕÇ›èoÇ≥Ç»Ç¢ÇÊÇ§Ç…ç≈ëÂï\é¶Ç∑ÇÈ
-      wi->pattern = BG_AUTOFIT;
-      break;
-    }
-  }
+	//„Åì„Çå„Åß„ÅÑ„ÅÑ„ÅÆÔºü
+	if (tile)
+		wi->pattern = BG_TILE;
+	else {
+		switch (style) {
+		case 0: // Center(‰∏≠Â§Æ„Å´Ë°®Á§∫)
+			wi->pattern = BG_CENTER;
+			break;
+		case 2: // Stretch(ÁîªÈù¢„Å´Âêà„Çè„Åõ„Å¶‰º∏Á∏Æ) „Ç¢„Çπ„Éö„ÇØ„ÉàÊØî„ÅØÁÑ°Ë¶ñ„Åï„Çå„Çã
+			wi->pattern = BG_STRETCH;
+			break;
+		case 10: // Fill(„Éö„Éº„Ç∏Ê®™ÂπÖ„Å´Âêà„Çè„Åõ„Çã) „Å®„ÅÇ„Çã„Åå„ÄÅÂíåË®≥„Åå„Åä„Åã„Åó„ÅÑ
+				 // „Ç¢„Çπ„Éö„ÇØ„ÉàÊØî„ÇíÁ∂≠ÊåÅ„Åó„Å¶„ÄÅ„ÅØ„ÅøÂá∫„Åó„Å¶„Åß„ÇÇÊúÄÂ§ßË°®Á§∫„Åô„Çã
+			wi->pattern = BG_AUTOFILL;
+			break;
+		case 6: // Fit(„Éö„Éº„Ç∏Á∏¶ÂπÖ„Å´Âêà„Çè„Åõ„Çã) „Å®„ÅÇ„Çã„Åå„ÄÅÂíåË®≥„Åå„Åä„Åã„Åó„ÅÑ
+		  // „Ç¢„Çπ„Éö„ÇØ„ÉàÊØî„ÇíÁ∂≠ÊåÅ„Åó„Å¶„ÄÅ„ÅØ„ÅøÂá∫„Åï„Å™„ÅÑ„Çà„ÅÜ„Å´ÊúÄÂ§ßË°®Á§∫„Åô„Çã
+			wi->pattern = BG_AUTOFIT;
+			break;
+		}
+	}
 
-  //ÉåÉWÉXÉgÉäÉLÅ[ÇÃÉNÉçÅ[ÉY
-  RegCloseKey(hKey);
+	//„É¨„Ç∏„Çπ„Éà„É™„Ç≠„Éº„ÅÆ„ÇØ„É≠„Éº„Ç∫
+	RegCloseKey(hKey);
 }
 
-// .bmpà»äOÇÃâÊëúÉtÉ@ÉCÉãÇì«ÇﬁÅB
-// ï«éÜÇ™ .bmp à»äOÇÃÉtÉ@ÉCÉãÇ…Ç»Ç¡ÇƒÇ¢ÇΩèÍçáÇ÷ÇÃëŒèàÅB
+// .bmp‰ª•Â§ñ„ÅÆÁîªÂÉè„Éï„Ç°„Ç§„É´„ÇíË™≠„ÇÄ„ÄÇ
+// Â£ÅÁ¥ô„Åå .bmp ‰ª•Â§ñ„ÅÆ„Éï„Ç°„Ç§„É´„Å´„Å™„Å£„Å¶„ÅÑ„ÅüÂ†¥Âêà„Å∏„ÅÆÂØæÂá¶„ÄÇ
 // (2011.8.3 yutaka)
 // cf. http://www.geocities.jp/ccfjd821/purogu/wpe-ji9.html
-// Ç±ÇÃä÷êîÇÕ Windows 2000 ñ¢ñûÇÃèÍçáÇ…ÇÕåƒÇÒÇ≈ÇÕÇ¢ÇØÇ»Ç¢
+// „Åì„ÅÆÈñ¢Êï∞„ÅØ Windows 2000 Êú™Ê∫Ä„ÅÆÂ†¥Âêà„Å´„ÅØÂëº„Çì„Åß„ÅØ„ÅÑ„Åë„Å™„ÅÑ
 static HBITMAP GetBitmapHandle(char *File)
 {
 	OLE_HANDLE hOle = 0;
-	IStream *iStream=NULL;
+	IStream *iStream = NULL;
 	IPicture *iPicture;
 	HGLOBAL hMem;
 	LPVOID pvData;
-	DWORD nReadByte=0,nFileSize;
+	DWORD nReadByte = 0, nFileSize;
 	HANDLE hFile;
 	short type;
 	HBITMAP hBitmap = NULL;
 
-	hFile=CreateFile(File,GENERIC_READ,0,NULL,OPEN_EXISTING,0,NULL);
+	hFile = CreateFile(File, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 	if (hFile == INVALID_HANDLE_VALUE) {
 		return (hBitmap);
 	}
-	nFileSize=GetFileSize(hFile,NULL);
-	hMem=GlobalAlloc(GMEM_MOVEABLE,nFileSize);
-	pvData=GlobalLock(hMem);
+	nFileSize = GetFileSize(hFile, NULL);
+	hMem = GlobalAlloc(GMEM_MOVEABLE, nFileSize);
+	pvData = GlobalLock(hMem);
 
-	ReadFile(hFile,pvData,nFileSize,&nReadByte,NULL);
+	ReadFile(hFile, pvData, nFileSize, &nReadByte, NULL);
 
 	GlobalUnlock(hMem);
 	CloseHandle(hFile);
 
-	CreateStreamOnHGlobal(hMem,TRUE,&iStream);
+	CreateStreamOnHGlobal(hMem, TRUE, &iStream);
 
-	OleLoadPicture(iStream,nFileSize,FALSE,&IID_IPicture,(LPVOID*)&iPicture);
+	OleLoadPicture(iStream, nFileSize, FALSE, &IID_IPicture, (LPVOID*)&iPicture);
 
-	// âÊëúÉtÉ@ÉCÉãÇ≈ÇÕÇ»Ç¢ÉoÉCÉiÉäÉtÉ@ÉCÉãÇéwíËÇµÇΩèÍçáÇ…ÅA
-	// ÉvÉçÉOÉâÉÄÇ™óéÇøÇÈñ‚ëËÇèCê≥ÇµÇΩÅB
+	// ÁîªÂÉè„Éï„Ç°„Ç§„É´„Åß„ÅØ„Å™„ÅÑ„Éê„Ç§„Éä„É™„Éï„Ç°„Ç§„É´„ÇíÊåáÂÆö„Åó„ÅüÂ†¥Âêà„Å´„ÄÅ
+	// „Éó„É≠„Ç∞„É©„É†„ÅåËêΩ„Å°„ÇãÂïèÈ°å„Çí‰øÆÊ≠£„Åó„Åü„ÄÇ
 	// (2015.12.5 yutaka)
 	if (iPicture == NULL)
 		return (hBitmap);
 
 	iStream->lpVtbl->Release((IStream *)iPicture);
 
-	iPicture->lpVtbl->get_Type(iPicture,&type);
-	if(type==PICTYPE_BITMAP){
-		iPicture->lpVtbl->get_Handle(iPicture,&hOle);
+	iPicture->lpVtbl->get_Type(iPicture, &type);
+	if (type == PICTYPE_BITMAP) {
+		iPicture->lpVtbl->get_Handle(iPicture, &hOle);
 	}
 
-	hBitmap=(HBITMAP)hOle;
+	hBitmap = (HBITMAP)hOle;
 
 	return (hBitmap);
 }
 
-// ê¸å`ï‚äÆñ@Ç…ÇÊÇËî‰ärìIëNñæÇ…ÉrÉbÉgÉ}ÉbÉvÇägëÂÅEèkè¨Ç∑ÇÈÅB
-// Windows 9x/NTëŒâû
+// Á∑öÂΩ¢Ë£úÂÆåÊ≥ï„Å´„Çà„ÇäÊØîËºÉÁöÑÈÆÆÊòé„Å´„Éì„ÉÉ„Éà„Éû„ÉÉ„Éó„ÇíÊã°Â§ß„ÉªÁ∏ÆÂ∞è„Åô„Çã„ÄÇ
+// Windows 9x/NTÂØæÂøú
 // cf.http://katahiromz.web.fc2.com/win32/bilinear.html
 static HBITMAP CreateStretched32BppBitmapBilinear(HBITMAP hbm, INT cxNew, INT cyNew)
 {
-    INT ix, iy, x0, y0, x1, y1;
-    DWORD x, y;
-    BITMAP bm;
-    HBITMAP hbmNew;
-    HDC hdc;
-    BITMAPINFO bi;
-    BYTE *pbNewBits, *pbBits, *pbNewLine, *pbLine0, *pbLine1;
-    DWORD wfactor, hfactor;
-    DWORD ex0, ey0, ex1, ey1;
-    DWORD r0, g0, b0, a0, r1, g1, b1, a1;
-    DWORD c00, c01, c10, c11;
-    LONG nWidthBytes, nWidthBytesNew;
-    BOOL fAlpha;
+	INT ix, iy, x0, y0, x1, y1;
+	DWORD x, y;
+	BITMAP bm;
+	HBITMAP hbmNew;
+	HDC hdc;
+	BITMAPINFO bi;
+	BYTE *pbNewBits, *pbBits, *pbNewLine, *pbLine0, *pbLine1;
+	DWORD wfactor, hfactor;
+	DWORD ex0, ey0, ex1, ey1;
+	DWORD r0, g0, b0, a0, r1, g1, b1, a1;
+	DWORD c00, c01, c10, c11;
+	LONG nWidthBytes, nWidthBytesNew;
+	BOOL fAlpha;
 
-    if (GetObject(hbm, sizeof(BITMAP), &bm) == 0)
-        return NULL;
+	if (GetObject(hbm, sizeof(BITMAP), &bm) == 0)
+		return NULL;
 
-    hbmNew = NULL;
-    hdc = CreateCompatibleDC(NULL);
-    if (hdc != NULL)
-    {
-        nWidthBytes = bm.bmWidth * 4;
-        ZeroMemory(&bi, sizeof(BITMAPINFOHEADER));
-        bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bi.bmiHeader.biWidth = bm.bmWidth;
-        bi.bmiHeader.biHeight = bm.bmHeight;
-        bi.bmiHeader.biPlanes = 1;
-        bi.bmiHeader.biBitCount = 32;
-        fAlpha = (bm.bmBitsPixel == 32);
-        pbBits = (BYTE *)HeapAlloc(GetProcessHeap(), 0,
-                                   nWidthBytes * bm.bmHeight);
-        if (pbBits == NULL)
-            return NULL;
-        GetDIBits(hdc, hbm, 0, bm.bmHeight, pbBits, &bi, DIB_RGB_COLORS);
-        bi.bmiHeader.biWidth = cxNew;
-        bi.bmiHeader.biHeight = cyNew;
-        hbmNew = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS,
-                                  (VOID **)&pbNewBits, NULL, 0);
-        if (hbmNew != NULL)
-        {
-            nWidthBytesNew = cxNew * 4;
-            wfactor = (bm.bmWidth << 8) / cxNew;
-            hfactor = (bm.bmHeight << 8) / cyNew;
-            if (!fAlpha)
-                a0 = 255;
-            for(iy = 0; iy < cyNew; iy++)
-            {
-                y = hfactor * iy;
-                y0 = y >> 8;
-                y1 = min(y0 + 1, (INT)bm.bmHeight - 1);
-                ey1 = y & 0xFF;
-                ey0 = 0x100 - ey1;
-                pbNewLine = pbNewBits + iy * nWidthBytesNew;
-                pbLine0 = pbBits + y0 * nWidthBytes;
-                pbLine1 = pbBits + y1 * nWidthBytes;
-                for(ix = 0; ix < cxNew; ix++)
-                {
-                    x = wfactor * ix;
-                    x0 = x >> 8;
-                    x1 = min(x0 + 1, (INT)bm.bmWidth - 1);
-                    ex1 = x & 0xFF;
-                    ex0 = 0x100 - ex1;
-                    c00 = ((LPDWORD)pbLine0)[x0];
-                    c01 = ((LPDWORD)pbLine1)[x0];
-                    c10 = ((LPDWORD)pbLine0)[x1];
-                    c11 = ((LPDWORD)pbLine1)[x1];
+	hbmNew = NULL;
+	hdc = CreateCompatibleDC(NULL);
+	if (hdc != NULL)
+	{
+		nWidthBytes = bm.bmWidth * 4;
+		ZeroMemory(&bi, sizeof(BITMAPINFOHEADER));
+		bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		bi.bmiHeader.biWidth = bm.bmWidth;
+		bi.bmiHeader.biHeight = bm.bmHeight;
+		bi.bmiHeader.biPlanes = 1;
+		bi.bmiHeader.biBitCount = 32;
+		fAlpha = (bm.bmBitsPixel == 32);
+		pbBits = (BYTE *)HeapAlloc(GetProcessHeap(), 0,
+			nWidthBytes * bm.bmHeight);
+		if (pbBits == NULL)
+			return NULL;
+		GetDIBits(hdc, hbm, 0, bm.bmHeight, pbBits, &bi, DIB_RGB_COLORS);
+		bi.bmiHeader.biWidth = cxNew;
+		bi.bmiHeader.biHeight = cyNew;
+		hbmNew = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS,
+			(VOID **)&pbNewBits, NULL, 0);
+		if (hbmNew != NULL)
+		{
+			nWidthBytesNew = cxNew * 4;
+			wfactor = (bm.bmWidth << 8) / cxNew;
+			hfactor = (bm.bmHeight << 8) / cyNew;
+			if (!fAlpha)
+				a0 = 255;
+			for (iy = 0; iy < cyNew; iy++)
+			{
+				y = hfactor * iy;
+				y0 = y >> 8;
+				y1 = min(y0 + 1, (INT)bm.bmHeight - 1);
+				ey1 = y & 0xFF;
+				ey0 = 0x100 - ey1;
+				pbNewLine = pbNewBits + iy * nWidthBytesNew;
+				pbLine0 = pbBits + y0 * nWidthBytes;
+				pbLine1 = pbBits + y1 * nWidthBytes;
+				for (ix = 0; ix < cxNew; ix++)
+				{
+					x = wfactor * ix;
+					x0 = x >> 8;
+					x1 = min(x0 + 1, (INT)bm.bmWidth - 1);
+					ex1 = x & 0xFF;
+					ex0 = 0x100 - ex1;
+					c00 = ((LPDWORD)pbLine0)[x0];
+					c01 = ((LPDWORD)pbLine1)[x0];
+					c10 = ((LPDWORD)pbLine0)[x1];
+					c11 = ((LPDWORD)pbLine1)[x1];
 
-                    b0 = ((ex0 * (c00 & 0xFF)) +
-                          (ex1 * (c10 & 0xFF))) >> 8;
-                    b1 = ((ex0 * (c01 & 0xFF)) +
-                          (ex1 * (c11 & 0xFF))) >> 8;
-                    g0 = ((ex0 * ((c00 >> 8) & 0xFF)) +
-                          (ex1 * ((c10 >> 8) & 0xFF))) >> 8;
-                    g1 = ((ex0 * ((c01 >> 8) & 0xFF)) +
-                          (ex1 * ((c11 >> 8) & 0xFF))) >> 8;
-                    r0 = ((ex0 * ((c00 >> 16) & 0xFF)) +
-                          (ex1 * ((c10 >> 16) & 0xFF))) >> 8;
-                    r1 = ((ex0 * ((c01 >> 16) & 0xFF)) +
-                          (ex1 * ((c11 >> 16) & 0xFF))) >> 8;
-                    b0 = (ey0 * b0 + ey1 * b1) >> 8;
-                    g0 = (ey0 * g0 + ey1 * g1) >> 8;
-                    r0 = (ey0 * r0 + ey1 * r1) >> 8;
+					b0 = ((ex0 * (c00 & 0xFF)) +
+						(ex1 * (c10 & 0xFF))) >> 8;
+					b1 = ((ex0 * (c01 & 0xFF)) +
+						(ex1 * (c11 & 0xFF))) >> 8;
+					g0 = ((ex0 * ((c00 >> 8) & 0xFF)) +
+						(ex1 * ((c10 >> 8) & 0xFF))) >> 8;
+					g1 = ((ex0 * ((c01 >> 8) & 0xFF)) +
+						(ex1 * ((c11 >> 8) & 0xFF))) >> 8;
+					r0 = ((ex0 * ((c00 >> 16) & 0xFF)) +
+						(ex1 * ((c10 >> 16) & 0xFF))) >> 8;
+					r1 = ((ex0 * ((c01 >> 16) & 0xFF)) +
+						(ex1 * ((c11 >> 16) & 0xFF))) >> 8;
+					b0 = (ey0 * b0 + ey1 * b1) >> 8;
+					g0 = (ey0 * g0 + ey1 * g1) >> 8;
+					r0 = (ey0 * r0 + ey1 * r1) >> 8;
 
-                    if (fAlpha)
-                    {
-                        a0 = ((ex0 * ((c00 >> 24) & 0xFF)) +
-                              (ex1 * ((c10 >> 24) & 0xFF))) >> 8;
-                        a1 = ((ex0 * ((c01 >> 24) & 0xFF)) +
-                              (ex1 * ((c11 >> 24) & 0xFF))) >> 8;
-                        a0 = (ey0 * a0 + ey1 * a1) >> 8;
-                    }
-                    ((LPDWORD)pbNewLine)[ix] =
-                        MAKELONG(MAKEWORD(b0, g0), MAKEWORD(r0, a0));
-                }
-            }
-        }
-        HeapFree(GetProcessHeap(), 0, pbBits);
-        DeleteDC(hdc);
-    }
-    return hbmNew;
+					if (fAlpha)
+					{
+						a0 = ((ex0 * ((c00 >> 24) & 0xFF)) +
+							(ex1 * ((c10 >> 24) & 0xFF))) >> 8;
+						a1 = ((ex0 * ((c01 >> 24) & 0xFF)) +
+							(ex1 * ((c11 >> 24) & 0xFF))) >> 8;
+						a0 = (ey0 * a0 + ey1 * a1) >> 8;
+					}
+					((LPDWORD)pbNewLine)[ix] =
+						MAKELONG(MAKEWORD(b0, g0), MAKEWORD(r0, a0));
+				}
+			}
+		}
+		HeapFree(GetProcessHeap(), 0, pbBits);
+		DeleteDC(hdc);
+	}
+	return hbmNew;
 }
 
 void BGPreloadWallpaper(BGSrc *src)
@@ -903,13 +906,13 @@ void BGPreloadWallpaper(BGSrc *src)
 #endif
 
 	if (IsLoadImageOnlyEnabled()) {
-		//ï«éÜÇì«Ç›çûÇ›
-		//LR_CREATEDIBSECTION ÇéwíËÇ∑ÇÈÇÃÇ™ÉRÉc
+		//Â£ÅÁ¥ô„ÇíË™≠„ÅøËæº„Åø
+		//LR_CREATEDIBSECTION „ÇíÊåáÂÆö„Åô„Çã„ÅÆ„Åå„Ç≥„ÉÑ
 		if (wi.pattern == BG_STRETCH) {
-			hbm = LoadImage(0,wi.filename,IMAGE_BITMAP,CRTWidth,CRTHeight,LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+			hbm = LoadImage(0, wi.filename, IMAGE_BITMAP, CRTWidth, CRTHeight, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 		}
 		else {
-			hbm = LoadImage(0,wi.filename,IMAGE_BITMAP,        0,       0,LR_LOADFROMFILE);
+			hbm = LoadImage(0, wi.filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 		}
 	}
 	else {
@@ -927,12 +930,13 @@ void BGPreloadWallpaper(BGSrc *src)
 		//wi.pattern = BG_FIT_HEIGHT;
 #endif
 
-		GetObject(hbm,sizeof(bm),&bm);
-		// ï«éÜÇÃê›íËÇ…çáÇÌÇπÇƒÅAâÊëúÇÃÉXÉgÉåÉbÉ`ÉTÉCÉYÇåàÇﬂÇÈÅB
+		GetObject(hbm, sizeof(bm), &bm);
+		// Â£ÅÁ¥ô„ÅÆË®≠ÂÆö„Å´Âêà„Çè„Åõ„Å¶„ÄÅÁîªÂÉè„ÅÆ„Çπ„Éà„É¨„ÉÉ„ÉÅ„Çµ„Ç§„Ç∫„ÇíÊ±∫„ÇÅ„Çã„ÄÇ
 		if (wi.pattern == BG_STRETCH) {
 			s_width = CRTWidth;
 			s_height = CRTHeight;
-		} else if (wi.pattern == BG_AUTOFILL || wi.pattern == BG_AUTOFIT) {
+		}
+		else if (wi.pattern == BG_AUTOFILL || wi.pattern == BG_AUTOFIT) {
 			if (wi.pattern == BG_AUTOFILL) {
 				if ((bm.bmHeight * CRTWidth) < (bm.bmWidth * CRTHeight)) {
 					wi.pattern = BG_FIT_HEIGHT;
@@ -960,7 +964,8 @@ void BGPreloadWallpaper(BGSrc *src)
 				s_height = CRTHeight;
 			}
 
-		} else {
+		}
+		else {
 			s_width = 0;
 			s_height = 0;
 		}
@@ -974,20 +979,21 @@ void BGPreloadWallpaper(BGSrc *src)
 		}
 	}
 
-	//ï«éÜDCÇçÏÇÈ
+	//Â£ÅÁ¥ôDC„Çí‰Ωú„Çã
 createdc:
-	if(hbm)
+	if (hbm)
 	{
 		BITMAP bm;
 
-		GetObject(hbm,sizeof(bm),&bm);
+		GetObject(hbm, sizeof(bm), &bm);
 
-		src->hdc     = CreateBitmapDC(hbm);
-		src->width   = bm.bmWidth;
-		src->height  = bm.bmHeight;
+		src->hdc = CreateBitmapDC(hbm);
+		src->width = bm.bmWidth;
+		src->height = bm.bmHeight;
 		src->pattern = wi.pattern;
 
-	}else{
+	}
+	else {
 		src->hdc = NULL;
 	}
 
@@ -996,37 +1002,38 @@ createdc:
 
 void BGPreloadSrc(BGSrc *src)
 {
-  DeleteBitmapDC(&(src->hdc));
+	DeleteBitmapDC(&(src->hdc));
 
-  switch(src->type)
-  {
-    case BG_COLOR :
-      break;
+	switch (src->type)
+	{
+	case BG_COLOR:
+		break;
 
-    case BG_WALLPAPER :
-      BGPreloadWallpaper(src);
-      break;
+	case BG_WALLPAPER:
+		BGPreloadWallpaper(src);
+		break;
 
-    case BG_PICTURE :
-      BGPreloadPicture(src);
-      break;
-  }
+	case BG_PICTURE:
+		BGPreloadPicture(src);
+		break;
+	}
 }
 
-void BGStretchPicture(HDC hdcDest,BGSrc *src,int x,int y,int width,int height,BOOL bAntiAlias)
+void BGStretchPicture(HDC hdcDest, BGSrc *src, int x, int y, int width, int height, BOOL bAntiAlias)
 {
-	if(!hdcDest || !src)
+	if (!hdcDest || !src)
 		return;
 
-	if(bAntiAlias)
+	if (bAntiAlias)
 	{
-		if(src->width != width || src->height != height)
+		if (src->width != width || src->height != height)
 		{
 			HBITMAP hbm;
 
 			if (IsLoadImageOnlyEnabled()) {
-				hbm = LoadImage(0,src->file,IMAGE_BITMAP,width,height,LR_LOADFROMFILE);
-			} else {
+				hbm = LoadImage(0, src->file, IMAGE_BITMAP, width, height, LR_LOADFROMFILE);
+			}
+			else {
 				HBITMAP newhbm;
 				hbm = GetBitmapHandle(src->file);
 				newhbm = CreateStretched32BppBitmapBilinear(hbm, width, height);
@@ -1034,645 +1041,649 @@ void BGStretchPicture(HDC hdcDest,BGSrc *src,int x,int y,int width,int height,BO
 				hbm = newhbm;
 			}
 
-			if(!hbm)
+			if (!hbm)
 				return;
 
 			DeleteBitmapDC(&(src->hdc));
 			src->hdc = CreateBitmapDC(hbm);
-			src->width  = width;
+			src->width = width;
 			src->height = height;
 		}
 
-		BitBlt(hdcDest,x,y,width,height,src->hdc,0,0,SRCCOPY);
-	}else{
-		SetStretchBltMode(src->hdc,COLORONCOLOR);
-		StretchBlt(hdcDest,x,y,width,height,src->hdc,0,0,src->width,src->height,SRCCOPY);
+		BitBlt(hdcDest, x, y, width, height, src->hdc, 0, 0, SRCCOPY);
+	}
+	else {
+		SetStretchBltMode(src->hdc, COLORONCOLOR);
+		StretchBlt(hdcDest, x, y, width, height, src->hdc, 0, 0, src->width, src->height, SRCCOPY);
 	}
 }
 
-void BGLoadPicture(HDC hdcDest,BGSrc *src)
+void BGLoadPicture(HDC hdcDest, BGSrc *src)
 {
-  int x,y,width,height,pattern;
-  HDC hdc = NULL;
+	int x, y, width, height, pattern;
+	HDC hdc = NULL;
 
-  FillBitmapDC(hdcDest,src->color);
+	FillBitmapDC(hdcDest, src->color);
 
-  if(!src->height || !src->width)
-    return;
+	if (!src->height || !src->width)
+		return;
 
-  if(src->pattern == BG_AUTOFIT){
-    if((src->height * ScreenWidth) > (ScreenHeight * src->width))
-      pattern = BG_FIT_WIDTH;
-    else
-      pattern = BG_FIT_HEIGHT;
-  }else{
-    pattern = src->pattern;
-  }
+	if (src->pattern == BG_AUTOFIT) {
+		if ((src->height * ScreenWidth) > (ScreenHeight * src->width))
+			pattern = BG_FIT_WIDTH;
+		else
+			pattern = BG_FIT_HEIGHT;
+	}
+	else {
+		pattern = src->pattern;
+	}
 
-  switch(pattern)
-  {
-    case BG_STRETCH :
-      BGStretchPicture(hdcDest,src,0,0,ScreenWidth,ScreenHeight,src->antiAlias);
-      break;
+	switch (pattern)
+	{
+	case BG_STRETCH:
+		BGStretchPicture(hdcDest, src, 0, 0, ScreenWidth, ScreenHeight, src->antiAlias);
+		break;
 
-    case BG_FIT_WIDTH :
+	case BG_FIT_WIDTH:
 
-      height = (src->height * ScreenWidth) / src->width;
-      y      = (ScreenHeight - height) / 2;
+		height = (src->height * ScreenWidth) / src->width;
+		y = (ScreenHeight - height) / 2;
 
-      BGStretchPicture(hdcDest,src,0,y,ScreenWidth,height,src->antiAlias);
-      break;
+		BGStretchPicture(hdcDest, src, 0, y, ScreenWidth, height, src->antiAlias);
+		break;
 
-    case BG_FIT_HEIGHT :
+	case BG_FIT_HEIGHT:
 
-      width = (src->width * ScreenHeight) / src->height;
-      x     = (ScreenWidth - width) / 2;
+		width = (src->width * ScreenHeight) / src->height;
+		x = (ScreenWidth - width) / 2;
 
-      BGStretchPicture(hdcDest,src,x,0,width,ScreenHeight,src->antiAlias);
-      break;
+		BGStretchPicture(hdcDest, src, x, 0, width, ScreenHeight, src->antiAlias);
+		break;
 
-    case BG_TILE :
-      for(x = 0;x < ScreenWidth ;x += src->width )
-      for(y = 0;y < ScreenHeight;y += src->height)
-        BitBlt(hdcDest,x,y,src->width,src->height,src->hdc,0,0,SRCCOPY);
-      break;
+	case BG_TILE:
+		for (x = 0; x < ScreenWidth; x += src->width)
+			for (y = 0; y < ScreenHeight; y += src->height)
+				BitBlt(hdcDest, x, y, src->width, src->height, src->hdc, 0, 0, SRCCOPY);
+		break;
 
-    case BG_CENTER :
-      x = (ScreenWidth  -  src->width) / 2;
-      y = (ScreenHeight - src->height) / 2;
+	case BG_CENTER:
+		x = (ScreenWidth - src->width) / 2;
+		y = (ScreenHeight - src->height) / 2;
 
-      BitBlt(hdcDest,x,y,src->width,src->height,src->hdc,0,0,SRCCOPY);
-      break;
-  }
+		BitBlt(hdcDest, x, y, src->width, src->height, src->hdc, 0, 0, SRCCOPY);
+		break;
+	}
 }
 
 typedef struct tagLoadWallpaperStruct
 {
-  RECT *rectClient;
-  HDC hdcDest;
-  BGSrc *src;
+	RECT *rectClient;
+	HDC hdcDest;
+	BGSrc *src;
 }LoadWallpaperStruct;
 
-BOOL CALLBACK BGLoadWallpaperEnumFunc(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData)
+BOOL CALLBACK BGLoadWallpaperEnumFunc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
-  RECT rectDest;
-  RECT rectRgn;
-  int  monitorWidth;
-  int  monitorHeight;
-  int  destWidth;
-  int  destHeight;
-  HRGN hRgn;
-  int  x;
-  int  y;
+	RECT rectDest;
+	RECT rectRgn;
+	int  monitorWidth;
+	int  monitorHeight;
+	int  destWidth;
+	int  destHeight;
+	HRGN hRgn;
+	int  x;
+	int  y;
 
-  LoadWallpaperStruct *lws = (LoadWallpaperStruct*)dwData;
+	LoadWallpaperStruct *lws = (LoadWallpaperStruct*)dwData;
 
-  if(!IntersectRect(&rectDest,lprcMonitor,lws->rectClient))
-    return TRUE;
+	if (!IntersectRect(&rectDest, lprcMonitor, lws->rectClient))
+		return TRUE;
 
-  //ÉÇÉjÉ^Å[Ç…Ç©Ç©Ç¡ÇƒÇÈïîï™ÇÉ}ÉXÉN
-  SaveDC(lws->hdcDest);
-  CopyRect(&rectRgn,&rectDest);
-  OffsetRect(&rectRgn,- lws->rectClient->left,- lws->rectClient->top);
-  hRgn = CreateRectRgnIndirect(&rectRgn);
-  SelectObject(lws->hdcDest,hRgn);
+	//„É¢„Éã„Çø„Éº„Å´„Åã„Åã„Å£„Å¶„ÇãÈÉ®ÂàÜ„Çí„Éû„Çπ„ÇØ
+	SaveDC(lws->hdcDest);
+	CopyRect(&rectRgn, &rectDest);
+	OffsetRect(&rectRgn, -lws->rectClient->left, -lws->rectClient->top);
+	hRgn = CreateRectRgnIndirect(&rectRgn);
+	SelectObject(lws->hdcDest, hRgn);
 
-  //ÉÇÉjÉ^Å[ÇÃëÂÇ´Ç≥
-  monitorWidth  = lprcMonitor->right  - lprcMonitor->left;
-  monitorHeight = lprcMonitor->bottom - lprcMonitor->top;
+	//„É¢„Éã„Çø„Éº„ÅÆÂ§ß„Åç„Åï
+	monitorWidth = lprcMonitor->right - lprcMonitor->left;
+	monitorHeight = lprcMonitor->bottom - lprcMonitor->top;
 
-  destWidth  = rectDest.right  - rectDest.left;
-  destHeight = rectDest.bottom - rectDest.top;
+	destWidth = rectDest.right - rectDest.left;
+	destHeight = rectDest.bottom - rectDest.top;
 
-  switch(lws->src->pattern)
-  {
-    case BG_CENTER  :
-    case BG_STRETCH :
+	switch (lws->src->pattern)
+	{
+	case BG_CENTER:
+	case BG_STRETCH:
 
-      SetWindowOrgEx(lws->src->hdc,
-                     lprcMonitor->left + (monitorWidth  - lws->src->width )/2,
-                     lprcMonitor->top  + (monitorHeight - lws->src->height)/2,NULL);
-      BitBlt(lws->hdcDest ,rectDest.left,rectDest.top,destWidth,destHeight,
-             lws->src->hdc,rectDest.left,rectDest.top,SRCCOPY);
+		SetWindowOrgEx(lws->src->hdc,
+			lprcMonitor->left + (monitorWidth - lws->src->width) / 2,
+			lprcMonitor->top + (monitorHeight - lws->src->height) / 2, NULL);
+		BitBlt(lws->hdcDest, rectDest.left, rectDest.top, destWidth, destHeight,
+			lws->src->hdc, rectDest.left, rectDest.top, SRCCOPY);
 
-      break;
-    case BG_TILE :
+		break;
+	case BG_TILE:
 
-      SetWindowOrgEx(lws->src->hdc,0,0,NULL);
+		SetWindowOrgEx(lws->src->hdc, 0, 0, NULL);
 
-      for(x = rectDest.left - (rectDest.left % lws->src->width ) - lws->src->width ;
-          x < rectDest.right ;x += lws->src->width )
-      for(y = rectDest.top  - (rectDest.top  % lws->src->height) - lws->src->height;
-          y < rectDest.bottom;y += lws->src->height)
-        BitBlt(lws->hdcDest,x,y,lws->src->width,lws->src->height,lws->src->hdc,0,0,SRCCOPY);
-      break;
-  }
+		for (x = rectDest.left - (rectDest.left % lws->src->width) - lws->src->width;
+			x < rectDest.right; x += lws->src->width)
+			for (y = rectDest.top - (rectDest.top  % lws->src->height) - lws->src->height;
+				y < rectDest.bottom; y += lws->src->height)
+				BitBlt(lws->hdcDest, x, y, lws->src->width, lws->src->height, lws->src->hdc, 0, 0, SRCCOPY);
+		break;
+	}
 
-  //ÉäÅ[ÉWÉáÉìÇîjä¸
-  RestoreDC(lws->hdcDest,-1);
-  DeleteObject(hRgn);
+	//„É™„Éº„Ç∏„Éß„É≥„ÇíÁ†¥Ê£Ñ
+	RestoreDC(lws->hdcDest, -1);
+	DeleteObject(hRgn);
 
-  return TRUE;
+	return TRUE;
 }
 
-void BGLoadWallpaper(HDC hdcDest,BGSrc *src)
+void BGLoadWallpaper(HDC hdcDest, BGSrc *src)
 {
-  RECT  rectClient;
-  POINT point;
-  LoadWallpaperStruct lws;
+	RECT  rectClient;
+	POINT point;
+	LoadWallpaperStruct lws;
 
-  //éÊÇËÇ†Ç¶Ç∏ÉfÉXÉNÉgÉbÉvêFÇ≈ìhÇËÇ¬Ç‘Ç∑
-  FillBitmapDC(hdcDest,src->color);
+	//Âèñ„Çä„ÅÇ„Åà„Åö„Éá„Çπ„ÇØ„Éà„ÉÉ„ÉóËâ≤„ÅßÂ°ó„Çä„Å§„Å∂„Åô
+	FillBitmapDC(hdcDest, src->color);
 
-  //ï«éÜÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç»Ç¢
-  if(!src->hdc)
-    return;
+	//Â£ÅÁ¥ô„ÅåË®≠ÂÆö„Åï„Çå„Å¶„ÅÑ„Å™„ÅÑ
+	if (!src->hdc)
+		return;
 
-  //hdcDestÇÃç¿ïWånÇâºëzÉXÉNÉäÅ[ÉìÇ…çáÇÌÇπÇÈ
-  point.x = 0;
-  point.y = 0;
-  ClientToScreen(HVTWin,&point);
+	//hdcDest„ÅÆÂ∫ßÊ®ôÁ≥ª„Çí‰ªÆÊÉ≥„Çπ„ÇØ„É™„Éº„É≥„Å´Âêà„Çè„Åõ„Çã
+	point.x = 0;
+	point.y = 0;
+	ClientToScreen(HVTWin, &point);
 
-  SetWindowOrgEx(hdcDest,point.x,point.y,NULL);
+	SetWindowOrgEx(hdcDest, point.x, point.y, NULL);
 
-  //âºëzÉXÉNÉäÅ[ÉìÇ≈ÇÃÉNÉâÉCÉAÉìÉgóÃàÊ
-  GetClientRect(HVTWin,&rectClient);
-  OffsetRect(&rectClient,point.x,point.y);
+	//‰ªÆÊÉ≥„Çπ„ÇØ„É™„Éº„É≥„Åß„ÅÆ„ÇØ„É©„Ç§„Ç¢„É≥„ÉàÈ†òÂüü
+	GetClientRect(HVTWin, &rectClient);
+	OffsetRect(&rectClient, point.x, point.y);
 
-  //ÉÇÉjÉ^Å[ÇóÒãì
-  lws.rectClient = &rectClient;
-  lws.src        = src;
-  lws.hdcDest    = hdcDest;
+	//„É¢„Éã„Çø„Éº„ÇíÂàóÊåô
+	lws.rectClient = &rectClient;
+	lws.src = src;
+	lws.hdcDest = hdcDest;
 
-  if(BGEnumDisplayMonitors)
-  {
-    (*BGEnumDisplayMonitors)(NULL,NULL,BGLoadWallpaperEnumFunc,(LPARAM)&lws);
-  }else{
-    RECT rectMonitor;
+	if (BGEnumDisplayMonitors)
+	{
+		(*BGEnumDisplayMonitors)(NULL, NULL, BGLoadWallpaperEnumFunc, (LPARAM)&lws);
+	}
+	else {
+		RECT rectMonitor;
 
-    SetRect(&rectMonitor,0,0,CRTWidth,CRTHeight);
-    BGLoadWallpaperEnumFunc(NULL,NULL,&rectMonitor,(LPARAM)&lws);
-  }
+		SetRect(&rectMonitor, 0, 0, CRTWidth, CRTHeight);
+		BGLoadWallpaperEnumFunc(NULL, NULL, &rectMonitor, (LPARAM)&lws);
+	}
 
-  //ç¿ïWånÇñﬂÇ∑
-  SetWindowOrgEx(hdcDest,0,0,NULL);
+	//Â∫ßÊ®ôÁ≥ª„ÇíÊàª„Åô
+	SetWindowOrgEx(hdcDest, 0, 0, NULL);
 }
 
-void BGLoadSrc(HDC hdcDest,BGSrc *src)
+void BGLoadSrc(HDC hdcDest, BGSrc *src)
 {
-  switch(src->type)
-  {
-    case BG_COLOR :
-      FillBitmapDC(hdcDest,src->color);
-      break;
+	switch (src->type)
+	{
+	case BG_COLOR:
+		FillBitmapDC(hdcDest, src->color);
+		break;
 
-    case BG_WALLPAPER :
-      BGLoadWallpaper(hdcDest,src);
-      break;
+	case BG_WALLPAPER:
+		BGLoadWallpaper(hdcDest, src);
+		break;
 
-    case BG_PICTURE :
-      BGLoadPicture(hdcDest,src);
-      break;
-  }
+	case BG_PICTURE:
+		BGLoadPicture(hdcDest, src);
+		break;
+	}
 }
 
 void BGSetupPrimary(BOOL forceSetup)
 {
-  POINT point;
-  RECT rect;
+	POINT point;
+	RECT rect;
 
-  if(!BGEnable)
-    return;
+	if (!BGEnable)
+		return;
 
-  //ëãÇÃà íuÅAëÂÇ´Ç≥Ç™ïœÇÌÇ¡ÇΩÇ©É`ÉFÉbÉN
-  point.x = 0;
-  point.y = 0;
-  ClientToScreen(HVTWin,&point);
+	//Á™ì„ÅÆ‰ΩçÁΩÆ„ÄÅÂ§ß„Åç„Åï„ÅåÂ§â„Çè„Å£„Åü„Åã„ÉÅ„Çß„ÉÉ„ÇØ
+	point.x = 0;
+	point.y = 0;
+	ClientToScreen(HVTWin, &point);
 
-  GetClientRect(HVTWin,&rect);
-  OffsetRect(&rect,point.x,point.y);
+	GetClientRect(HVTWin, &rect);
+	OffsetRect(&rect, point.x, point.y);
 
-  if(!forceSetup && EqualRect(&rect,&BGPrevRect))
-    return;
+	if (!forceSetup && EqualRect(&rect, &BGPrevRect))
+		return;
 
-  CopyRect(&BGPrevRect,&rect);
+	CopyRect(&BGPrevRect, &rect);
 
-  #ifdef _DEBUG
-    dprintf("BGSetupPrimary : BGInSizeMove = %d",BGInSizeMove);
-  #endif
+#ifdef _DEBUG
+	dprintf("BGSetupPrimary : BGInSizeMove = %d", BGInSizeMove);
+#endif
 
-  //çÏã∆óp DC çÏê¨
-  if(hdcBGWork)   DeleteBitmapDC(&hdcBGWork);
-  if(hdcBGBuffer) DeleteBitmapDC(&hdcBGBuffer);
+	//‰ΩúÊ•≠Áî® DC ‰ΩúÊàê
+	if (hdcBGWork)   DeleteBitmapDC(&hdcBGWork);
+	if (hdcBGBuffer) DeleteBitmapDC(&hdcBGBuffer);
 
-  hdcBGWork   = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth,FontHeight));
-  hdcBGBuffer = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth,FontHeight));
+	hdcBGWork = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth, FontHeight));
+	hdcBGBuffer = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth, FontHeight));
 
-  //hdcBGBuffer ÇÃëÆê´ê›íË
-  SetBkMode(hdcBGBuffer,TRANSPARENT);
+	//hdcBGBuffer „ÅÆÂ±ûÊÄßË®≠ÂÆö
+	SetBkMode(hdcBGBuffer, TRANSPARENT);
 
-  if(!BGInSizeMove)
-  {
-    BGBLENDFUNCTION bf;
-    HDC hdcSrc = NULL;
+	if (!BGInSizeMove)
+	{
+		BGBLENDFUNCTION bf;
+		HDC hdcSrc = NULL;
 
-    //îwåi HDC
-    if(hdcBG) DeleteBitmapDC(&hdcBG);
-      hdcBG = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth,ScreenHeight));
+		//ËÉåÊôØ HDC
+		if (hdcBG) DeleteBitmapDC(&hdcBG);
+		hdcBG = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth, ScreenHeight));
 
-    //çÏã∆ópDC
-    hdcSrc = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth,ScreenHeight));
+		//‰ΩúÊ•≠Áî®DC
+		hdcSrc = CreateBitmapDC(CreateScreenCompatibleBitmap(ScreenWidth, ScreenHeight));
 
-    //îwåiê∂ê¨
-    BGLoadSrc(hdcBG,&BGDest);
+		//ËÉåÊôØÁîüÊàê
+		BGLoadSrc(hdcBG, &BGDest);
 
-    ZeroMemory(&bf,sizeof(bf));
-    bf.BlendOp = AC_SRC_OVER;
+		ZeroMemory(&bf, sizeof(bf));
+		bf.BlendOp = AC_SRC_OVER;
 
-    if(bf.SourceConstantAlpha = BGSrc1.alpha)
-    {
-      BGLoadSrc(hdcSrc,&BGSrc1);
-      (BGAlphaBlend)(hdcBG,0,0,ScreenWidth,ScreenHeight,hdcSrc,0,0,ScreenWidth,ScreenHeight,bf);
-    }
+		if (bf.SourceConstantAlpha = BGSrc1.alpha)
+		{
+			BGLoadSrc(hdcSrc, &BGSrc1);
+			(BGAlphaBlend)(hdcBG, 0, 0, ScreenWidth, ScreenHeight, hdcSrc, 0, 0, ScreenWidth, ScreenHeight, bf);
+		}
 
-    if(bf.SourceConstantAlpha = BGSrc2.alpha)
-    {
-      BGLoadSrc(hdcSrc,&BGSrc2);
-      (BGAlphaBlend)(hdcBG,0,0,ScreenWidth,ScreenHeight,hdcSrc,0,0,ScreenWidth,ScreenHeight,bf);
-    }
+		if (bf.SourceConstantAlpha = BGSrc2.alpha)
+		{
+			BGLoadSrc(hdcSrc, &BGSrc2);
+			(BGAlphaBlend)(hdcBG, 0, 0, ScreenWidth, ScreenHeight, hdcSrc, 0, 0, ScreenWidth, ScreenHeight, bf);
+		}
 
-    DeleteBitmapDC(&hdcSrc);
-  }
+		DeleteBitmapDC(&hdcSrc);
+	}
 }
 
-COLORREF BGGetColor(char *name,COLORREF defcolor,char *file)
+COLORREF BGGetColor(char *name, COLORREF defcolor, char *file)
 {
-  unsigned int r,g,b;
-  char colorstr[256],defstr[256];
+	unsigned int r, g, b;
+	char colorstr[256], defstr[256];
 
-  _snprintf_s(defstr,sizeof(defstr),_TRUNCATE,"%d,%d,%d",GetRValue(defcolor),GetGValue(defcolor),GetBValue(defcolor));
+	_snprintf_s(defstr, sizeof(defstr), _TRUNCATE, "%d,%d,%d", GetRValue(defcolor), GetGValue(defcolor), GetBValue(defcolor));
 
-  GetPrivateProfileString(BG_SECTION,name,defstr,colorstr,255,file);
+	GetPrivateProfileString(BG_SECTION, name, defstr, colorstr, 255, file);
 
-  r = g = b = 0;
+	r = g = b = 0;
 
-  sscanf(colorstr,"%d , %d , %d",&r,&g,&b);
+	sscanf(colorstr, "%d , %d , %d", &r, &g, &b);
 
-  return RGB(r,g,b);
+	return RGB(r, g, b);
 }
 
-BG_PATTERN BGGetStrIndex(char *name,BG_PATTERN def,char *file,char **strList,int nList)
+BG_PATTERN BGGetStrIndex(char *name, BG_PATTERN def, char *file, char **strList, int nList)
 {
-  char defstr[64],str[64];
-  int  i;
+	char defstr[64], str[64];
+	int  i;
 
-  def %= nList;
+	def %= nList;
 
-  strncpy_s(defstr, sizeof(defstr),strList[def], _TRUNCATE);
-  GetPrivateProfileString(BG_SECTION,name,defstr,str,64,file);
+	strncpy_s(defstr, sizeof(defstr), strList[def], _TRUNCATE);
+	GetPrivateProfileString(BG_SECTION, name, defstr, str, 64, file);
 
-  for(i = 0;i < nList;i++)
-    if(!_stricmp(str,strList[i]))
-      return i;
+	for (i = 0; i < nList; i++)
+		if (!_stricmp(str, strList[i]))
+			return i;
 
-  return 0;
+	return 0;
 }
 
-BOOL BGGetOnOff(char *name,BOOL def,char *file)
+BOOL BGGetOnOff(char *name, BOOL def, char *file)
 {
-  char *strList[2] = {"Off","On"};
+	char *strList[2] = { "Off","On" };
 
-  return BGGetStrIndex(name,def,file,strList,2);
+	return BGGetStrIndex(name, def, file, strList, 2);
 }
 
-BG_PATTERN BGGetPattern(char *name,BG_PATTERN def,char *file)
+BG_PATTERN BGGetPattern(char *name, BG_PATTERN def, char *file)
 {
-  char *strList[6]={"stretch","tile","center","fitwidth","fitheight","autofit"};
+	char *strList[6] = { "stretch","tile","center","fitwidth","fitheight","autofit" };
 
-  return BGGetStrIndex(name,def,file,strList,6);
+	return BGGetStrIndex(name, def, file, strList, 6);
 }
 
-BG_PATTERN BGGetType(char *name,BG_TYPE def,char *file)
+BG_PATTERN BGGetType(char *name, BG_TYPE def, char *file)
 {
-  char *strList[3]={"color","picture","wallpaper"};
+	char *strList[3] = { "color","picture","wallpaper" };
 
-  return BGGetStrIndex(name,def,file,strList,3);
+	return BGGetStrIndex(name, def, file, strList, 3);
 }
 
 void BGReadTextColorConfig(char *file)
 {
-  ANSIColor[IdFore   ] = BGGetColor("Fore"   ,ANSIColor[IdFore],file);
-  ANSIColor[IdBack   ] = BGGetColor("Back"   ,ANSIColor[IdBack],file);
-  ANSIColor[IdRed    ] = BGGetColor("Red"    ,ANSIColor[IdRed    ],file);
-  ANSIColor[IdGreen  ] = BGGetColor("Green"  ,ANSIColor[IdGreen  ],file);
-  ANSIColor[IdYellow ] = BGGetColor("Yellow" ,ANSIColor[IdYellow ],file);
-  ANSIColor[IdBlue   ] = BGGetColor("Blue"   ,ANSIColor[IdBlue   ],file);
-  ANSIColor[IdMagenta] = BGGetColor("Magenta",ANSIColor[IdMagenta],file);
-  ANSIColor[IdCyan   ] = BGGetColor("Cyan"   ,ANSIColor[IdCyan   ],file);
+	ANSIColor[IdFore] = BGGetColor("Fore", ANSIColor[IdFore], file);
+	ANSIColor[IdBack] = BGGetColor("Back", ANSIColor[IdBack], file);
+	ANSIColor[IdRed] = BGGetColor("Red", ANSIColor[IdRed], file);
+	ANSIColor[IdGreen] = BGGetColor("Green", ANSIColor[IdGreen], file);
+	ANSIColor[IdYellow] = BGGetColor("Yellow", ANSIColor[IdYellow], file);
+	ANSIColor[IdBlue] = BGGetColor("Blue", ANSIColor[IdBlue], file);
+	ANSIColor[IdMagenta] = BGGetColor("Magenta", ANSIColor[IdMagenta], file);
+	ANSIColor[IdCyan] = BGGetColor("Cyan", ANSIColor[IdCyan], file);
 
-  ANSIColor[IdFore   + 8] = BGGetColor("DarkFore"   ,ANSIColor[IdFore   + 8],file);
-  ANSIColor[IdBack   + 8] = BGGetColor("DarkBack"   ,ANSIColor[IdBack   + 8],file);
-  ANSIColor[IdRed    + 8] = BGGetColor("DarkRed"    ,ANSIColor[IdRed    + 8],file);
-  ANSIColor[IdGreen  + 8] = BGGetColor("DarkGreen"  ,ANSIColor[IdGreen  + 8],file);
-  ANSIColor[IdYellow + 8] = BGGetColor("DarkYellow" ,ANSIColor[IdYellow + 8],file);
-  ANSIColor[IdBlue   + 8] = BGGetColor("DarkBlue"   ,ANSIColor[IdBlue   + 8],file);
-  ANSIColor[IdMagenta+ 8] = BGGetColor("DarkMagenta",ANSIColor[IdMagenta+ 8],file);
-  ANSIColor[IdCyan   + 8] = BGGetColor("DarkCyan"   ,ANSIColor[IdCyan   + 8],file);
+	ANSIColor[IdFore + 8] = BGGetColor("DarkFore", ANSIColor[IdFore + 8], file);
+	ANSIColor[IdBack + 8] = BGGetColor("DarkBack", ANSIColor[IdBack + 8], file);
+	ANSIColor[IdRed + 8] = BGGetColor("DarkRed", ANSIColor[IdRed + 8], file);
+	ANSIColor[IdGreen + 8] = BGGetColor("DarkGreen", ANSIColor[IdGreen + 8], file);
+	ANSIColor[IdYellow + 8] = BGGetColor("DarkYellow", ANSIColor[IdYellow + 8], file);
+	ANSIColor[IdBlue + 8] = BGGetColor("DarkBlue", ANSIColor[IdBlue + 8], file);
+	ANSIColor[IdMagenta + 8] = BGGetColor("DarkMagenta", ANSIColor[IdMagenta + 8], file);
+	ANSIColor[IdCyan + 8] = BGGetColor("DarkCyan", ANSIColor[IdCyan + 8], file);
 
-  BGVTColor[0]      = BGGetColor("VTFore",BGVTColor[0],file);
-  BGVTColor[1]      = BGGetColor("VTBack",BGVTColor[1],file);
+	BGVTColor[0] = BGGetColor("VTFore", BGVTColor[0], file);
+	BGVTColor[1] = BGGetColor("VTBack", BGVTColor[1], file);
 
-  BGVTBlinkColor[0] = BGGetColor("VTBlinkFore",BGVTBlinkColor[0],file);
-  BGVTBlinkColor[1] = BGGetColor("VTBlinkBack",BGVTBlinkColor[1],file);
+	BGVTBlinkColor[0] = BGGetColor("VTBlinkFore", BGVTBlinkColor[0], file);
+	BGVTBlinkColor[1] = BGGetColor("VTBlinkBack", BGVTBlinkColor[1], file);
 
-  BGVTBoldColor[0]  = BGGetColor("VTBoldFore" ,BGVTBoldColor[0],file);
-  BGVTBoldColor[1]  = BGGetColor("VTBoldBack" ,BGVTBoldColor[1],file);
+	BGVTBoldColor[0] = BGGetColor("VTBoldFore", BGVTBoldColor[0], file);
+	BGVTBoldColor[1] = BGGetColor("VTBoldBack", BGVTBoldColor[1], file);
 
-  BGVTReverseColor[0]  = BGGetColor("VTReverseFore" ,BGVTReverseColor[0],file);
-  BGVTReverseColor[1]  = BGGetColor("VTReverseBack" ,BGVTReverseColor[1],file);
+	BGVTReverseColor[0] = BGGetColor("VTReverseFore", BGVTReverseColor[0], file);
+	BGVTReverseColor[1] = BGGetColor("VTReverseBack", BGVTReverseColor[1], file);
 
-  /* begin - ishizaki */
-  BGURLColor[0]     = BGGetColor("URLFore" ,BGURLColor[0],file);
-  BGURLColor[1]     = BGGetColor("URLBack" ,BGURLColor[1],file);
-  /* end - ishizaki */
+	/* begin - ishizaki */
+	BGURLColor[0] = BGGetColor("URLFore", BGURLColor[0], file);
+	BGURLColor[1] = BGGetColor("URLBack", BGURLColor[1], file);
+	/* end - ishizaki */
 }
 
 void BGReadIniFile(char *file)
 {
-  char path[MAX_PATH];
+	char path[MAX_PATH];
 
-  // Easy Setting
-  BGDest.pattern = BGGetPattern("BGPicturePattern",BGSrc1.pattern,file);
-  BGDest.color   = BGGetColor("BGPictureBaseColor",BGSrc1.color,file);
+	// Easy Setting
+	BGDest.pattern = BGGetPattern("BGPicturePattern", BGSrc1.pattern, file);
+	BGDest.color = BGGetColor("BGPictureBaseColor", BGSrc1.color, file);
 
-  GetPrivateProfileString(BG_SECTION,"BGPictureFile",BGSrc1.file,path,MAX_PATH,file);
-  RandomFile(path,BGDest.file,sizeof(BGDest.file));
+	GetPrivateProfileString(BG_SECTION, "BGPictureFile", BGSrc1.file, path, MAX_PATH, file);
+	RandomFile(path, BGDest.file, sizeof(BGDest.file));
 
-  BGSrc1.alpha   = 255 - GetPrivateProfileInt(BG_SECTION,"BGPictureTone",255 - BGSrc1.alpha,file);
+	BGSrc1.alpha = 255 - GetPrivateProfileInt(BG_SECTION, "BGPictureTone", 255 - BGSrc1.alpha, file);
 
-  if(!strcmp(BGDest.file,""))
-    BGSrc1.alpha = 255;
+	if (!strcmp(BGDest.file, ""))
+		BGSrc1.alpha = 255;
 
-  BGSrc2.alpha   = 255 - GetPrivateProfileInt(BG_SECTION,"BGFadeTone",255 - BGSrc2.alpha,file);
-  BGSrc2.color   = BGGetColor("BGFadeColor",BGSrc2.color,file);
+	BGSrc2.alpha = 255 - GetPrivateProfileInt(BG_SECTION, "BGFadeTone", 255 - BGSrc2.alpha, file);
+	BGSrc2.color = BGGetColor("BGFadeColor", BGSrc2.color, file);
 
-  BGReverseTextAlpha = GetPrivateProfileInt(BG_SECTION,"BGReverseTextTone",BGReverseTextAlpha,file);
+	BGReverseTextAlpha = GetPrivateProfileInt(BG_SECTION, "BGReverseTextTone", BGReverseTextAlpha, file);
 
-  //Src1 ÇÃì«Ç›èoÇµ
-  BGSrc1.type      = BGGetType("BGSrc1Type",BGSrc1.type,file);
-  BGSrc1.pattern   = BGGetPattern("BGSrc1Pattern",BGSrc1.pattern,file);
-  BGSrc1.antiAlias = BGGetOnOff("BGSrc1AntiAlias",BGSrc1.antiAlias,file);
-  BGSrc1.alpha     = GetPrivateProfileInt(BG_SECTION,"BGSrc1Alpha"  ,BGSrc1.alpha  ,file);
-  BGSrc1.color     = BGGetColor("BGSrc1Color",BGSrc1.color,file);
+	//Src1 „ÅÆË™≠„ÅøÂá∫„Åó
+	BGSrc1.type = BGGetType("BGSrc1Type", BGSrc1.type, file);
+	BGSrc1.pattern = BGGetPattern("BGSrc1Pattern", BGSrc1.pattern, file);
+	BGSrc1.antiAlias = BGGetOnOff("BGSrc1AntiAlias", BGSrc1.antiAlias, file);
+	BGSrc1.alpha = GetPrivateProfileInt(BG_SECTION, "BGSrc1Alpha", BGSrc1.alpha, file);
+	BGSrc1.color = BGGetColor("BGSrc1Color", BGSrc1.color, file);
 
-  GetPrivateProfileString(BG_SECTION,"BGSrc1File",BGSrc1.file,path,MAX_PATH,file);
-  RandomFile(path,BGSrc1.file,sizeof(BGSrc1.file));
+	GetPrivateProfileString(BG_SECTION, "BGSrc1File", BGSrc1.file, path, MAX_PATH, file);
+	RandomFile(path, BGSrc1.file, sizeof(BGSrc1.file));
 
-  //Src2 ÇÃì«Ç›èoÇµ
-  BGSrc2.type      = BGGetType("BGSrc2Type",BGSrc2.type,file);
-  BGSrc2.pattern   = BGGetPattern("BGSrc2Pattern",BGSrc2.pattern,file);
-  BGSrc2.antiAlias = BGGetOnOff("BGSrc2AntiAlias",BGSrc2.antiAlias,file);
-  BGSrc2.alpha     = GetPrivateProfileInt(BG_SECTION,"BGSrc2Alpha"  ,BGSrc2.alpha  ,file);
-  BGSrc2.color     = BGGetColor("BGSrc2Color",BGSrc2.color,file);
+	//Src2 „ÅÆË™≠„ÅøÂá∫„Åó
+	BGSrc2.type = BGGetType("BGSrc2Type", BGSrc2.type, file);
+	BGSrc2.pattern = BGGetPattern("BGSrc2Pattern", BGSrc2.pattern, file);
+	BGSrc2.antiAlias = BGGetOnOff("BGSrc2AntiAlias", BGSrc2.antiAlias, file);
+	BGSrc2.alpha = GetPrivateProfileInt(BG_SECTION, "BGSrc2Alpha", BGSrc2.alpha, file);
+	BGSrc2.color = BGGetColor("BGSrc2Color", BGSrc2.color, file);
 
-  GetPrivateProfileString(BG_SECTION,"BGSrc2File",BGSrc2.file,path,MAX_PATH,file);
-  RandomFile(path,BGSrc2.file,sizeof(BGSrc2.file));
+	GetPrivateProfileString(BG_SECTION, "BGSrc2File", BGSrc2.file, path, MAX_PATH, file);
+	RandomFile(path, BGSrc2.file, sizeof(BGSrc2.file));
 
-  //Dest ÇÃì«Ç›èoÇµ
-  BGDest.type      = BGGetType("BGDestType",BGDest.type,file);
-  BGDest.pattern   = BGGetPattern("BGDestPattern",BGDest.pattern,file);
-  BGDest.antiAlias = BGGetOnOff("BGDestAntiAlias",BGDest.antiAlias,file);
-  BGDest.color     = BGGetColor("BGDestColor",BGDest.color,file);
+	//Dest „ÅÆË™≠„ÅøÂá∫„Åó
+	BGDest.type = BGGetType("BGDestType", BGDest.type, file);
+	BGDest.pattern = BGGetPattern("BGDestPattern", BGDest.pattern, file);
+	BGDest.antiAlias = BGGetOnOff("BGDestAntiAlias", BGDest.antiAlias, file);
+	BGDest.color = BGGetColor("BGDestColor", BGDest.color, file);
 
-  GetPrivateProfileString(BG_SECTION, BG_DESTFILE, BGDest.file,path,MAX_PATH,file);
-  RandomFile(path,BGDest.file,sizeof(BGDest.file));
+	GetPrivateProfileString(BG_SECTION, BG_DESTFILE, BGDest.file, path, MAX_PATH, file);
+	RandomFile(path, BGDest.file, sizeof(BGDest.file));
 
-  //ÇªÇÃëºì«Ç›èoÇµ
-  BGReverseTextAlpha = GetPrivateProfileInt(BG_SECTION,"BGReverseTextAlpha",BGReverseTextAlpha,file);
-  BGReadTextColorConfig(file);
+	//„Åù„ÅÆ‰ªñË™≠„ÅøÂá∫„Åó
+	BGReverseTextAlpha = GetPrivateProfileInt(BG_SECTION, "BGReverseTextAlpha", BGReverseTextAlpha, file);
+	BGReadTextColorConfig(file);
 }
 
 void BGDestruct(void)
 {
-  if(!BGEnable)
-    return;
+	if (!BGEnable)
+		return;
 
-  DeleteBitmapDC(&hdcBGBuffer);
-  DeleteBitmapDC(&hdcBGWork);
-  DeleteBitmapDC(&hdcBG);
-  DeleteBitmapDC(&(BGDest.hdc));
-  DeleteBitmapDC(&(BGSrc1.hdc));
-  DeleteBitmapDC(&(BGSrc2.hdc));
+	DeleteBitmapDC(&hdcBGBuffer);
+	DeleteBitmapDC(&hdcBGWork);
+	DeleteBitmapDC(&hdcBG);
+	DeleteBitmapDC(&(BGDest.hdc));
+	DeleteBitmapDC(&(BGSrc1.hdc));
+	DeleteBitmapDC(&(BGSrc2.hdc));
 
-  //ÉeÉìÉ|ÉâÉäÅ[ÉtÉ@ÉCÉãçÌèú
-  DeleteFile(BGDest.fileTmp);
-  DeleteFile(BGSrc1.fileTmp);
-  DeleteFile(BGSrc2.fileTmp);
+	//„ÉÜ„É≥„Éù„É©„É™„Éº„Éï„Ç°„Ç§„É´ÂâäÈô§
+	DeleteFile(BGDest.fileTmp);
+	DeleteFile(BGSrc1.fileTmp);
+	DeleteFile(BGSrc2.fileTmp);
 }
 
 void BGInitialize(void)
 {
-  char path[MAX_PATH],config_file[MAX_PATH],tempPath[MAX_PATH];
-  char msimg32_dll[MAX_PATH],user32_dll[MAX_PATH];
+	char path[MAX_PATH], config_file[MAX_PATH], tempPath[MAX_PATH];
+	char msimg32_dll[MAX_PATH], user32_dll[MAX_PATH];
 
-  // VTColor Çì«Ç›çûÇ›
-  BGVTColor[0] = ts.VTColor[0];
-  BGVTColor[1] = ts.VTColor[1];
+	// VTColor „ÇíË™≠„ÅøËæº„Åø
+	BGVTColor[0] = ts.VTColor[0];
+	BGVTColor[1] = ts.VTColor[1];
 
-  BGVTBoldColor[0] = ts.VTBoldColor[0];
-  BGVTBoldColor[1] = ts.VTBoldColor[1];
+	BGVTBoldColor[0] = ts.VTBoldColor[0];
+	BGVTBoldColor[1] = ts.VTBoldColor[1];
 
-  BGVTBlinkColor[0] = ts.VTBlinkColor[0];
-  BGVTBlinkColor[1] = ts.VTBlinkColor[1];
+	BGVTBlinkColor[0] = ts.VTBlinkColor[0];
+	BGVTBlinkColor[1] = ts.VTBlinkColor[1];
 
-  BGVTReverseColor[0] = ts.VTReverseColor[0];
-  BGVTReverseColor[1] = ts.VTReverseColor[1];
+	BGVTReverseColor[0] = ts.VTReverseColor[0];
+	BGVTReverseColor[1] = ts.VTReverseColor[1];
 
 #if 1
-  // ÉnÉCÉpÅ[ÉäÉìÉNï`âÊÇÃïúäàÅB(2009.8.26 yutaka)
-  /* begin - ishizaki */
-  BGURLColor[0] = ts.URLColor[0];
-  BGURLColor[1] = ts.URLColor[1];
-  /* end - ishizaki */
+	// „Éè„Ç§„Éë„Éº„É™„É≥„ÇØÊèèÁîª„ÅÆÂæ©Ê¥ª„ÄÇ(2009.8.26 yutaka)
+	/* begin - ishizaki */
+	BGURLColor[0] = ts.URLColor[0];
+	BGURLColor[1] = ts.URLColor[1];
+	/* end - ishizaki */
 #else
-  // TODO: ÉnÉCÉpÅ[ÉäÉìÉNÇÃï`âÊÇ™ÉäÉAÉãÉ^ÉCÉÄÇ…çsÇÌÇÍÇ»Ç¢Ç±Ç∆Ç™Ç†ÇÈÇÃÇ≈ÅA
-  // êFëÆê´ïœçXÇÕÇ¢Ç¡ÇΩÇÒéÊÇËÇ‚ÇﬂÇÈÇ±Ç∆Ç…Ç∑ÇÈÅBè´óàÅAëŒâûÇ∑ÇÈÅB(2005.4.3 yutaka)
-  BGURLColor[0] = ts.VTColor[0];
-  BGURLColor[1] = ts.VTColor[1];
+	// TODO: „Éè„Ç§„Éë„Éº„É™„É≥„ÇØ„ÅÆÊèèÁîª„Åå„É™„Ç¢„É´„Çø„Ç§„É†„Å´Ë°å„Çè„Çå„Å™„ÅÑ„Åì„Å®„Åå„ÅÇ„Çã„ÅÆ„Åß„ÄÅ
+	// Ëâ≤Â±ûÊÄßÂ§âÊõ¥„ÅØ„ÅÑ„Å£„Åü„ÇìÂèñ„Çä„ÇÑ„ÇÅ„Çã„Åì„Å®„Å´„Åô„Çã„ÄÇÂ∞ÜÊù•„ÄÅÂØæÂøú„Åô„Çã„ÄÇ(2005.4.3 yutaka)
+	BGURLColor[0] = ts.VTColor[0];
+	BGURLColor[1] = ts.VTColor[1];
 #endif
 
-  // ANSI colorê›íËÇÃÇŸÇ§ÇóDêÊÇ≥ÇπÇÈ (2005.2.3 yutaka)
-  InitColorTable();
+	// ANSI colorË®≠ÂÆö„ÅÆ„Åª„ÅÜ„ÇíÂÑ™ÂÖà„Åï„Åõ„Çã (2005.2.3 yutaka)
+	InitColorTable();
 
-  //ÉäÉ\Å[ÉXâï˙
-  BGDestruct();
+	//„É™„ÇΩ„Éº„ÇπËß£Êîæ
+	BGDestruct();
 
-  //BG Ç™óLå¯Ç©É`ÉFÉbÉN
-  // ãÛÇÃèÍçáÇÃÇ›ÅAÉfÉBÉXÉNÇ©ÇÁì«ÇﬁÅBBGInitialize()Ç™ Tera Term ãNìÆéûà»äOÇ…Ç‡ÅA
-  // Additional settings Ç©ÇÁåƒÇ—èoÇ≥ÇÍÇÈÇ±Ç∆Ç™Ç†ÇÈÇΩÇﬂÅB
-  if (ts.EtermLookfeel.BGThemeFile[0] == '\0') {
-	  ts.EtermLookfeel.BGEnable = BGEnable = BGGetOnOff("BGEnable",FALSE,ts.SetupFName);
-  } else {
-	  BGEnable = BGGetOnOff("BGEnable",FALSE,ts.SetupFName);
-  }
+	//BG „ÅåÊúâÂäπ„Åã„ÉÅ„Çß„ÉÉ„ÇØ
+	// Á©∫„ÅÆÂ†¥Âêà„ÅÆ„Åø„ÄÅ„Éá„Ç£„Çπ„ÇØ„Åã„ÇâË™≠„ÇÄ„ÄÇBGInitialize()„Åå Tera Term Ëµ∑ÂãïÊôÇ‰ª•Â§ñ„Å´„ÇÇ„ÄÅ
+	// Additional settings „Åã„ÇâÂëº„Å≥Âá∫„Åï„Çå„Çã„Åì„Å®„Åå„ÅÇ„Çã„Åü„ÇÅ„ÄÇ
+	if (ts.EtermLookfeel.BGThemeFile[0] == '\0') {
+		ts.EtermLookfeel.BGEnable = BGEnable = BGGetOnOff("BGEnable", FALSE, ts.SetupFName);
+	}
+	else {
+		BGEnable = BGGetOnOff("BGEnable", FALSE, ts.SetupFName);
+	}
 
-	  ts.EtermLookfeel.BGUseAlphaBlendAPI = BGGetOnOff("BGUseAlphaBlendAPI",TRUE ,ts.SetupFName);
-	  ts.EtermLookfeel.BGNoFrame = BGGetOnOff("BGNoFrame"         ,FALSE,ts.SetupFName);
-	  ts.EtermLookfeel.BGFastSizeMove = BGGetOnOff("BGFastSizeMove"    ,TRUE ,ts.SetupFName);
-	  ts.EtermLookfeel.BGNoCopyBits = BGGetOnOff("BGFlickerlessMove" ,TRUE ,ts.SetupFName);
+	ts.EtermLookfeel.BGUseAlphaBlendAPI = BGGetOnOff("BGUseAlphaBlendAPI", TRUE, ts.SetupFName);
+	ts.EtermLookfeel.BGNoFrame = BGGetOnOff("BGNoFrame", FALSE, ts.SetupFName);
+	ts.EtermLookfeel.BGFastSizeMove = BGGetOnOff("BGFastSizeMove", TRUE, ts.SetupFName);
+	ts.EtermLookfeel.BGNoCopyBits = BGGetOnOff("BGFlickerlessMove", TRUE, ts.SetupFName);
 
-	  GetPrivateProfileString(BG_SECTION,"BGSPIPath","plugin",BGSPIPath,MAX_PATH,ts.SetupFName);
-	  strncpy_s(ts.EtermLookfeel.BGSPIPath, sizeof(ts.EtermLookfeel.BGSPIPath), BGSPIPath, _TRUNCATE);
+	GetPrivateProfileString(BG_SECTION, "BGSPIPath", "plugin", BGSPIPath, MAX_PATH, ts.SetupFName);
+	strncpy_s(ts.EtermLookfeel.BGSPIPath, sizeof(ts.EtermLookfeel.BGSPIPath), BGSPIPath, _TRUNCATE);
 
-  if (ts.EtermLookfeel.BGThemeFile[0] == '\0') {
-	  //ÉRÉìÉtÉBÉOÉtÉ@ÉCÉãÇÃåàíË
-	  GetPrivateProfileString(BG_SECTION,"BGThemeFile","",path,MAX_PATH,ts.SetupFName);
-	  strncpy_s(ts.EtermLookfeel.BGThemeFile, sizeof(ts.EtermLookfeel.BGThemeFile), path, _TRUNCATE);
+	if (ts.EtermLookfeel.BGThemeFile[0] == '\0') {
+		//„Ç≥„É≥„Éï„Ç£„Ç∞„Éï„Ç°„Ç§„É´„ÅÆÊ±∫ÂÆö
+		GetPrivateProfileString(BG_SECTION, "BGThemeFile", "", path, MAX_PATH, ts.SetupFName);
+		strncpy_s(ts.EtermLookfeel.BGThemeFile, sizeof(ts.EtermLookfeel.BGThemeFile), path, _TRUNCATE);
 
-	  // îwåiâÊëúÇÃì«Ç›çûÇ›
-	  _snprintf_s(path, sizeof(path), _TRUNCATE, "%s\\%s", ts.HomeDir, BG_THEME_IMAGEFILE);
-	  GetPrivateProfileString(BG_SECTION, BG_DESTFILE, "", ts.BGImageFilePath, sizeof(ts.BGImageFilePath), path);
+		// ËÉåÊôØÁîªÂÉè„ÅÆË™≠„ÅøËæº„Åø
+		_snprintf_s(path, sizeof(path), _TRUNCATE, "%s\\%s", ts.HomeDir, BG_THEME_IMAGEFILE);
+		GetPrivateProfileString(BG_SECTION, BG_DESTFILE, "", ts.BGImageFilePath, sizeof(ts.BGImageFilePath), path);
 
-	  // îwåiâÊëúÇÃñæÇÈÇ≥ÇÃì«Ç›çûÇ›ÅB
-	  // BGSrc1Alpha Ç∆ BGSrc2AlphaÇÕìØílÇ∆ÇµÇƒàµÇ§ÅB
-	  ts.BGImgBrightness = GetPrivateProfileInt(BG_SECTION, BG_THEME_IMAGE_BRIGHTNESS1, BG_THEME_IMAGE_BRIGHTNESS_DEFAULT, path);
-  }
+		// ËÉåÊôØÁîªÂÉè„ÅÆÊòé„Çã„Åï„ÅÆË™≠„ÅøËæº„Åø„ÄÇ
+		// BGSrc1Alpha „Å® BGSrc2Alpha„ÅØÂêåÂÄ§„Å®„Åó„Å¶Êâ±„ÅÜ„ÄÇ
+		ts.BGImgBrightness = GetPrivateProfileInt(BG_SECTION, BG_THEME_IMAGE_BRIGHTNESS1, BG_THEME_IMAGE_BRIGHTNESS_DEFAULT, path);
+	}
 
-  if(!BGEnable)
-    return;
+	if (!BGEnable)
+		return;
 
-  //óêêîèâä˙âª
-  // add cast (2006.2.18 yutaka)
-  srand((unsigned int)time(NULL));
+	//‰π±Êï∞ÂàùÊúüÂåñ
+	// add cast (2006.2.18 yutaka)
+	srand((unsigned int)time(NULL));
 
-  //BGÉVÉXÉeÉÄê›íËì«Ç›èoÇµ
-  BGUseAlphaBlendAPI = ts.EtermLookfeel.BGUseAlphaBlendAPI;
-  BGNoFrame = ts.EtermLookfeel.BGNoFrame;
-  BGFastSizeMove = ts.EtermLookfeel.BGFastSizeMove;
-  BGNoCopyBits = ts.EtermLookfeel.BGNoCopyBits;
+	//BG„Ç∑„Çπ„ÉÜ„É†Ë®≠ÂÆöË™≠„ÅøÂá∫„Åó
+	BGUseAlphaBlendAPI = ts.EtermLookfeel.BGUseAlphaBlendAPI;
+	BGNoFrame = ts.EtermLookfeel.BGNoFrame;
+	BGFastSizeMove = ts.EtermLookfeel.BGFastSizeMove;
+	BGNoCopyBits = ts.EtermLookfeel.BGNoCopyBits;
 
 #if 0
-  GetPrivateProfileString(BG_SECTION,"BGSPIPath","plugin",BGSPIPath,MAX_PATH,ts.SetupFName);
-  strncpy_s(ts.EtermLookfeel.BGSPIPath, sizeof(ts.EtermLookfeel.BGSPIPath), BGSPIPath, _TRUNCATE);
+	GetPrivateProfileString(BG_SECTION, "BGSPIPath", "plugin", BGSPIPath, MAX_PATH, ts.SetupFName);
+	strncpy_s(ts.EtermLookfeel.BGSPIPath, sizeof(ts.EtermLookfeel.BGSPIPath), BGSPIPath, _TRUNCATE);
 #endif
 
-  //ÉeÉìÉ|ÉâÉäÅ[ÉtÉ@ÉCÉãñºÇê∂ê¨
-  GetTempPath(MAX_PATH,tempPath);
-  GetTempFileName(tempPath,"ttAK",0,BGDest.fileTmp);
-  GetTempFileName(tempPath,"ttAK",0,BGSrc1.fileTmp);
-  GetTempFileName(tempPath,"ttAK",0,BGSrc2.fileTmp);
+	//„ÉÜ„É≥„Éù„É©„É™„Éº„Éï„Ç°„Ç§„É´Âêç„ÇíÁîüÊàê
+	GetTempPath(MAX_PATH, tempPath);
+	GetTempFileName(tempPath, "ttAK", 0, BGDest.fileTmp);
+	GetTempFileName(tempPath, "ttAK", 0, BGSrc1.fileTmp);
+	GetTempFileName(tempPath, "ttAK", 0, BGSrc2.fileTmp);
 
-  //ÉfÉtÉHÉãÉgíl
-  BGDest.type      = BG_PICTURE;
-  BGDest.pattern   = BG_STRETCH;
-  BGDest.color     = RGB(0,0,0);
-  BGDest.antiAlias = TRUE;
-  strncpy_s(BGDest.file, sizeof(BGDest.file),"", _TRUNCATE);
+	//„Éá„Éï„Ç©„É´„ÉàÂÄ§
+	BGDest.type = BG_PICTURE;
+	BGDest.pattern = BG_STRETCH;
+	BGDest.color = RGB(0, 0, 0);
+	BGDest.antiAlias = TRUE;
+	strncpy_s(BGDest.file, sizeof(BGDest.file), "", _TRUNCATE);
 
-  BGSrc1.type      = BG_WALLPAPER;
-  BGSrc1.pattern   = BG_STRETCH;
-  BGSrc1.color     = RGB(255,255,255);
-  BGSrc1.antiAlias = TRUE;
-  BGSrc1.alpha     = 255;
-  strncpy_s(BGSrc1.file, sizeof(BGSrc1.file),"", _TRUNCATE);
+	BGSrc1.type = BG_WALLPAPER;
+	BGSrc1.pattern = BG_STRETCH;
+	BGSrc1.color = RGB(255, 255, 255);
+	BGSrc1.antiAlias = TRUE;
+	BGSrc1.alpha = 255;
+	strncpy_s(BGSrc1.file, sizeof(BGSrc1.file), "", _TRUNCATE);
 
-  BGSrc2.type      = BG_COLOR;
-  BGSrc2.pattern   = BG_STRETCH;
-  BGSrc2.color     = RGB(0,0,0);
-  BGSrc2.antiAlias = TRUE;
-  BGSrc2.alpha     = 128;
-  strncpy_s(BGSrc2.file, sizeof(BGSrc2.file),"", _TRUNCATE);
+	BGSrc2.type = BG_COLOR;
+	BGSrc2.pattern = BG_STRETCH;
+	BGSrc2.color = RGB(0, 0, 0);
+	BGSrc2.antiAlias = TRUE;
+	BGSrc2.alpha = 128;
+	strncpy_s(BGSrc2.file, sizeof(BGSrc2.file), "", _TRUNCATE);
 
-  BGReverseTextAlpha = 255;
+	BGReverseTextAlpha = 255;
 
-  //ê›íËÇÃì«Ç›èoÇµ
-  BGReadIniFile(ts.SetupFName);
+	//Ë®≠ÂÆö„ÅÆË™≠„ÅøÂá∫„Åó
+	BGReadIniFile(ts.SetupFName);
 
-  //ÉRÉìÉtÉBÉOÉtÉ@ÉCÉãÇÃåàíË
-  GetPrivateProfileString(BG_SECTION,"BGThemeFile","",path,MAX_PATH,ts.SetupFName);
-  RandomFile(path,config_file,sizeof(config_file));
+	//„Ç≥„É≥„Éï„Ç£„Ç∞„Éï„Ç°„Ç§„É´„ÅÆÊ±∫ÂÆö
+	GetPrivateProfileString(BG_SECTION, "BGThemeFile", "", path, MAX_PATH, ts.SetupFName);
+	RandomFile(path, config_file, sizeof(config_file));
 
-  //ê›íËÇÃÉIÅ[ÉoÅ[ÉâÉCÉh
-  if(strcmp(config_file,""))
-  {
-    char dir[MAX_PATH],prevDir[MAX_PATH];
+	//Ë®≠ÂÆö„ÅÆ„Ç™„Éº„Éê„Éº„É©„Ç§„Éâ
+	if (strcmp(config_file, ""))
+	{
+		char dir[MAX_PATH], prevDir[MAX_PATH];
 
-    //INIÉtÉ@ÉCÉãÇÃÇ†ÇÈÉfÉBÉåÉNÉgÉäÇ…àÍéûìIÇ…à⁄ìÆ
-    GetCurrentDirectory(MAX_PATH,prevDir);
+		//INI„Éï„Ç°„Ç§„É´„ÅÆ„ÅÇ„Çã„Éá„Ç£„É¨„ÇØ„Éà„É™„Å´‰∏ÄÊôÇÁöÑ„Å´ÁßªÂãï
+		GetCurrentDirectory(MAX_PATH, prevDir);
 
-    ExtractDirName(config_file,dir);
-    SetCurrentDirectory(dir);
+		ExtractDirName(config_file, dir);
+		SetCurrentDirectory(dir);
 
-    BGReadIniFile(config_file);
+		BGReadIniFile(config_file);
 
-    SetCurrentDirectory(prevDir);
-  }
+		SetCurrentDirectory(prevDir);
+	}
 
-  //SPI ÇÃÉpÉXÇêÆå`
-  AppendSlash(BGSPIPath,sizeof(BGSPIPath));
-  strncat_s(BGSPIPath,sizeof(BGSPIPath),"*",_TRUNCATE);
+	//SPI „ÅÆ„Éë„Çπ„ÇíÊï¥ÂΩ¢
+	AppendSlash(BGSPIPath, sizeof(BGSPIPath));
+	strncat_s(BGSPIPath, sizeof(BGSPIPath), "*", _TRUNCATE);
 
-  //ï«éÜ or îwåiÇÉvÉäÉçÅ[Éh
-  BGPreloadSrc(&BGDest);
-  BGPreloadSrc(&BGSrc1);
-  BGPreloadSrc(&BGSrc2);
+	//Â£ÅÁ¥ô or ËÉåÊôØ„Çí„Éó„É™„É≠„Éº„Éâ
+	BGPreloadSrc(&BGDest);
+	BGPreloadSrc(&BGSrc1);
+	BGPreloadSrc(&BGSrc2);
 
-  // AlphaBlend ÇÃÉAÉhÉåÉXÇì«Ç›çûÇ›
-  if(BGUseAlphaBlendAPI) {
-    GetSystemDirectory(msimg32_dll, sizeof(msimg32_dll));
-    strncat_s(msimg32_dll, sizeof(msimg32_dll), "\\msimg32.dll", _TRUNCATE);
-    (FARPROC)BGAlphaBlend = GetProcAddressWithDllName(msimg32_dll,"AlphaBlend");
-  }
-  else {
-    BGAlphaBlend = NULL;
-  }
+	// AlphaBlend „ÅÆ„Ç¢„Éâ„É¨„Çπ„ÇíË™≠„ÅøËæº„Åø
+	if (BGUseAlphaBlendAPI) {
+		GetSystemDirectory(msimg32_dll, sizeof(msimg32_dll));
+		strncat_s(msimg32_dll, sizeof(msimg32_dll), "\\msimg32.dll", _TRUNCATE);
+		(FARPROC)BGAlphaBlend = GetProcAddressWithDllName(msimg32_dll, "AlphaBlend");
+	}
+	else {
+		BGAlphaBlend = NULL;
+	}
 
-  if(!BGAlphaBlend)
-    BGAlphaBlend = AlphaBlendWithoutAPI;
+	if (!BGAlphaBlend)
+		BGAlphaBlend = AlphaBlendWithoutAPI;
 
-  //EnumDisplayMonitors ÇíTÇ∑
-  GetSystemDirectory(user32_dll, sizeof(user32_dll));
-  strncat_s(user32_dll, sizeof(user32_dll), "\\user32.dll", _TRUNCATE);
-  (FARPROC)BGEnumDisplayMonitors = GetProcAddressWithDllName(user32_dll,"EnumDisplayMonitors");
+	//EnumDisplayMonitors „ÇíÊé¢„Åô
+	GetSystemDirectory(user32_dll, sizeof(user32_dll));
+	strncat_s(user32_dll, sizeof(user32_dll), "\\user32.dll", _TRUNCATE);
+	(FARPROC)BGEnumDisplayMonitors = GetProcAddressWithDllName(user32_dll, "EnumDisplayMonitors");
 }
 
 void BGExchangeColor() {
 	COLORREF ColorRef;
-      if (ts.ColorFlag & CF_REVERSECOLOR) {
-        ColorRef = BGVTColor[0];
-        BGVTColor[0] = BGVTReverseColor[0];
-        BGVTReverseColor[0] = ColorRef;
-        ColorRef = BGVTColor[1];
-        BGVTColor[1] = BGVTReverseColor[1];
-        BGVTReverseColor[1] = ColorRef;
-      }
-      else {
-        ColorRef = BGVTColor[0];
-        BGVTColor[0] = BGVTColor[1];
-        BGVTColor[1] = ColorRef;
-      }
+	if (ts.ColorFlag & CF_REVERSECOLOR) {
+		ColorRef = BGVTColor[0];
+		BGVTColor[0] = BGVTReverseColor[0];
+		BGVTReverseColor[0] = ColorRef;
+		ColorRef = BGVTColor[1];
+		BGVTColor[1] = BGVTReverseColor[1];
+		BGVTReverseColor[1] = ColorRef;
+	}
+	else {
+		ColorRef = BGVTColor[0];
+		BGVTColor[0] = BGVTColor[1];
+		BGVTColor[1] = ColorRef;
+	}
 
-      ColorRef = BGVTBoldColor[0];
-      BGVTBoldColor[0] = BGVTBoldColor[1];
-      BGVTBoldColor[1] = ColorRef;
+	ColorRef = BGVTBoldColor[0];
+	BGVTBoldColor[0] = BGVTBoldColor[1];
+	BGVTBoldColor[1] = ColorRef;
 
-      ColorRef = BGVTBlinkColor[0];
-      BGVTBlinkColor[0] = BGVTBlinkColor[1];
-      BGVTBlinkColor[1] = ColorRef;
+	ColorRef = BGVTBlinkColor[0];
+	BGVTBlinkColor[0] = BGVTBlinkColor[1];
+	BGVTBlinkColor[1] = ColorRef;
 
-      ColorRef = BGURLColor[0];
-      BGURLColor[0] = BGURLColor[1];
-      BGURLColor[1] = ColorRef;
+	ColorRef = BGURLColor[0];
+	BGURLColor[0] = BGURLColor[1];
+	BGURLColor[1] = ColorRef;
 
-//    BGReverseText = !BGReverseText;
+	//    BGReverseText = !BGReverseText;
 }
 
-void BGFillRect(HDC hdc,RECT *R,HBRUSH brush)
+void BGFillRect(HDC hdc, RECT *R, HBRUSH brush)
 {
-  if(!BGEnable)
-    FillRect(hdc,R,brush);
-  else
-    BitBlt(VTDC,R->left,R->top,R->right - R->left,R->bottom - R->top,hdcBG,R->left,R->top,SRCCOPY);
+	if (!BGEnable)
+		FillRect(hdc, R, brush);
+	else
+		BitBlt(VTDC, R->left, R->top, R->right - R->left, R->bottom - R->top, hdcBG, R->left, R->top, SRCCOPY);
 }
 
 void BGScrollWindow(HWND hwnd, int xa, int ya, RECT *Rect, RECT *ClipRect)
@@ -1683,12 +1694,12 @@ void BGScrollWindow(HWND hwnd, int xa, int ya, RECT *Rect, RECT *ClipRect)
 		InvalidateRect(HVTWin, ClipRect, FALSE);
 	}
 	else if (IsZoomed(hwnd)) {
-		// ÉEÉBÉìÉhÉEç≈ëÂâªéûÇÃï∂éöåáÇØëŒçÙ
+		// „Ç¶„Ç£„É≥„Éâ„Ç¶ÊúÄÂ§ßÂåñÊôÇ„ÅÆÊñáÂ≠óÊ¨†„ÅëÂØæÁ≠ñ
 		switch (ts.MaximizedBugTweak) {
-		case 1: // type 1: ScrollWindow ÇégÇÌÇ∏Ç…Ç∑Ç◊ÇƒèëÇ´íºÇ∑
+		case 1: // type 1: ScrollWindow „Çí‰Ωø„Çè„Åö„Å´„Åô„Åπ„Å¶Êõ∏„ÅçÁõ¥„Åô
 			InvalidateRect(HVTWin, ClipRect, FALSE);
 			break;
-		case 2: // type 2: ÉXÉNÉçÅ[ÉãóÃàÊÇ™ëSëÃ(NULL)ÇÃéûÇÕåÑä‘ïîï™ÇèúÇ¢ÇΩóÃàÊÇ…ç∑Çµë÷Ç¶ÇÈ
+		case 2: // type 2: „Çπ„ÇØ„É≠„Éº„É´È†òÂüü„ÅåÂÖ®‰Ωì(NULL)„ÅÆÊôÇ„ÅØÈöôÈñìÈÉ®ÂàÜ„ÇíÈô§„ÅÑ„ÅüÈ†òÂüü„Å´Â∑Æ„ÅóÊõø„Åà„Çã
 			if (Rect == NULL) {
 				GetClientRect(hwnd, &r);
 				r.bottom -= r.bottom % ts.TerminalHeight;
@@ -1707,228 +1718,229 @@ void BGScrollWindow(HWND hwnd, int xa, int ya, RECT *Rect, RECT *ClipRect)
 
 void BGOnEnterSizeMove(void)
 {
-  int  r,g,b;
+	int  r, g, b;
 
-  if(!BGEnable || !BGFastSizeMove)
-    return;
+	if (!BGEnable || !BGFastSizeMove)
+		return;
 
-  BGInSizeMove = TRUE;
+	BGInSizeMove = TRUE;
 
-  //îwåiêFê∂ê¨
-  r = GetRValue(BGDest.color);
-  g = GetGValue(BGDest.color);
-  b = GetBValue(BGDest.color);
+	//ËÉåÊôØËâ≤ÁîüÊàê
+	r = GetRValue(BGDest.color);
+	g = GetGValue(BGDest.color);
+	b = GetBValue(BGDest.color);
 
-  r = (r * (255 - BGSrc1.alpha) + GetRValue(BGSrc1.color) * BGSrc1.alpha) >> 8;
-  g = (g * (255 - BGSrc1.alpha) + GetGValue(BGSrc1.color) * BGSrc1.alpha) >> 8;
-  b = (b * (255 - BGSrc1.alpha) + GetBValue(BGSrc1.color) * BGSrc1.alpha) >> 8;
+	r = (r * (255 - BGSrc1.alpha) + GetRValue(BGSrc1.color) * BGSrc1.alpha) >> 8;
+	g = (g * (255 - BGSrc1.alpha) + GetGValue(BGSrc1.color) * BGSrc1.alpha) >> 8;
+	b = (b * (255 - BGSrc1.alpha) + GetBValue(BGSrc1.color) * BGSrc1.alpha) >> 8;
 
-  r = (r * (255 - BGSrc2.alpha) + GetRValue(BGSrc2.color) * BGSrc2.alpha) >> 8;
-  g = (g * (255 - BGSrc2.alpha) + GetGValue(BGSrc2.color) * BGSrc2.alpha) >> 8;
-  b = (b * (255 - BGSrc2.alpha) + GetBValue(BGSrc2.color) * BGSrc2.alpha) >> 8;
+	r = (r * (255 - BGSrc2.alpha) + GetRValue(BGSrc2.color) * BGSrc2.alpha) >> 8;
+	g = (g * (255 - BGSrc2.alpha) + GetGValue(BGSrc2.color) * BGSrc2.alpha) >> 8;
+	b = (b * (255 - BGSrc2.alpha) + GetBValue(BGSrc2.color) * BGSrc2.alpha) >> 8;
 
-  BGBrushInSizeMove = CreateSolidBrush(RGB(r,g,b));
+	BGBrushInSizeMove = CreateSolidBrush(RGB(r, g, b));
 }
 
 void BGOnExitSizeMove(void)
 {
-  if(!BGEnable || !BGFastSizeMove)
-    return;
+	if (!BGEnable || !BGFastSizeMove)
+		return;
 
-  BGInSizeMove = FALSE;
+	BGInSizeMove = FALSE;
 
-  BGSetupPrimary(TRUE);
-  InvalidateRect(HVTWin,NULL,FALSE);
+	BGSetupPrimary(TRUE);
+	InvalidateRect(HVTWin, NULL, FALSE);
 
-  //ÉuÉâÉVÇçÌèú
-  if(BGBrushInSizeMove)
-  {
-    DeleteObject(BGBrushInSizeMove);
-    BGBrushInSizeMove = NULL;
-  }
+	//„Éñ„É©„Ç∑„ÇíÂâäÈô§
+	if (BGBrushInSizeMove)
+	{
+		DeleteObject(BGBrushInSizeMove);
+		BGBrushInSizeMove = NULL;
+	}
 }
 
 void BGOnSettingChange(void)
 {
-  if(!BGEnable)
-    return;
+	if (!BGEnable)
+		return;
 
-  CRTWidth  = GetSystemMetrics(SM_CXSCREEN);
-  CRTHeight = GetSystemMetrics(SM_CYSCREEN);
+	CRTWidth = GetSystemMetrics(SM_CXSCREEN);
+	CRTHeight = GetSystemMetrics(SM_CYSCREEN);
 
-  //ï«éÜ or îwåiÇÉvÉäÉçÅ[Éh
-  BGPreloadSrc(&BGDest);
-  BGPreloadSrc(&BGSrc1);
-  BGPreloadSrc(&BGSrc2);
+	//Â£ÅÁ¥ô or ËÉåÊôØ„Çí„Éó„É™„É≠„Éº„Éâ
+	BGPreloadSrc(&BGDest);
+	BGPreloadSrc(&BGSrc1);
+	BGPreloadSrc(&BGSrc2);
 
-  BGSetupPrimary(TRUE);
-  InvalidateRect(HVTWin, NULL, FALSE);
+	BGSetupPrimary(TRUE);
+	InvalidateRect(HVTWin, NULL, FALSE);
 }
 
 //-->
 #endif  // ALPHABLEND_TYPE2
 
 void DispApplyANSIColor() {
-  int i;
+	int i;
 
-  for (i = IdBack ; i <= IdFore+8 ; i++)
-    ANSIColor[i] = ts.ANSIColor[i];
+	for (i = IdBack; i <= IdFore + 8; i++)
+		ANSIColor[i] = ts.ANSIColor[i];
 
-  if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
+	if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
 #ifdef ALPHABLEND_TYPE2
-    ANSIColor[IdBack ] = BGVTColor[1]; // use background color for "Black"
-    ANSIColor[IdFore ] = BGVTColor[0]; // use text color for "white"
+		ANSIColor[IdBack] = BGVTColor[1]; // use background color for "Black"
+		ANSIColor[IdFore] = BGVTColor[0]; // use text color for "white"
 #else
-    ANSIColor[IdBack ] = ts.VTColor[1]; // use background color for "Black"
-    ANSIColor[IdFore ] = ts.VTColor[0]; // use text color for "white"
+		ANSIColor[IdBack] = ts.VTColor[1]; // use background color for "Black"
+		ANSIColor[IdFore] = ts.VTColor[0]; // use text color for "white"
 #endif
-  }
+	}
 }
 
 void InitColorTable()
 {
-  int i;
+	int i;
 
-  DispApplyANSIColor();
+	DispApplyANSIColor();
 
-  for (i=16; i<=255; i++) {
-    ANSIColor[i] = RGB(DefaultColorTable[i][0], DefaultColorTable[i][1], DefaultColorTable[i][2]);
-  }
+	for (i = 16; i <= 255; i++) {
+		ANSIColor[i] = RGB(DefaultColorTable[i][0], DefaultColorTable[i][1], DefaultColorTable[i][2]);
+	}
 }
 
 void DispSetNearestColors(int start, int end, HDC DispCtx) {
-  HDC TmpDC;
-  int i;
+	HDC TmpDC;
+	int i;
 
-  if (DispCtx) {
-	TmpDC = DispCtx;
-  }
-  else {
-	TmpDC = GetDC(NULL);
-  }
+	if (DispCtx) {
+		TmpDC = DispCtx;
+	}
+	else {
+		TmpDC = GetDC(NULL);
+	}
 
-  for (i = start ; i <= end; i++)
-    ANSIColor[i] = GetNearestColor(TmpDC, ANSIColor[i]);
+	for (i = start; i <= end; i++)
+		ANSIColor[i] = GetNearestColor(TmpDC, ANSIColor[i]);
 
-  if (!DispCtx) {
-	ReleaseDC(NULL, TmpDC);
-  }
+	if (!DispCtx) {
+		ReleaseDC(NULL, TmpDC);
+	}
 }
 
 void InitDisp()
 {
-  HDC TmpDC;
-  BOOL bMultiDisplaySupport = FALSE;
+	HDC TmpDC;
+	BOOL bMultiDisplaySupport = FALSE;
 
-  TmpDC = GetDC(NULL);
+	TmpDC = GetDC(NULL);
 
 #ifdef ALPHABLEND_TYPE2
-  CRTWidth  = GetSystemMetrics(SM_CXSCREEN);
-  CRTHeight = GetSystemMetrics(SM_CYSCREEN);
+	CRTWidth = GetSystemMetrics(SM_CXSCREEN);
+	CRTHeight = GetSystemMetrics(SM_CYSCREEN);
 
-  BGInitialize();
+	BGInitialize();
 #else
-  InitColorTable();
+	InitColorTable();
 #endif  // ALPHABLEND_TYPE2
 
-  DispSetNearestColors(IdBack, 255, TmpDC);
+	DispSetNearestColors(IdBack, 255, TmpDC);
 
-  /* background paintbrush */
-  Background = CreateSolidBrush(ts.VTColor[1]);
-  /* CRT width & height */
-  if (HasMultiMonitorSupport()) {
-    bMultiDisplaySupport = TRUE;
-  }
-  if( bMultiDisplaySupport ) {
-	  VirtualScreen.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
-	  VirtualScreen.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
-	  VirtualScreen.right = VirtualScreen.left +  GetSystemMetrics(SM_CXVIRTUALSCREEN);
-	  VirtualScreen.bottom = VirtualScreen.top + GetSystemMetrics(SM_CYVIRTUALSCREEN);
-  } else {
-	  VirtualScreen.left = 0;
-	  VirtualScreen.top = 0;
-	  VirtualScreen.right = GetDeviceCaps(TmpDC,HORZRES);
-	  VirtualScreen.bottom = GetDeviceCaps(TmpDC,VERTRES);
-  }
+	/* background paintbrush */
+	Background = CreateSolidBrush(ts.VTColor[1]);
+	/* CRT width & height */
+	if (HasMultiMonitorSupport()) {
+		bMultiDisplaySupport = TRUE;
+	}
+	if (bMultiDisplaySupport) {
+		VirtualScreen.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
+		VirtualScreen.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
+		VirtualScreen.right = VirtualScreen.left + GetSystemMetrics(SM_CXVIRTUALSCREEN);
+		VirtualScreen.bottom = VirtualScreen.top + GetSystemMetrics(SM_CYVIRTUALSCREEN);
+	}
+	else {
+		VirtualScreen.left = 0;
+		VirtualScreen.top = 0;
+		VirtualScreen.right = GetDeviceCaps(TmpDC, HORZRES);
+		VirtualScreen.bottom = GetDeviceCaps(TmpDC, VERTRES);
+	}
 
-  ReleaseDC(NULL, TmpDC);
+	ReleaseDC(NULL, TmpDC);
 
-  if ( (ts.VTPos.x > VirtualScreen.right) || (ts.VTPos.y > VirtualScreen.bottom) )
-  {
-    ts.VTPos.x = CW_USEDEFAULT;
-    ts.VTPos.y = CW_USEDEFAULT;
-  }
-  else if ( (ts.VTPos.x < VirtualScreen.left-20) || (ts.VTPos.y < VirtualScreen.top-20) )
-  {
-    ts.VTPos.x = CW_USEDEFAULT;
-    ts.VTPos.y = CW_USEDEFAULT;
-  }
-  else {
-    if ( ts.VTPos.x < VirtualScreen.left ) ts.VTPos.x = VirtualScreen.left;
-    if ( ts.VTPos.y < VirtualScreen.top ) ts.VTPos.y = VirtualScreen.top;
-  }
+	if ((ts.VTPos.x > VirtualScreen.right) || (ts.VTPos.y > VirtualScreen.bottom))
+	{
+		ts.VTPos.x = CW_USEDEFAULT;
+		ts.VTPos.y = CW_USEDEFAULT;
+	}
+	else if ((ts.VTPos.x < VirtualScreen.left - 20) || (ts.VTPos.y < VirtualScreen.top - 20))
+	{
+		ts.VTPos.x = CW_USEDEFAULT;
+		ts.VTPos.y = CW_USEDEFAULT;
+	}
+	else {
+		if (ts.VTPos.x < VirtualScreen.left) ts.VTPos.x = VirtualScreen.left;
+		if (ts.VTPos.y < VirtualScreen.top) ts.VTPos.y = VirtualScreen.top;
+	}
 
-  if ( (ts.TEKPos.x >  VirtualScreen.right) || (ts.TEKPos.y > VirtualScreen.bottom) )
-  {
-    ts.TEKPos.x = CW_USEDEFAULT;
-    ts.TEKPos.y = CW_USEDEFAULT;
-  }
-  else if ( (ts.TEKPos.x < VirtualScreen.left-20) || (ts.TEKPos.y < VirtualScreen.top-20) )
-  {
-    ts.TEKPos.x = CW_USEDEFAULT;
-    ts.TEKPos.y = CW_USEDEFAULT;
-  }
-  else {
-    if ( ts.TEKPos.x < VirtualScreen.left ) ts.TEKPos.x = VirtualScreen.left;
-    if ( ts.TEKPos.y < VirtualScreen.top ) ts.TEKPos.y = VirtualScreen.top;
-  }
+	if ((ts.TEKPos.x > VirtualScreen.right) || (ts.TEKPos.y > VirtualScreen.bottom))
+	{
+		ts.TEKPos.x = CW_USEDEFAULT;
+		ts.TEKPos.y = CW_USEDEFAULT;
+	}
+	else if ((ts.TEKPos.x < VirtualScreen.left - 20) || (ts.TEKPos.y < VirtualScreen.top - 20))
+	{
+		ts.TEKPos.x = CW_USEDEFAULT;
+		ts.TEKPos.y = CW_USEDEFAULT;
+	}
+	else {
+		if (ts.TEKPos.x < VirtualScreen.left) ts.TEKPos.x = VirtualScreen.left;
+		if (ts.TEKPos.y < VirtualScreen.top) ts.TEKPos.y = VirtualScreen.top;
+	}
 }
 
 void EndDisp()
 {
-  int i, j;
+	int i, j;
 
-  if (VTDC!=NULL) DispReleaseDC();
+	if (VTDC != NULL) DispReleaseDC();
 
-  /* Delete fonts */
-  for (i = 0 ; i <= AttrFontMask; i++)
-  {
-    for (j = i+1 ; j <= AttrFontMask ; j++)
-      if (VTFont[j]==VTFont[i])
-        VTFont[j] = 0;
-    if (VTFont[i]!=0) DeleteObject(VTFont[i]);
-  }
+	/* Delete fonts */
+	for (i = 0; i <= AttrFontMask; i++)
+	{
+		for (j = i + 1; j <= AttrFontMask; j++)
+			if (VTFont[j] == VTFont[i])
+				VTFont[j] = 0;
+		if (VTFont[i] != 0) DeleteObject(VTFont[i]);
+	}
 
-  if (Background!=0)
-  {
-	DeleteObject(Background);
-	Background = 0;
-  }
+	if (Background != 0)
+	{
+		DeleteObject(Background);
+		Background = 0;
+	}
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-  BGDestruct();
-//-->
+	//<!--by AKASI
+	BGDestruct();
+	//-->
 #endif  // ALPHABLEND_TYPE2
 
 }
 
 void DispReset()
 {
-  /* Cursor */
-  CursorX = 0;
-  CursorY = 0;
+	/* Cursor */
+	CursorX = 0;
+	CursorY = 0;
 
-  /* Scroll status */
-  ScrollCount = 0;
-  dScroll = 0;
+	/* Scroll status */
+	ScrollCount = 0;
+	dScroll = 0;
 
-  if (IsCaretOn()) CaretOn();
-  DispEnableCaret(TRUE); // enable caret
+	if (IsCaretOn()) CaretOn();
+	DispEnableCaret(TRUE); // enable caret
 }
 
 void DispConvWinToScreen
-  (int Xw, int Yw, int *Xs, int *Ys, PBOOL Right)
+(int Xw, int Yw, int *Xs, int *Ys, PBOOL Right)
 // Converts window coordinate to screen cordinate
 //   Xs: horizontal position in window coordinate (pixels)
 //   Ys: vertical
@@ -1937,129 +1949,129 @@ void DispConvWinToScreen
 //   Right: TRUE if the (Xs,Ys) is on the right half of
 //			 a character cell.
 {
-  if (Xs!=NULL)
-	*Xs = Xw / FontWidth + WinOrgX;
-  *Ys = Yw / FontHeight + WinOrgY;
-  if ((Xs!=NULL) && (Right!=NULL))
-    *Right = (Xw - (*Xs-WinOrgX)*FontWidth) >= FontWidth/2;
+	if (Xs != NULL)
+		*Xs = Xw / FontWidth + WinOrgX;
+	*Ys = Yw / FontHeight + WinOrgY;
+	if ((Xs != NULL) && (Right != NULL))
+		*Right = (Xw - (*Xs - WinOrgX)*FontWidth) >= FontWidth / 2;
 }
 
 void DispConvScreenToWin
-  (int Xs, int Ys, int *Xw, int *Yw)
+(int Xs, int Ys, int *Xw, int *Yw)
 // Converts screen coordinate to window cordinate
 //   Xs: horizontal position in screen coordinate (characters)
 //   Ys: vertical
 //  Output
 //      Xw, Yw: window coordinate
 {
-  if (Xw!=NULL)
-       *Xw = (Xs - WinOrgX) * FontWidth;
-  if (Yw!=NULL)
-       *Yw = (Ys - WinOrgY) * FontHeight;
+	if (Xw != NULL)
+		*Xw = (Xs - WinOrgX) * FontWidth;
+	if (Yw != NULL)
+		*Yw = (Ys - WinOrgY) * FontHeight;
 }
 
 void SetLogFont()
 {
-  memset(&VTlf, 0, sizeof(LOGFONT));
-  VTlf.lfWeight = FW_NORMAL;
-  VTlf.lfItalic = 0;
-  VTlf.lfUnderline = 0;
-  VTlf.lfStrikeOut = 0;
-  VTlf.lfWidth = ts.VTFontSize.x;
-  VTlf.lfHeight = ts.VTFontSize.y;
-  VTlf.lfCharSet = ts.VTFontCharSet;
-  VTlf.lfOutPrecision  = OUT_CHARACTER_PRECIS;
-  VTlf.lfClipPrecision = CLIP_CHARACTER_PRECIS;
-  VTlf.lfQuality       = (BYTE)ts.FontQuality;
-  VTlf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
-  strncpy_s(VTlf.lfFaceName, sizeof(VTlf.lfFaceName),ts.VTFont, _TRUNCATE);
+	memset(&VTlf, 0, sizeof(LOGFONT));
+	VTlf.lfWeight = FW_NORMAL;
+	VTlf.lfItalic = 0;
+	VTlf.lfUnderline = 0;
+	VTlf.lfStrikeOut = 0;
+	VTlf.lfWidth = ts.VTFontSize.x;
+	VTlf.lfHeight = ts.VTFontSize.y;
+	VTlf.lfCharSet = ts.VTFontCharSet;
+	VTlf.lfOutPrecision = OUT_CHARACTER_PRECIS;
+	VTlf.lfClipPrecision = CLIP_CHARACTER_PRECIS;
+	VTlf.lfQuality = (BYTE)ts.FontQuality;
+	VTlf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
+	strncpy_s(VTlf.lfFaceName, sizeof(VTlf.lfFaceName), ts.VTFont, _TRUNCATE);
 }
 
 void ChangeFont()
 {
-  int i, j;
-  TEXTMETRIC Metrics;
-  HDC TmpDC;
+	int i, j;
+	TEXTMETRIC Metrics;
+	HDC TmpDC;
 
-  /* Delete Old Fonts */
-  for (i = 0 ; i <= AttrFontMask ; i++)
-  {
-    for (j = i+1 ; j <= AttrFontMask ; j++)
-      if (VTFont[j]==VTFont[i])
-        VTFont[j] = 0;
-    if (VTFont[i]!=0)
-      DeleteObject(VTFont[i]);
-  }
+	/* Delete Old Fonts */
+	for (i = 0; i <= AttrFontMask; i++)
+	{
+		for (j = i + 1; j <= AttrFontMask; j++)
+			if (VTFont[j] == VTFont[i])
+				VTFont[j] = 0;
+		if (VTFont[i] != 0)
+			DeleteObject(VTFont[i]);
+	}
 
-  /* Normal Font */
-  SetLogFont();
-  VTFont[0] = CreateFontIndirect(&VTlf);
+	/* Normal Font */
+	SetLogFont();
+	VTFont[0] = CreateFontIndirect(&VTlf);
 
-  /* set IME font */
-  SetConversionLogFont(&VTlf);
+	/* set IME font */
+	SetConversionLogFont(&VTlf);
 
-  TmpDC = GetDC(HVTWin);
+	TmpDC = GetDC(HVTWin);
 
-  SelectObject(TmpDC, VTFont[0]);
-  GetTextMetrics(TmpDC, &Metrics);
-  FontWidth = Metrics.tmAveCharWidth + ts.FontDW;
-  FontHeight = Metrics.tmHeight + ts.FontDH;
+	SelectObject(TmpDC, VTFont[0]);
+	GetTextMetrics(TmpDC, &Metrics);
+	FontWidth = Metrics.tmAveCharWidth + ts.FontDW;
+	FontHeight = Metrics.tmHeight + ts.FontDH;
 
-  ReleaseDC(HVTWin,TmpDC);
+	ReleaseDC(HVTWin, TmpDC);
 
-  /* Underline */
-  VTlf.lfUnderline = 1;
-  VTFont[AttrUnder] = CreateFontIndirect(&VTlf);
+	/* Underline */
+	VTlf.lfUnderline = 1;
+	VTFont[AttrUnder] = CreateFontIndirect(&VTlf);
 
-  if (ts.FontFlag & FF_BOLD) {
-    /* Bold */
-    VTlf.lfUnderline = 0;
-    VTlf.lfWeight = FW_BOLD;
-    VTFont[AttrBold] = CreateFontIndirect(&VTlf);
-    /* Bold + Underline */
-    VTlf.lfUnderline = 1;
-    VTFont[AttrBold | AttrUnder] = CreateFontIndirect(&VTlf);
-  }
-  else {
-    VTFont[AttrBold] = VTFont[AttrDefault];
-    VTFont[AttrBold | AttrUnder] = VTFont[AttrUnder];
-  }
+	if (ts.FontFlag & FF_BOLD) {
+		/* Bold */
+		VTlf.lfUnderline = 0;
+		VTlf.lfWeight = FW_BOLD;
+		VTFont[AttrBold] = CreateFontIndirect(&VTlf);
+		/* Bold + Underline */
+		VTlf.lfUnderline = 1;
+		VTFont[AttrBold | AttrUnder] = CreateFontIndirect(&VTlf);
+	}
+	else {
+		VTFont[AttrBold] = VTFont[AttrDefault];
+		VTFont[AttrBold | AttrUnder] = VTFont[AttrUnder];
+	}
 
-  /* Special font */
-  VTlf.lfWeight = FW_NORMAL;
-  VTlf.lfUnderline = 0;
-  VTlf.lfWidth = FontWidth + 1; /* adjust width */
-  VTlf.lfHeight = FontHeight;
-  VTlf.lfCharSet = SYMBOL_CHARSET;
+	/* Special font */
+	VTlf.lfWeight = FW_NORMAL;
+	VTlf.lfUnderline = 0;
+	VTlf.lfWidth = FontWidth + 1; /* adjust width */
+	VTlf.lfHeight = FontHeight;
+	VTlf.lfCharSet = SYMBOL_CHARSET;
 
-  strncpy_s(VTlf.lfFaceName, sizeof(VTlf.lfFaceName),"Tera Special", _TRUNCATE);
-  VTFont[AttrSpecial] = CreateFontIndirect(&VTlf);
+	strncpy_s(VTlf.lfFaceName, sizeof(VTlf.lfFaceName), "Tera Special", _TRUNCATE);
+	VTFont[AttrSpecial] = CreateFontIndirect(&VTlf);
 
-  /* Special font (Underline) */
-  VTlf.lfUnderline = 1;
-  VTlf.lfHeight = FontHeight - 1; // adjust for underline
-  VTFont[AttrSpecial | AttrUnder] = CreateFontIndirect(&VTlf);
+	/* Special font (Underline) */
+	VTlf.lfUnderline = 1;
+	VTlf.lfHeight = FontHeight - 1; // adjust for underline
+	VTFont[AttrSpecial | AttrUnder] = CreateFontIndirect(&VTlf);
 
-  if (ts.FontFlag & FF_BOLD) {
-    /* Special font (Bold) */
-    VTlf.lfUnderline = 0;
-    VTlf.lfHeight = FontHeight;
-    VTlf.lfWeight = FW_BOLD;
-    VTFont[AttrSpecial | AttrBold] = CreateFontIndirect(&VTlf);
-    /* Special font (Bold + Underline) */
-    VTlf.lfUnderline = 1;
-    VTlf.lfHeight = FontHeight - 1; // adjust for underline
-    VTFont[AttrSpecial | AttrBold | AttrUnder] = CreateFontIndirect(&VTlf);
-  }
-  else {
-    VTFont[AttrSpecial | AttrBold] = VTFont[AttrSpecial];
-    VTFont[AttrSpecial | AttrBold | AttrUnder] = VTFont[AttrSpecial | AttrUnder];
-  }
+	if (ts.FontFlag & FF_BOLD) {
+		/* Special font (Bold) */
+		VTlf.lfUnderline = 0;
+		VTlf.lfHeight = FontHeight;
+		VTlf.lfWeight = FW_BOLD;
+		VTFont[AttrSpecial | AttrBold] = CreateFontIndirect(&VTlf);
+		/* Special font (Bold + Underline) */
+		VTlf.lfUnderline = 1;
+		VTlf.lfHeight = FontHeight - 1; // adjust for underline
+		VTFont[AttrSpecial | AttrBold | AttrUnder] = CreateFontIndirect(&VTlf);
+	}
+	else {
+		VTFont[AttrSpecial | AttrBold] = VTFont[AttrSpecial];
+		VTFont[AttrSpecial | AttrBold | AttrUnder] = VTFont[AttrSpecial | AttrUnder];
+	}
 
-  SetLogFont();
+	SetLogFont();
 
-  for (i = 0 ; i < TermWidthMax; i++)
-    Dx[i] = FontWidth;
+	for (i = 0; i < TermWidthMax; i++)
+		Dx[i] = FontWidth;
 }
 
 void ResetIME()
@@ -2068,19 +2080,19 @@ void ResetIME()
 	cv.Language = ts.Language;
 
 	/* reset IME */
-	if ((ts.Language==IdJapanese) || (ts.Language==IdKorean) || (ts.Language==IdUtf8)) //HKS
+	if ((ts.Language == IdJapanese) || (ts.Language == IdKorean) || (ts.Language == IdUtf8)) //HKS
 	{
-		if (ts.UseIME==0)
+		if (ts.UseIME == 0)
 			FreeIME();
-		else if (! LoadIME())
+		else if (!LoadIME())
 			ts.UseIME = 0;
 
-		if (ts.UseIME>0)
+		if (ts.UseIME > 0)
 		{
-			if (ts.IMEInline>0)
+			if (ts.IMEInline > 0)
 				SetConversionLogFont(&VTlf);
 			else
-				SetConversionWindow(HVTWin,-1,0);
+				SetConversionWindow(HVTWin, -1, 0);
 		}
 	}
 	else
@@ -2091,119 +2103,120 @@ void ResetIME()
 
 void ChangeCaret()
 {
-  UINT T;
+	UINT T;
 
-  if (! Active) return;
-  DestroyCaret();
-  switch (ts.CursorShape) {
-    case IdVCur:
-	CreateCaret(HVTWin, 0, CurWidth, FontHeight);
-	break;
-    case IdHCur:
-	CreateCaret(HVTWin, 0, FontWidth, CurWidth);
-	break;
-  }
-  if (CaretEnabled) {
-	CaretStatus = 1;
-  }
-  CaretOn();
-  if (CaretEnabled && (ts.NonblinkingCursor!=0)) {
-    T = GetCaretBlinkTime() * 2 / 3;
-    SetTimer(HVTWin,IdCaretTimer,T,NULL);
-  }
-  UpdateCaretPosition(TRUE);
+	if (!Active) return;
+	DestroyCaret();
+	switch (ts.CursorShape) {
+	case IdVCur:
+		CreateCaret(HVTWin, 0, CurWidth, FontHeight);
+		break;
+	case IdHCur:
+		CreateCaret(HVTWin, 0, FontWidth, CurWidth);
+		break;
+	}
+	if (CaretEnabled) {
+		CaretStatus = 1;
+	}
+	CaretOn();
+	if (CaretEnabled && (ts.NonblinkingCursor != 0)) {
+		T = GetCaretBlinkTime() * 2 / 3;
+		SetTimer(HVTWin, IdCaretTimer, T, NULL);
+	}
+	UpdateCaretPosition(TRUE);
 }
 
-// WM_KILLFOCUSÇ≥ÇÍÇΩÇ∆Ç´ÇÃÉJÅ[É\ÉãÇé©ï™Ç≈ï`Ç≠
+// WM_KILLFOCUS„Åï„Çå„Åü„Å®„Åç„ÅÆ„Ç´„Éº„ÇΩ„É´„ÇíËá™ÂàÜ„ÅßÊèè„Åè
 void CaretKillFocus(BOOL show)
 {
-  int CaretX, CaretY;
-  POINT p[5];
-  HPEN oldpen;
-  HDC hdc;
+	int CaretX, CaretY;
+	POINT p[5];
+	HPEN oldpen;
+	HDC hdc;
 
-  if (ts.KillFocusCursor == 0)
-	  return;
+	if (ts.KillFocusCursor == 0)
+		return;
 
-  // Eterm lookfeelÇÃèÍçáÇÕâΩÇ‡ÇµÇ»Ç¢
+	// Eterm lookfeel„ÅÆÂ†¥Âêà„ÅØ‰Ωï„ÇÇ„Åó„Å™„ÅÑ
 #ifdef ALPHABLEND_TYPE2
-  if (BGEnable)
-	  return;
+	if (BGEnable)
+		return;
 #endif	// ALPHABLEND_TYPE2
 
-  /* Get Device Context */
-  DispInitDC();
-  hdc = VTDC;
+	/* Get Device Context */
+	DispInitDC();
+	hdc = VTDC;
 
-  CaretX = (CursorX-WinOrgX)*FontWidth;
-  CaretY = (CursorY-WinOrgY)*FontHeight;
+	CaretX = (CursorX - WinOrgX)*FontWidth;
+	CaretY = (CursorY - WinOrgY)*FontHeight;
 
-  p[0].x = CaretX;
-  p[0].y = CaretY;
-  p[1].x = CaretX;
-  p[1].y = CaretY + FontHeight - 1;
-  if (CursorOnDBCS)
-	p[2].x = CaretX + FontWidth*2 - 1;
-  else
-	p[2].x = CaretX + FontWidth - 1;
-  p[2].y = CaretY + FontHeight - 1;
-  if (CursorOnDBCS)
-	p[3].x = CaretX + FontWidth*2 - 1;
-  else
-	p[3].x = CaretX + FontWidth - 1;
-  p[3].y = CaretY;
-  p[4].x = CaretX;
-  p[4].y = CaretY;
+	p[0].x = CaretX;
+	p[0].y = CaretY;
+	p[1].x = CaretX;
+	p[1].y = CaretY + FontHeight - 1;
+	if (CursorOnDBCS)
+		p[2].x = CaretX + FontWidth * 2 - 1;
+	else
+		p[2].x = CaretX + FontWidth - 1;
+	p[2].y = CaretY + FontHeight - 1;
+	if (CursorOnDBCS)
+		p[3].x = CaretX + FontWidth * 2 - 1;
+	else
+		p[3].x = CaretX + FontWidth - 1;
+	p[3].y = CaretY;
+	p[4].x = CaretX;
+	p[4].y = CaretY;
 
-  if (show) {  // É|ÉäÉSÉìÉJÅ[É\ÉãÇï\é¶ÅiîÒÉtÉHÅ[ÉJÉXéûÅj
-	  oldpen = SelectObject(hdc, CreatePen(PS_SOLID, 0, ts.VTColor[0]));
-  } else {
-	  oldpen = SelectObject(hdc, CreatePen(PS_SOLID, 0, ts.VTColor[1]));
-  }
-  Polyline(VTDC, p, 5);
-  oldpen = SelectObject(hdc, oldpen);
-  DeleteObject(oldpen);
+	if (show) {  // „Éù„É™„Ç¥„É≥„Ç´„Éº„ÇΩ„É´„ÇíË°®Á§∫ÔºàÈùû„Éï„Ç©„Éº„Ç´„ÇπÊôÇÔºâ
+		oldpen = SelectObject(hdc, CreatePen(PS_SOLID, 0, ts.VTColor[0]));
+	}
+	else {
+		oldpen = SelectObject(hdc, CreatePen(PS_SOLID, 0, ts.VTColor[1]));
+	}
+	Polyline(VTDC, p, 5);
+	oldpen = SelectObject(hdc, oldpen);
+	DeleteObject(oldpen);
 
-  /* release device context */
-  DispReleaseDC();
+	/* release device context */
+	DispReleaseDC();
 }
 
-// É|ÉäÉSÉìÉJÅ[É\ÉãÇè¡ÇµÇΩÇ†Ç∆Ç…ÅAÇªÇÃïîï™ÇÃï∂éöÇçƒï`âÊÇ∑ÇÈÅB
+// „Éù„É™„Ç¥„É≥„Ç´„Éº„ÇΩ„É´„ÇíÊ∂à„Åó„Åü„ÅÇ„Å®„Å´„ÄÅ„Åù„ÅÆÈÉ®ÂàÜ„ÅÆÊñáÂ≠ó„ÇíÂÜçÊèèÁîª„Åô„Çã„ÄÇ
 //
-// CaretOff()ÇÃíºå„Ç…åƒÇ‘Ç±Ç∆ÅBCaretOff()ì‡Ç©ÇÁåƒÇ‘Ç∆ÅAñ≥å¿çƒãAåƒÇ—èoÇµÇ∆Ç»ÇËÅA
-// stack overflowÇ…Ç»ÇÈÅB
+// CaretOff()„ÅÆÁõ¥Âæå„Å´Âëº„Å∂„Åì„Å®„ÄÇCaretOff()ÂÜÖ„Åã„ÇâÂëº„Å∂„Å®„ÄÅÁÑ°ÈôêÂÜçÂ∏∞Âëº„Å≥Âá∫„Åó„Å®„Å™„Çä„ÄÅ
+// stack overflow„Å´„Å™„Çã„ÄÇ
 //
-// ÉJÅ[É\Éãå`èÛïœçXéû(ChangeCaret)Ç…Ç‡åƒÇ‘Ç±Ç∆Ç…ÇµÇΩÇΩÇﬂÅAä÷êîñºïœçX -- 2009/04/17 doda.
+// „Ç´„Éº„ÇΩ„É´ÂΩ¢Áä∂Â§âÊõ¥ÊôÇ(ChangeCaret)„Å´„ÇÇÂëº„Å∂„Åì„Å®„Å´„Åó„Åü„Åü„ÇÅ„ÄÅÈñ¢Êï∞ÂêçÂ§âÊõ¥ -- 2009/04/17 doda.
 //
 void UpdateCaretPosition(BOOL enforce)
 {
-  int CaretX, CaretY;
-  RECT rc;
+	int CaretX, CaretY;
+	RECT rc;
 
-  CaretX = (CursorX-WinOrgX)*FontWidth;
-  CaretY = (CursorY-WinOrgY)*FontHeight;
+	CaretX = (CursorX - WinOrgX)*FontWidth;
+	CaretY = (CursorY - WinOrgY)*FontHeight;
 
-  if (!enforce && !ts.KillFocusCursor)
-	  return;
+	if (!enforce && !ts.KillFocusCursor)
+		return;
 
-  // Eterm lookfeelÇÃèÍçáÇÕâΩÇ‡ÇµÇ»Ç¢
+	// Eterm lookfeel„ÅÆÂ†¥Âêà„ÅØ‰Ωï„ÇÇ„Åó„Å™„ÅÑ
 #ifdef ALPHABLEND_TYPE2
-  if (BGEnable)
-	  return;
+	if (BGEnable)
+		return;
 #endif	// ALPHABLEND_TYPE2
 
-  if (enforce == TRUE || !Active) {
-	  rc.left = CaretX;
-	  rc.top = CaretY;
-	  if (CursorOnDBCS)
-		rc.right = CaretX + FontWidth*2;
-	  else
-		rc.right = CaretX + FontWidth;
-	  rc.bottom = CaretY + FontHeight;
-	  // éwíËÇÊÇËÇ‡1ÉsÉNÉZÉãè¨Ç≥Ç¢îÕàÕÇ™çƒï`âÊÇ≥ÇÍÇÈÇΩÇﬂ
-	  // rc ÇÃ right, bottom ÇÕ1ÉsÉNÉZÉãëÂÇ´Ç≠ÇµÇƒÇ¢ÇÈÅB
-	  InvalidateRect(HVTWin, &rc, FALSE);
-  }
+	if (enforce == TRUE || !Active) {
+		rc.left = CaretX;
+		rc.top = CaretY;
+		if (CursorOnDBCS)
+			rc.right = CaretX + FontWidth * 2;
+		else
+			rc.right = CaretX + FontWidth;
+		rc.bottom = CaretY + FontHeight;
+		// ÊåáÂÆö„Çà„Çä„ÇÇ1„Éî„ÇØ„Çª„É´Â∞è„Åï„ÅÑÁØÑÂõ≤„ÅåÂÜçÊèèÁîª„Åï„Çå„Çã„Åü„ÇÅ
+		// rc „ÅÆ right, bottom „ÅØ1„Éî„ÇØ„Çª„É´Â§ß„Åç„Åè„Åó„Å¶„ÅÑ„Çã„ÄÇ
+		InvalidateRect(HVTWin, &rc, FALSE);
+	}
 }
 
 void CaretOn()
@@ -2212,31 +2225,33 @@ void CaretOn()
 	if (ts.KillFocusCursor == 0 && !Active)
 		return;
 
-	if (! CaretEnabled) return;
+	if (!CaretEnabled) return;
 
 	if (Active) {
 		int CaretX, CaretY, H;
 		HBITMAP color;
 
-		/* IMEÇÃon/offèÛë‘Çå©ÇƒÅAÉJÅ[É\ÉãÇÃêFÇïœçXÇ∑ÇÈÅB
-		 * WM_INPUTLANGCHANGE, WM_IME_NOTIFY Ç≈ÇÕÉJÅ[É\ÉãÇÃçƒï`âÊÇÃÇ›çsÇ§ÅB
+		/* IME„ÅÆon/offÁä∂ÊÖã„ÇíË¶ã„Å¶„ÄÅ„Ç´„Éº„ÇΩ„É´„ÅÆËâ≤„ÇíÂ§âÊõ¥„Åô„Çã„ÄÇ
+		 * WM_INPUTLANGCHANGE, WM_IME_NOTIFY „Åß„ÅØ„Ç´„Éº„ÇΩ„É´„ÅÆÂÜçÊèèÁîª„ÅÆ„ÅøË°å„ÅÜ„ÄÇ
 		 * (2010.5.20 yutaka)
 		 */
 		if ((ts.WindowFlag & WF_IMECURSORCHANGE) == 0) {
 			color = 0;
-		} else {
+		}
+		else {
 			if (IMEstat) {
 				color = (HBITMAP)1;
-			} else {
+			}
+			else {
 				color = 0;
 			}
 		}
 
-		CaretX = (CursorX-WinOrgX)*FontWidth;
-		CaretY = (CursorY-WinOrgY)*FontHeight;
-		if (ts.CursorShape!=IdVCur) {
-			if (ts.CursorShape==IdHCur) {
-				CaretY = CaretY+FontHeight-CurWidth;
+		CaretX = (CursorX - WinOrgX)*FontWidth;
+		CaretY = (CursorY - WinOrgY)*FontHeight;
+		if (ts.CursorShape != IdVCur) {
+			if (ts.CursorShape == IdHCur) {
+				CaretY = CaretY + FontHeight - CurWidth;
 				H = CurWidth;
 			}
 			else {
@@ -2246,7 +2261,7 @@ void CaretOn()
 			DestroyCaret();
 			if (CursorOnDBCS) {
 				/* double width caret */
-				CreateCaret(HVTWin, color, FontWidth*2, H);
+				CreateCaret(HVTWin, color, FontWidth * 2, H);
 			}
 			else {
 				/* single width caret */
@@ -2254,13 +2269,14 @@ void CaretOn()
 			}
 			CaretStatus = 1;
 		}
-		SetCaretPos(CaretX,CaretY);
+		SetCaretPos(CaretX, CaretY);
 	}
 
 	while (CaretStatus > 0) {
-		if (! Active) {
+		if (!Active) {
 			CaretKillFocus(TRUE);
-		} else {
+		}
+		else {
 			ShowCaret(HVTWin);
 		}
 		CaretStatus--;
@@ -2273,9 +2289,10 @@ void CaretOff()
 		return;
 
 	if (CaretStatus == 0) {
-		if (! Active) {
+		if (!Active) {
 			CaretKillFocus(FALSE);
-		} else {
+		}
+		else {
 			HideCaret(HVTWin);
 		}
 		CaretStatus++;
@@ -2284,277 +2301,277 @@ void CaretOff()
 
 void DispDestroyCaret()
 {
-  DestroyCaret();
-  if (ts.NonblinkingCursor!=0)
-	KillTimer(HVTWin,IdCaretTimer);
+	DestroyCaret();
+	if (ts.NonblinkingCursor != 0)
+		KillTimer(HVTWin, IdCaretTimer);
 }
 
 BOOL IsCaretOn()
 // check if caret is on
 {
-	return ((ts.KillFocusCursor || Active) && (CaretStatus==0));
+	return ((ts.KillFocusCursor || Active) && (CaretStatus == 0));
 }
 
 void DispEnableCaret(BOOL On)
 {
-  if (! On) CaretOff();
-  CaretEnabled = On;
+	if (!On) CaretOff();
+	CaretEnabled = On;
 }
 
 BOOL IsCaretEnabled()
 {
-  return CaretEnabled;
+	return CaretEnabled;
 }
 
 void DispSetCaretWidth(BOOL DW)
 {
-  /* TRUE if cursor is on a DBCS character */
-  CursorOnDBCS = DW;
+	/* TRUE if cursor is on a DBCS character */
+	CursorOnDBCS = DW;
 }
 
 void DispChangeWinSize(int Nx, int Ny)
 {
-  LONG W,H,dW,dH;
-  RECT R;
+	LONG W, H, dW, dH;
+	RECT R;
 
-  if (SaveWinSize)
-  {
-    WinWidthOld = WinWidth;
-    WinHeightOld = WinHeight;
-    SaveWinSize = FALSE;
-  }
-  else {
-    WinWidthOld = NumOfColumns;
-    WinHeightOld = NumOfLines;
-  }
-
-  WinWidth = Nx;
-  WinHeight = Ny;
-
-  ScreenWidth = WinWidth*FontWidth;
-  ScreenHeight = WinHeight*FontHeight;
-
-  AdjustScrollBar();
-
-  GetWindowRect(HVTWin,&R);
-  W = R.right-R.left;
-  H = R.bottom-R.top;
-  GetClientRect(HVTWin,&R);
-  dW = ScreenWidth - R.right + R.left;
-  dH = ScreenHeight - R.bottom + R.top;
-
-  if ((dW!=0) || (dH!=0))
-  {
-	AdjustSize = TRUE;
-
-	// SWP_NOMOVE ÇéwíËÇµÇƒÇ¢ÇÈÇÃÇ…Ç»Ç∫Ç© 0,0 Ç™îΩâfÇ≥ÇÍÅA
-	// É}ÉãÉ`ÉfÉBÉXÉvÉåÉCä¬ã´Ç≈ÇÕÉvÉâÉCÉ}ÉäÉÇÉjÉ^Ç…
-	// à⁄ìÆÇµÇƒÇµÇ‹Ç§ÇÃÇèCê≥ (2008.5.29 maya)
-	//SetWindowPos(HVTWin,HWND_TOP,0,0,W+dW,H+dH,SWP_NOMOVE);
-
-	// É}ÉãÉ`ÉfÉBÉXÉvÉåÉCä¬ã´Ç≈ç≈ëÂâªÇµÇΩÇ∆Ç´Ç…ÅA
-	// ó◊ÇÃÉfÉBÉXÉvÉåÉCÇ…ÉEÉBÉìÉhÉEÇÃí[Ç™ÇÕÇ›èoÇ∑ñ‚ëËÇèCê≥ (2008.5.30 maya)
-	// Ç‹ÇΩÅAè„ãLÇÃèÛë‘Ç≈ÇÕç≈ëÂâªèÛë‘Ç≈Ç‡ÉEÉBÉìÉhÉEÇà⁄ìÆÇ≥ÇπÇÈÇ±Ç∆Ç™èoóàÇÈÅB
-	if (!IsZoomed(HVTWin)) {
-		SetWindowPos(HVTWin,HWND_TOP,R.left,R.top,W+dW,H+dH,SWP_NOMOVE);
+	if (SaveWinSize)
+	{
+		WinWidthOld = WinWidth;
+		WinHeightOld = WinHeight;
+		SaveWinSize = FALSE;
 	}
-  }
-  else
-    InvalidateRect(HVTWin,NULL,FALSE);
+	else {
+		WinWidthOld = NumOfColumns;
+		WinHeightOld = NumOfLines;
+	}
+
+	WinWidth = Nx;
+	WinHeight = Ny;
+
+	ScreenWidth = WinWidth * FontWidth;
+	ScreenHeight = WinHeight * FontHeight;
+
+	AdjustScrollBar();
+
+	GetWindowRect(HVTWin, &R);
+	W = R.right - R.left;
+	H = R.bottom - R.top;
+	GetClientRect(HVTWin, &R);
+	dW = ScreenWidth - R.right + R.left;
+	dH = ScreenHeight - R.bottom + R.top;
+
+	if ((dW != 0) || (dH != 0))
+	{
+		AdjustSize = TRUE;
+
+		// SWP_NOMOVE „ÇíÊåáÂÆö„Åó„Å¶„ÅÑ„Çã„ÅÆ„Å´„Å™„Åú„Åã 0,0 „ÅåÂèçÊò†„Åï„Çå„ÄÅ
+		// „Éû„É´„ÉÅ„Éá„Ç£„Çπ„Éó„É¨„Ç§Áí∞Â¢É„Åß„ÅØ„Éó„É©„Ç§„Éû„É™„É¢„Éã„Çø„Å´
+		// ÁßªÂãï„Åó„Å¶„Åó„Åæ„ÅÜ„ÅÆ„Çí‰øÆÊ≠£ (2008.5.29 maya)
+		//SetWindowPos(HVTWin,HWND_TOP,0,0,W+dW,H+dH,SWP_NOMOVE);
+
+		// „Éû„É´„ÉÅ„Éá„Ç£„Çπ„Éó„É¨„Ç§Áí∞Â¢É„ÅßÊúÄÂ§ßÂåñ„Åó„Åü„Å®„Åç„Å´„ÄÅ
+		// Èö£„ÅÆ„Éá„Ç£„Çπ„Éó„É¨„Ç§„Å´„Ç¶„Ç£„É≥„Éâ„Ç¶„ÅÆÁ´Ø„Åå„ÅØ„ÅøÂá∫„ÅôÂïèÈ°å„Çí‰øÆÊ≠£ (2008.5.30 maya)
+		// „Åæ„Åü„ÄÅ‰∏äË®ò„ÅÆÁä∂ÊÖã„Åß„ÅØÊúÄÂ§ßÂåñÁä∂ÊÖã„Åß„ÇÇ„Ç¶„Ç£„É≥„Éâ„Ç¶„ÇíÁßªÂãï„Åï„Åõ„Çã„Åì„Å®„ÅåÂá∫Êù•„Çã„ÄÇ
+		if (!IsZoomed(HVTWin)) {
+			SetWindowPos(HVTWin, HWND_TOP, R.left, R.top, W + dW, H + dH, SWP_NOMOVE);
+		}
+	}
+	else
+		InvalidateRect(HVTWin, NULL, FALSE);
 }
 
 void ResizeWindow(int x, int y, int w, int h, int cw, int ch)
 {
-  int dw,dh, NewX, NewY;
-  POINT Point;
+	int dw, dh, NewX, NewY;
+	POINT Point;
 
-  if (! AdjustSize) return;
-  dw = ScreenWidth - cw;
-  dh = ScreenHeight - ch;
-  if ((dw!=0) || (dh!=0)) {
-    SetWindowPos(HVTWin,HWND_TOP,x,y,w+dw,h+dh,SWP_NOMOVE);
-    AdjustSize = FALSE;
-  }
-  else {
-    AdjustSize = FALSE;
+	if (!AdjustSize) return;
+	dw = ScreenWidth - cw;
+	dh = ScreenHeight - ch;
+	if ((dw != 0) || (dh != 0)) {
+		SetWindowPos(HVTWin, HWND_TOP, x, y, w + dw, h + dh, SWP_NOMOVE);
+		AdjustSize = FALSE;
+	}
+	else {
+		AdjustSize = FALSE;
 
-    NewX = x;
-    NewY = y;
-    if (x+w > VirtualScreen.right)
-    {
-      NewX = VirtualScreen.right-w;
-      if (NewX < 0) NewX = 0;
-    }
-    if (y+h > VirtualScreen.bottom)
-    {
-      NewY =  VirtualScreen.bottom-h;
-      if (NewY < 0) NewY = 0;
-    }
-    if ((NewX!=x) || (NewY!=y))
-      SetWindowPos(HVTWin,HWND_TOP,NewX,NewY,w,h,SWP_NOSIZE);
+		NewX = x;
+		NewY = y;
+		if (x + w > VirtualScreen.right)
+		{
+			NewX = VirtualScreen.right - w;
+			if (NewX < 0) NewX = 0;
+		}
+		if (y + h > VirtualScreen.bottom)
+		{
+			NewY = VirtualScreen.bottom - h;
+			if (NewY < 0) NewY = 0;
+		}
+		if ((NewX != x) || (NewY != y))
+			SetWindowPos(HVTWin, HWND_TOP, NewX, NewY, w, h, SWP_NOSIZE);
 
-    Point.x = 0;
-    Point.y = ScreenHeight;
-    ClientToScreen(HVTWin,&Point);
-    CompletelyVisible = (Point.y <= VirtualScreen.bottom);
-    if (IsCaretOn()) CaretOn();
-  }
+		Point.x = 0;
+		Point.y = ScreenHeight;
+		ClientToScreen(HVTWin, &Point);
+		CompletelyVisible = (Point.y <= VirtualScreen.bottom);
+		if (IsCaretOn()) CaretOn();
+	}
 }
 
 void PaintWindow(HDC PaintDC, RECT PaintRect, BOOL fBkGnd,
-		 int* Xs, int* Ys, int* Xe, int* Ye)
-//  Paint window with background color &
-//  convert paint region from window coord. to screen coord.
-//  Called from WM_PAINT handler
-//    PaintRect: Paint region in window coordinate
-//    Return:
-//	*Xs, *Ys: upper left corner of the region
-//		    in screen coord.
-//	*Xe, *Ye: lower right
+	int* Xs, int* Ys, int* Xe, int* Ye)
+	//  Paint window with background color &
+	//  convert paint region from window coord. to screen coord.
+	//  Called from WM_PAINT handler
+	//    PaintRect: Paint region in window coordinate
+	//    Return:
+	//	*Xs, *Ys: upper left corner of the region
+	//		    in screen coord.
+	//	*Xe, *Ye: lower right
 {
-  if (VTDC!=NULL)
-	DispReleaseDC();
-  VTDC = PaintDC;
-  DCPrevFont = SelectObject(VTDC, VTFont[0]);
-  DispInitDC();
+	if (VTDC != NULL)
+		DispReleaseDC();
+	VTDC = PaintDC;
+	DCPrevFont = SelectObject(VTDC, VTFont[0]);
+	DispInitDC();
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//if (fBkGnd)
-  if(!BGEnable && fBkGnd)
-//-->
+	//<!--by AKASI
+	//if (fBkGnd)
+	if (!BGEnable && fBkGnd)
+		//-->
 #else
-  if (fBkGnd)
+	if (fBkGnd)
 #endif  // ALPHABLEND_TYPE2
 
-    FillRect(VTDC, &PaintRect,Background);
+		FillRect(VTDC, &PaintRect, Background);
 
-  *Xs = PaintRect.left / FontWidth + WinOrgX;
-  *Ys = PaintRect.top / FontHeight + WinOrgY;
-  *Xe = (PaintRect.right-1) / FontWidth + WinOrgX;
-  *Ye = (PaintRect.bottom-1) / FontHeight + WinOrgY;
+	*Xs = PaintRect.left / FontWidth + WinOrgX;
+	*Ys = PaintRect.top / FontHeight + WinOrgY;
+	*Xe = (PaintRect.right - 1) / FontWidth + WinOrgX;
+	*Ye = (PaintRect.bottom - 1) / FontHeight + WinOrgY;
 }
 
 void DispEndPaint()
 {
-  if (VTDC==NULL) return;
-  SelectObject(VTDC,DCPrevFont);
-  VTDC = NULL;
+	if (VTDC == NULL) return;
+	SelectObject(VTDC, DCPrevFont);
+	VTDC = NULL;
 }
 
 void DispClearWin()
 {
-  InvalidateRect(HVTWin,NULL,FALSE);
+	InvalidateRect(HVTWin, NULL, FALSE);
 
-  ScrollCount = 0;
-  dScroll = 0;
-  if (WinHeight > NumOfLines)
-    DispChangeWinSize(NumOfColumns,NumOfLines);
-  else {
-    if ((NumOfLines==WinHeight) && (ts.EnableScrollBuff>0))
-    {
-      SetScrollRange(HVTWin,SB_VERT,0,1,FALSE);
-    }
-    else
-      SetScrollRange(HVTWin,SB_VERT,0,NumOfLines-WinHeight,FALSE);
+	ScrollCount = 0;
+	dScroll = 0;
+	if (WinHeight > NumOfLines)
+		DispChangeWinSize(NumOfColumns, NumOfLines);
+	else {
+		if ((NumOfLines == WinHeight) && (ts.EnableScrollBuff > 0))
+		{
+			SetScrollRange(HVTWin, SB_VERT, 0, 1, FALSE);
+		}
+		else
+			SetScrollRange(HVTWin, SB_VERT, 0, NumOfLines - WinHeight, FALSE);
 
-    SetScrollPos(HVTWin,SB_HORZ,0,TRUE);
-    SetScrollPos(HVTWin,SB_VERT,0,TRUE);
-  }
-  if (IsCaretOn()) CaretOn();
+		SetScrollPos(HVTWin, SB_HORZ, 0, TRUE);
+		SetScrollPos(HVTWin, SB_VERT, 0, TRUE);
+	}
+	if (IsCaretOn()) CaretOn();
 }
 
 void DispChangeBackground()
 {
-  DispReleaseDC();
-  if (Background != NULL) DeleteObject(Background);
+	DispReleaseDC();
+	if (Background != NULL) DeleteObject(Background);
 
-  if ((CurCharAttr.Attr2 & Attr2Back) != 0) {
-    if ((CurCharAttr.Back<16) && (CurCharAttr.Back&7)!=0)
-      Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back ^ 8]);
-    else
-      Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back]);
-  }
-  else {
+	if ((CurCharAttr.Attr2 & Attr2Back) != 0) {
+		if ((CurCharAttr.Back < 16) && (CurCharAttr.Back & 7) != 0)
+			Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back ^ 8]);
+		else
+			Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back]);
+	}
+	else {
 #ifdef ALPHABLEND_TYPE2
-    Background = CreateSolidBrush(BGVTColor[1]);
+		Background = CreateSolidBrush(BGVTColor[1]);
 #else
-    Background = CreateSolidBrush(ts.VTColor[1]);
+		Background = CreateSolidBrush(ts.VTColor[1]);
 #endif  // ALPHABLEND_TYPE2
-  }
+	}
 
-  InvalidateRect(HVTWin,NULL,TRUE);
+	InvalidateRect(HVTWin, NULL, TRUE);
 }
 
 void DispChangeWin()
 {
-  /* Change window caption */
-  ChangeTitle();
+	/* Change window caption */
+	ChangeTitle();
 
-  /* Menu bar / Popup menu */
-  SwitchMenu();
+	/* Menu bar / Popup menu */
+	SwitchMenu();
 
-  SwitchTitleBar();
+	SwitchTitleBar();
 
-  /* Change caret shape */
-  ChangeCaret();
+	/* Change caret shape */
+	ChangeCaret();
 
-  if ((ts.ColorFlag & CF_USETEXTCOLOR)==0)
-  {
-    ANSIColor[IdFore ]   = ts.ANSIColor[IdFore ];
-    ANSIColor[IdBack ]   = ts.ANSIColor[IdBack ];
-  }
-  else { // use text (background) color for "white (black)"
-    ANSIColor[IdFore ]   = ts.VTColor[0];
-    ANSIColor[IdBack ]   = ts.VTColor[1];
+	if ((ts.ColorFlag & CF_USETEXTCOLOR) == 0)
+	{
+		ANSIColor[IdFore] = ts.ANSIColor[IdFore];
+		ANSIColor[IdBack] = ts.ANSIColor[IdBack];
+	}
+	else { // use text (background) color for "white (black)"
+		ANSIColor[IdFore] = ts.VTColor[0];
+		ANSIColor[IdBack] = ts.VTColor[1];
 
 #ifdef ALPHABLEND_TYPE2
-      ANSIColor[IdFore ]   = BGVTColor[0];
-     ANSIColor[IdBack ]   = BGVTColor[1];
+		ANSIColor[IdFore] = BGVTColor[0];
+		ANSIColor[IdBack] = BGVTColor[1];
 #endif  // ALPHABLEND_TYPE2
 
-  }
+	}
 
-  /* change background color */
-  DispChangeBackground();
+	/* change background color */
+	DispChangeBackground();
 }
 
 void DispInitDC()
 {
 
-  if (VTDC==NULL)
-  {
-    VTDC = GetDC(HVTWin);
-    DCPrevFont = SelectObject(VTDC, VTFont[0]);
-  }
-  else
-    SelectObject(VTDC, VTFont[0]);
+	if (VTDC == NULL)
+	{
+		VTDC = GetDC(HVTWin);
+		DCPrevFont = SelectObject(VTDC, VTFont[0]);
+	}
+	else
+		SelectObject(VTDC, VTFont[0]);
 
 #ifdef ALPHABLEND_TYPE2
-  SetTextColor(VTDC, BGVTColor[0]);
-  SetBkColor(VTDC, BGVTColor[1]);
+	SetTextColor(VTDC, BGVTColor[0]);
+	SetBkColor(VTDC, BGVTColor[1]);
 #else
-  SetTextColor(VTDC, ts.VTColor[0]);
-  SetBkColor(VTDC, ts.VTColor[1]);
+	SetTextColor(VTDC, ts.VTColor[0]);
+	SetBkColor(VTDC, ts.VTColor[1]);
 #endif  // ALPHABLEND_TYPE2
 
-  SetBkMode(VTDC,OPAQUE);
-  DCAttr = DefCharAttr;
-  DCReverse = FALSE;
+	SetBkMode(VTDC, OPAQUE);
+	DCAttr = DefCharAttr;
+	DCReverse = FALSE;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-  BGReverseText = FALSE;
-//-->
+	//<!--by AKASI
+	BGReverseText = FALSE;
+	//-->
 #endif  // ALPHABLEND_TYPE2
 }
 
 void DispReleaseDC()
 {
-  if (VTDC==NULL) return;
-  SelectObject(VTDC, DCPrevFont);
-  ReleaseDC(HVTWin,VTDC);
-  VTDC = NULL;
+	if (VTDC == NULL) return;
+	SelectObject(VTDC, DCPrevFont);
+	ReleaseDC(HVTWin, VTDC);
+	VTDC = NULL;
 }
 
 #define isURLColored(x) ((ts.ColorFlag & CF_URLCOLOR) && ((x).Attr & AttrURL))
@@ -2570,193 +2587,193 @@ void DispSetupDC(TCharAttr Attr, BOOL Reverse)
 //   Attr: character attributes
 //   Reverse: true if text is selected (reversed) by mouse
 {
-  COLORREF TextColor, BackColor;
-  int NoReverseColor = 2;
+	COLORREF TextColor, BackColor;
+	int NoReverseColor = 2;
 
-  if (VTDC==NULL)  DispInitDC();
+	if (VTDC == NULL)  DispInitDC();
 
-  if (TCharAttrCmp(DCAttr, Attr) == 0 && DCReverse == Reverse) {
-    return;
-  }
-  DCAttr = Attr;
-  DCReverse = Reverse;
-
-  SelectObject(VTDC, VTFont[(Attr.Attr & AttrFontMask) | (isURLUnderlined(Attr)?AttrUnder:0)]);
-
-  if ((ts.ColorFlag & CF_FULLCOLOR) == 0) {
-	if (isBlinkColored(Attr)) {
-#ifdef ALPHABLEND_TYPE2 // AKASI
-	  TextColor = BGVTBlinkColor[0];
-	  BackColor = BGVTBlinkColor[1];
-#else
-	  TextColor = ts.VTBlinkColor[0];
-	  BackColor = ts.VTBlinkColor[1];
-#endif
+	if (TCharAttrCmp(DCAttr, Attr) == 0 && DCReverse == Reverse) {
+		return;
 	}
-	else if (isBoldColored(Attr)) {
-#ifdef ALPHABLEND_TYPE2 // AKASI
-	  TextColor = BGVTBoldColor[0];
-	  BackColor = BGVTBoldColor[1];
-#else
-	  TextColor = ts.VTBoldColor[0];
-	  BackColor = ts.VTBoldColor[1];
-#endif
-	}
-    /* begin - ishizaki */
-	else if (isURLColored(Attr)) {
-#ifdef ALPHABLEND_TYPE2 // AKASI
-	  TextColor = BGURLColor[0];
-	  BackColor = BGURLColor[1];
-#else
-	  TextColor = ts.URLColor[0];
-	  BackColor = ts.URLColor[1];
-#endif
-	}
-    /* end - ishizaki */
-	else {
-	  if (isForeColored(Attr)) {
-		TextColor = ANSIColor[Attr.Fore];
-	  }
-	  else {
-#ifdef ALPHABLEND_TYPE2 // AKASI
-		TextColor = BGVTColor[0];
-#else
-		TextColor = ts.VTColor[0];
-#endif
-		NoReverseColor = 1;
-	  }
+	DCAttr = Attr;
+	DCReverse = Reverse;
 
-	  if (isBackColored(Attr)) {
-		BackColor = ANSIColor[Attr.Back];
-	  }
-	  else {
+	SelectObject(VTDC, VTFont[(Attr.Attr & AttrFontMask) | (isURLUnderlined(Attr) ? AttrUnder : 0)]);
+
+	if ((ts.ColorFlag & CF_FULLCOLOR) == 0) {
+		if (isBlinkColored(Attr)) {
 #ifdef ALPHABLEND_TYPE2 // AKASI
+			TextColor = BGVTBlinkColor[0];
+			BackColor = BGVTBlinkColor[1];
+#else
+			TextColor = ts.VTBlinkColor[0];
+			BackColor = ts.VTBlinkColor[1];
+#endif
+		}
+		else if (isBoldColored(Attr)) {
+#ifdef ALPHABLEND_TYPE2 // AKASI
+			TextColor = BGVTBoldColor[0];
+			BackColor = BGVTBoldColor[1];
+#else
+			TextColor = ts.VTBoldColor[0];
+			BackColor = ts.VTBoldColor[1];
+#endif
+		}
+		/* begin - ishizaki */
+		else if (isURLColored(Attr)) {
+#ifdef ALPHABLEND_TYPE2 // AKASI
+			TextColor = BGURLColor[0];
+			BackColor = BGURLColor[1];
+#else
+			TextColor = ts.URLColor[0];
+			BackColor = ts.URLColor[1];
+#endif
+		}
+		/* end - ishizaki */
+		else {
+			if (isForeColored(Attr)) {
+				TextColor = ANSIColor[Attr.Fore];
+			}
+			else {
+#ifdef ALPHABLEND_TYPE2 // AKASI
+				TextColor = BGVTColor[0];
+#else
+				TextColor = ts.VTColor[0];
+#endif
+				NoReverseColor = 1;
+			}
+
+			if (isBackColored(Attr)) {
+				BackColor = ANSIColor[Attr.Back];
+			}
+			else {
+#ifdef ALPHABLEND_TYPE2 // AKASI
+				BackColor = BGVTColor[1];
+#else
+				BackColor = ts.VTColor[1];
+#endif
+				if (NoReverseColor == 1) {
+					NoReverseColor = !(ts.ColorFlag & CF_REVERSECOLOR);
+				}
+			}
+		}
+	}
+	else { // full color
+		if (isForeColored(Attr)) {
+			if (Attr.Fore < 8 && (ts.ColorFlag&CF_PCBOLD16)) {
+				if (((Attr.Attr&AttrBold) != 0) == (Attr.Fore != 0)) {
+					TextColor = ANSIColor[Attr.Fore];
+				}
+				else {
+					TextColor = ANSIColor[Attr.Fore ^ 8];
+				}
+			}
+			else if (Attr.Fore < 16 && (Attr.Fore & 7) != 0) {
+				TextColor = ANSIColor[Attr.Fore ^ 8];
+			}
+			else {
+				TextColor = ANSIColor[Attr.Fore];
+			}
+		}
+		else if (isBlinkColored(Attr))
+#ifdef ALPHABLEND_TYPE2 // AKASI
+			TextColor = BGVTBlinkColor[0];
+		else if (isBoldColored(Attr))
+			TextColor = BGVTBoldColor[0];
+		else if (isURLColored(Attr))
+			TextColor = BGURLColor[0];
+		else {
+			TextColor = BGVTColor[0];
+#else
+			TextColor = ts.VTBlinkColor[0];
+		else if (isBoldColored(Attr))
+			TextColor = ts.VTBoldColor[0];
+		else if (isURLColored(Attr))
+			TextColor = ts.URLColor[0];
+		else {
+			TextColor = ts.VTColor[0];
+#endif
+			NoReverseColor = 1;
+		}
+		if (isBackColored(Attr)) {
+			if (Attr.Back < 8 && (ts.ColorFlag&CF_PCBOLD16)) {
+				if (((Attr.Attr&AttrBlink) != 0) == (Attr.Back != 0)) {
+					BackColor = ANSIColor[Attr.Back];
+				}
+				else {
+					BackColor = ANSIColor[Attr.Back ^ 8];
+				}
+			}
+			else if (Attr.Back < 16 && (Attr.Back & 7) != 0) {
+				BackColor = ANSIColor[Attr.Back ^ 8];
+			}
+			else {
+				BackColor = ANSIColor[Attr.Back];
+			}
+		}
+		else if (isBlinkColored(Attr))
+#ifdef ALPHABLEND_TYPE2 // AKASI
+			BackColor = BGVTBlinkColor[1];
+		else if (isBoldColored(Attr))
+			BackColor = BGVTBoldColor[1];
+		else if (isURLColored(Attr))
+			BackColor = BGURLColor[1];
+		else {
+			BackColor = BGVTColor[1];
+#else
+			BackColor = ts.VTBlinkColor[1];
+		else if (isBoldColored(Attr))
+			BackColor = ts.VTBoldColor[1];
+		else if (isURLColored(Attr))
+			BackColor = ts.URLColor[1];
+		else {
+			BackColor = ts.VTColor[1];
+#endif
+			if (NoReverseColor == 1) {
+				NoReverseColor = !(ts.ColorFlag & CF_REVERSECOLOR);
+			}
+		}
+		}
+#ifdef USE_NORMAL_BGCOLOR_REJECT
+	if (ts.UseNormalBGColor) {
+#ifdef ALPHABLEND_TYPE2
 		BackColor = BGVTColor[1];
 #else
 		BackColor = ts.VTColor[1];
 #endif
-		if (NoReverseColor == 1) {
-		  NoReverseColor = !(ts.ColorFlag & CF_REVERSECOLOR);
-		}
-	  }
 	}
-  }
-  else { // full color
-	if (isForeColored(Attr)) {
-	  if (Attr.Fore<8 && (ts.ColorFlag&CF_PCBOLD16)) {
-	    if (((Attr.Attr&AttrBold)!=0) == (Attr.Fore!=0)) {
-	      TextColor = ANSIColor[Attr.Fore];
-	    }
-	    else {
-	      TextColor = ANSIColor[Attr.Fore ^ 8];
-	    }
-	  }
-	  else if (Attr.Fore < 16 && (Attr.Fore&7) != 0) {
-	    TextColor = ANSIColor[Attr.Fore ^ 8];
-	  }
-	  else {
-	    TextColor = ANSIColor[Attr.Fore];
-	  }
-	}
-	else if (isBlinkColored(Attr))
-#ifdef ALPHABLEND_TYPE2 // AKASI
-	  TextColor = BGVTBlinkColor[0];
-	else if (isBoldColored(Attr))
-	  TextColor = BGVTBoldColor[0];
-	else if (isURLColored(Attr))
-	  TextColor = BGURLColor[0];
-	else {
-	  TextColor = BGVTColor[0];
-#else
-	  TextColor = ts.VTBlinkColor[0];
-	else if (isBoldColored(Attr))
-	  TextColor = ts.VTBoldColor[0];
-	else if (isURLColored(Attr))
-	  TextColor = ts.URLColor[0];
-	else {
-	  TextColor = ts.VTColor[0];
-#endif
-	  NoReverseColor = 1;
-	}
-	if (isBackColored(Attr)) {
-	  if (Attr.Back<8 && (ts.ColorFlag&CF_PCBOLD16)) {
-	    if (((Attr.Attr&AttrBlink)!=0) == (Attr.Back!=0)) {
-	      BackColor = ANSIColor[Attr.Back];
-	    }
-	    else {
-	      BackColor = ANSIColor[Attr.Back ^ 8];
-	    }
-	  }
-	  else if (Attr.Back < 16 && (Attr.Back&7) != 0) {
-	    BackColor = ANSIColor[Attr.Back ^ 8];
-	  }
-	  else {
-	    BackColor = ANSIColor[Attr.Back];
-	  }
-	}
-	else if (isBlinkColored(Attr))
-#ifdef ALPHABLEND_TYPE2 // AKASI
-	  BackColor = BGVTBlinkColor[1];
-	else if (isBoldColored(Attr))
-	  BackColor = BGVTBoldColor[1];
-	else if (isURLColored(Attr))
-	  BackColor = BGURLColor[1];
-	else {
-	  BackColor = BGVTColor[1];
-#else
-	  BackColor = ts.VTBlinkColor[1];
-	else if (isBoldColored(Attr))
-	  BackColor = ts.VTBoldColor[1];
-	else if (isURLColored(Attr))
-	  BackColor = ts.URLColor[1];
-	else {
-	  BackColor = ts.VTColor[1];
-#endif
-	  if (NoReverseColor == 1) {
-	    NoReverseColor = !(ts.ColorFlag & CF_REVERSECOLOR);
-	  }
-	}
-  }
-#ifdef USE_NORMAL_BGCOLOR_REJECT
-  if (ts.UseNormalBGColor) {
- #ifdef ALPHABLEND_TYPE2
-    BackColor = BGVTColor[1];
- #else
-    BackColor = ts.VTColor[1];
- #endif
-  }
 #endif
 
-  if (Reverse != ((Attr.Attr & AttrReverse) != 0))
-  {
+	if (Reverse != ((Attr.Attr & AttrReverse) != 0))
+	{
 #ifdef ALPHABLEND_TYPE2
-    BGReverseText = TRUE;
+		BGReverseText = TRUE;
 #endif
-    if ((Attr.Attr & AttrReverse) && !NoReverseColor) {
+		if ((Attr.Attr & AttrReverse) && !NoReverseColor) {
 #ifdef ALPHABLEND_TYPE2
-      SetTextColor(VTDC, BGVTReverseColor[0]);
-      SetBkColor(  VTDC, BGVTReverseColor[1]);
+			SetTextColor(VTDC, BGVTReverseColor[0]);
+			SetBkColor(VTDC, BGVTReverseColor[1]);
 #else
-      SetTextColor(VTDC, ts.VTReverseColor[0]);
-      SetBkColor(  VTDC, ts.VTReverseColor[1]);
+			SetTextColor(VTDC, ts.VTReverseColor[0]);
+			SetBkColor(VTDC, ts.VTReverseColor[1]);
 #endif
-    }
-    else {
-      SetTextColor(VTDC, BackColor);
-      SetBkColor(  VTDC, TextColor);
-    }
-  }
-  else {
+		}
+		else {
+			SetTextColor(VTDC, BackColor);
+			SetBkColor(VTDC, TextColor);
+		}
+	}
+	else {
 #ifdef ALPHABLEND_TYPE2 // by AKASI
-    BGReverseText = FALSE;
+		BGReverseText = FALSE;
 #endif
-    SetTextColor(VTDC,TextColor);
-    SetBkColor(  VTDC,BackColor);
-  }
-}
+		SetTextColor(VTDC, TextColor);
+		SetBkColor(VTDC, BackColor);
+	}
+		}
 
 #if 1
-// ìññ ÇÕÇ±ÇøÇÁÇÃä÷êîÇégÇ§ÅB(2004.11.4 yutaka)
+// ÂΩìÈù¢„ÅØ„Åì„Å°„Çâ„ÅÆÈñ¢Êï∞„Çí‰Ωø„ÅÜ„ÄÇ(2004.11.4 yutaka)
 void DispStr(PCHAR Buff, int Count, int Y, int* X)
 // Display a string
 //   Buff: points the string
@@ -2765,84 +2782,86 @@ void DispStr(PCHAR Buff, int Count, int Y, int* X)
 // Return:
 //  *X: horizontal position shifted by the width of the string
 {
-  RECT RText;
+	RECT RText;
 
-  if ((ts.Language==IdRussian) &&
-      (ts.RussClient!=ts.RussFont))
-    RussConvStr(ts.RussClient,ts.RussFont,Buff,Count);
+	if ((ts.Language == IdRussian) &&
+		(ts.RussClient != ts.RussFont))
+		RussConvStr(ts.RussClient, ts.RussFont, Buff, Count);
 
-  RText.top = Y;
-  RText.bottom = Y+FontHeight;
-  RText.left = *X;
-  RText.right = *X + Count*FontWidth;
+	RText.top = Y;
+	RText.bottom = Y + FontHeight;
+	RText.left = *X;
+	RText.right = *X + Count * FontWidth;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-  if(!BGEnable)
-  {
-    ExtTextOut(VTDC,*X+ts.FontDX,Y+ts.FontDY,
-               ETO_CLIPPED | ETO_OPAQUE,
-               &RText,Buff,Count,&Dx[0]);
-  }else{
+	//<!--by AKASI
+	if (!BGEnable)
+	{
+		ExtTextOut(VTDC, *X + ts.FontDX, Y + ts.FontDY,
+			ETO_CLIPPED | ETO_OPAQUE,
+			&RText, Buff, Count, &Dx[0]);
+	}
+	else {
 
-    int   width;
-    int   height;
-    int   eto_options = ETO_CLIPPED;
-    RECT  rect;
-    HFONT hPrevFont;
+		int   width;
+		int   height;
+		int   eto_options = ETO_CLIPPED;
+		RECT  rect;
+		HFONT hPrevFont;
 
-    width  = Count*FontWidth;
-    height = FontHeight;
-    SetRect(&rect,0,0,width,height);
+		width = Count * FontWidth;
+		height = FontHeight;
+		SetRect(&rect, 0, 0, width, height);
 
-    //hdcBGBuffer ÇÃëÆê´Çê›íË
-    hPrevFont = SelectObject(hdcBGBuffer,GetCurrentObject(VTDC,OBJ_FONT));
-    SetTextColor(hdcBGBuffer,GetTextColor(VTDC));
-    SetBkColor(hdcBGBuffer,GetBkColor(VTDC));
+		//hdcBGBuffer „ÅÆÂ±ûÊÄß„ÇíË®≠ÂÆö
+		hPrevFont = SelectObject(hdcBGBuffer, GetCurrentObject(VTDC, OBJ_FONT));
+		SetTextColor(hdcBGBuffer, GetTextColor(VTDC));
+		SetBkColor(hdcBGBuffer, GetBkColor(VTDC));
 
-    //ëãÇÃà⁄ìÆÅAÉäÉTÉCÉYíÜÇÕîwåiÇ BGBrushInSizeMove Ç≈ìhÇËÇ¬Ç‘Ç∑
-    if(BGInSizeMove)
-      FillRect(hdcBGBuffer,&rect,BGBrushInSizeMove);
+		//Á™ì„ÅÆÁßªÂãï„ÄÅ„É™„Çµ„Ç§„Ç∫‰∏≠„ÅØËÉåÊôØ„Çí BGBrushInSizeMove „ÅßÂ°ó„Çä„Å§„Å∂„Åô
+		if (BGInSizeMove)
+			FillRect(hdcBGBuffer, &rect, BGBrushInSizeMove);
 
-    BitBlt(hdcBGBuffer,0,0,width,height,hdcBG,*X,Y,SRCCOPY);
+		BitBlt(hdcBGBuffer, 0, 0, width, height, hdcBG, *X, Y, SRCCOPY);
 
-    if(BGReverseText == TRUE)
-    {
-      if(BGReverseTextAlpha < 255)
-      {
-        BGBLENDFUNCTION bf;
-        HBRUSH hbr;
+		if (BGReverseText == TRUE)
+		{
+			if (BGReverseTextAlpha < 255)
+			{
+				BGBLENDFUNCTION bf;
+				HBRUSH hbr;
 
-        hbr = CreateSolidBrush(GetBkColor(hdcBGBuffer));
-        FillRect(hdcBGWork,&rect,hbr);
-        DeleteObject(hbr);
+				hbr = CreateSolidBrush(GetBkColor(hdcBGBuffer));
+				FillRect(hdcBGWork, &rect, hbr);
+				DeleteObject(hbr);
 
-        ZeroMemory(&bf,sizeof(bf));
-        bf.BlendOp             = AC_SRC_OVER;
-        bf.SourceConstantAlpha = BGReverseTextAlpha;
+				ZeroMemory(&bf, sizeof(bf));
+				bf.BlendOp = AC_SRC_OVER;
+				bf.SourceConstantAlpha = BGReverseTextAlpha;
 
-        BGAlphaBlend(hdcBGBuffer,0,0,width,height,hdcBGWork,0,0,width,height,bf);
-      }else{
-        eto_options |= ETO_OPAQUE;
-      }
-    }
+				BGAlphaBlend(hdcBGBuffer, 0, 0, width, height, hdcBGWork, 0, 0, width, height, bf);
+			}
+			else {
+				eto_options |= ETO_OPAQUE;
+			}
+		}
 
-    ExtTextOut(hdcBGBuffer,ts.FontDX,ts.FontDY,eto_options,&rect,Buff,Count,&Dx[0]);
-    BitBlt(VTDC,*X,Y,width,height,hdcBGBuffer,0,0,SRCCOPY);
+		ExtTextOut(hdcBGBuffer, ts.FontDX, ts.FontDY, eto_options, &rect, Buff, Count, &Dx[0]);
+		BitBlt(VTDC, *X, Y, width, height, hdcBGBuffer, 0, 0, SRCCOPY);
 
-    SelectObject(hdcBGBuffer,hPrevFont);
-  }
-//-->
+		SelectObject(hdcBGBuffer, hPrevFont);
+	}
+	//-->
 #else
-  ExtTextOut(VTDC,*X+ts.FontDX,Y+ts.FontDY,
-             ETO_CLIPPED | ETO_OPAQUE,
-             &RText,Buff,Count,&Dx[0]);
+	ExtTextOut(VTDC, *X + ts.FontDX, Y + ts.FontDY,
+		ETO_CLIPPED | ETO_OPAQUE,
+		&RText, Buff, Count, &Dx[0]);
 #endif
-  *X = RText.right;
+	*X = RText.right;
 
-  if ((ts.Language==IdRussian) &&
-      (ts.RussClient!=ts.RussFont))
-    RussConvStr(ts.RussFont,ts.RussClient,Buff,Count);
+	if ((ts.Language == IdRussian) &&
+		(ts.RussClient != ts.RussFont))
+		RussConvStr(ts.RussFont, ts.RussClient, Buff, Count);
 }
 
 #else
@@ -2871,7 +2890,7 @@ void DispStr(PCHAR Buff, int Count, int Y, int* X)
 	Count = 6;
 #endif
 
-	setlocale(LC_ALL, ts.Locale);	// TODO ÉRÅ[Éhïœä∑Ç±Ç±Ç≈Ç∑ÇÈ?,ñ≥å¯âªÇ≥ÇÍÇΩÉRÅ[Éh
+	setlocale(LC_ALL, ts.Locale);	// TODO „Ç≥„Éº„ÉâÂ§âÊèõ„Åì„Åì„Åß„Åô„Çã?,ÁÑ°ÂäπÂåñ„Åï„Çå„Åü„Ç≥„Éº„Éâ
 
 	ch = Buff[Count];
 	Buff[Count] = 0;
@@ -2883,34 +2902,34 @@ void DispStr(PCHAR Buff, int Count, int Y, int* X)
 	wclen = mbstowcs(wc, Buff, len + 1);
 	Buff[Count] = ch;
 
-	if ((ts.Language==IdRussian) &&
-		(ts.RussClient!=ts.RussFont))
-		RussConvStr(ts.RussClient,ts.RussFont,Buff,Count);
+	if ((ts.Language == IdRussian) &&
+		(ts.RussClient != ts.RussFont))
+		RussConvStr(ts.RussClient, ts.RussFont, Buff, Count);
 
 	RText.top = Y;
-	RText.bottom = Y+FontHeight;
+	RText.bottom = Y + FontHeight;
 	RText.left = *X;
-	RText.right = *X + Count*FontWidth; //
+	RText.right = *X + Count * FontWidth; //
 
-	// UnicodeÇ≈èoóÕÇ∑ÇÈÅB
+	// Unicode„ÅßÂá∫Âäõ„Åô„Çã„ÄÇ
 #if 1
-	// UTF-8ä¬ã´Ç…Ç®Ç¢ÇƒÅAtcshÇ™EUCèoóÕÇµÇΩèÍçáÅAâÊñ Ç…âΩÇ‡ï\é¶Ç≥ÇÍÇ»Ç¢Ç±Ç∆Ç™Ç†ÇÈÅB
-	// É}ÉEÉXÇ≈ÉhÉâÉbÉOÇµÇΩÇËÅAÉçÉOÉtÉ@ÉCÉãÇ÷ï€ë∂ÇµÇƒÇ›ÇÈÇ∆ÅAï∂éöâªÇØÇµÇΩï∂éöóÒÇ
-	// ämîFÇ∑ÇÈÇ±Ç∆Ç™Ç≈Ç´ÇÈÅB(2004.8.6 yutaka)
-	ExtTextOutW(VTDC,*X+ts.FontDX,Y+ts.FontDY,
+	// UTF-8Áí∞Â¢É„Å´„Åä„ÅÑ„Å¶„ÄÅtcsh„ÅåEUCÂá∫Âäõ„Åó„ÅüÂ†¥Âêà„ÄÅÁîªÈù¢„Å´‰Ωï„ÇÇË°®Á§∫„Åï„Çå„Å™„ÅÑ„Åì„Å®„Åå„ÅÇ„Çã„ÄÇ
+	// „Éû„Ç¶„Çπ„Åß„Éâ„É©„ÉÉ„Ç∞„Åó„Åü„Çä„ÄÅ„É≠„Ç∞„Éï„Ç°„Ç§„É´„Å∏‰øùÂ≠ò„Åó„Å¶„Åø„Çã„Å®„ÄÅÊñáÂ≠óÂåñ„Åë„Åó„ÅüÊñáÂ≠óÂàó„Çí
+	// Á¢∫Ë™ç„Åô„Çã„Åì„Å®„Åå„Åß„Åç„Çã„ÄÇ(2004.8.6 yutaka)
+	ExtTextOutW(VTDC, *X + ts.FontDX, Y + ts.FontDY,
 		ETO_CLIPPED | ETO_OPAQUE,
 		&RText, wc, wclen, NULL);
-//		&RText, wc, wclen, &Dx[0]);
+	//		&RText, wc, wclen, &Dx[0]);
 #else
-	TextOutW(VTDC, *X+ts.FontDX, Y+ts.FontDY, wc, wclen);
+	TextOutW(VTDC, *X + ts.FontDX, Y + ts.FontDY, wc, wclen);
 
 #endif
 
 	*X = RText.right;
 
-	if ((ts.Language==IdRussian) &&
-		(ts.RussClient!=ts.RussFont))
-		RussConvStr(ts.RussFont,ts.RussClient,Buff,Count);
+	if ((ts.Language == IdRussian) &&
+		(ts.RussClient != ts.RussFont))
+		RussConvStr(ts.RussFont, ts.RussClient, Buff, Count);
 
 	free(wc);
 }
@@ -2919,87 +2938,87 @@ void DispStr(PCHAR Buff, int Count, int Y, int* X)
 
 void DispEraseCurToEnd(int YEnd)
 {
-  RECT R;
+	RECT R;
 
-  if (VTDC==NULL) DispInitDC();
-  R.left = 0;
-  R.right = ScreenWidth;
-  R.top = (CursorY+1-WinOrgY)*FontHeight;
-  R.bottom = (YEnd+1-WinOrgY)*FontHeight;
+	if (VTDC == NULL) DispInitDC();
+	R.left = 0;
+	R.right = ScreenWidth;
+	R.top = (CursorY + 1 - WinOrgY)*FontHeight;
+	R.bottom = (YEnd + 1 - WinOrgY)*FontHeight;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  FillRect(VTDC,&R,Background);
-  BGFillRect(VTDC,&R,Background);
-//-->
+	//<!--by AKASI
+	//  FillRect(VTDC,&R,Background);
+	BGFillRect(VTDC, &R, Background);
+	//-->
 #else
-  FillRect(VTDC,&R,Background);
+	FillRect(VTDC, &R, Background);
 #endif
 
-  R.left = (CursorX-WinOrgX)*FontWidth;
-  R.bottom = R.top;
-  R.top = R.bottom-FontHeight;
+	R.left = (CursorX - WinOrgX)*FontWidth;
+	R.bottom = R.top;
+	R.top = R.bottom - FontHeight;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  FillRect(VTDC,&R,Background);
-  BGFillRect(VTDC,&R,Background);
-//-->
+	//<!--by AKASI
+	//  FillRect(VTDC,&R,Background);
+	BGFillRect(VTDC, &R, Background);
+	//-->
 #else
-  FillRect(VTDC,&R,Background);
+	FillRect(VTDC, &R, Background);
 #endif
 }
 
 void DispEraseHomeToCur(int YHome)
 {
-  RECT R;
+	RECT R;
 
-  if (VTDC==NULL) DispInitDC();
-  R.left = 0;
-  R.right = ScreenWidth;
-  R.top = (YHome-WinOrgY)*FontHeight;
-  R.bottom = (CursorY-WinOrgY)*FontHeight;
+	if (VTDC == NULL) DispInitDC();
+	R.left = 0;
+	R.right = ScreenWidth;
+	R.top = (YHome - WinOrgY)*FontHeight;
+	R.bottom = (CursorY - WinOrgY)*FontHeight;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  FillRect(VTDC,&R,Background);
-  BGFillRect(VTDC,&R,Background);
-//-->
+	//<!--by AKASI
+	//  FillRect(VTDC,&R,Background);
+	BGFillRect(VTDC, &R, Background);
+	//-->
 #else
-  FillRect(VTDC,&R,Background);
+	FillRect(VTDC, &R, Background);
 #endif
 
-  R.top = R.bottom;
-  R.bottom = R.top + FontHeight;
-  R.right = (CursorX+1-WinOrgX)*FontWidth;
+	R.top = R.bottom;
+	R.bottom = R.top + FontHeight;
+	R.right = (CursorX + 1 - WinOrgX)*FontWidth;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  FillRect(VTDC,&R,Background);
-  BGFillRect(VTDC,&R,Background);
-//-->
+	//<!--by AKASI
+	//  FillRect(VTDC,&R,Background);
+	BGFillRect(VTDC, &R, Background);
+	//-->
 #else
-  FillRect(VTDC,&R,Background);
+	FillRect(VTDC, &R, Background);
 #endif
 }
 
 void DispEraseCharsInLine(int XStart, int Count)
 {
-  RECT R;
+	RECT R;
 
-  if (VTDC==NULL) DispInitDC();
-  R.top = (CursorY-WinOrgY)*FontHeight;
-  R.bottom = R.top+FontHeight;
-  R.left = (XStart-WinOrgX)*FontWidth;
-  R.right = R.left + Count * FontWidth;
+	if (VTDC == NULL) DispInitDC();
+	R.top = (CursorY - WinOrgY)*FontHeight;
+	R.bottom = R.top + FontHeight;
+	R.left = (XStart - WinOrgX)*FontWidth;
+	R.right = R.left + Count * FontWidth;
 
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  FillRect(VTDC,&R,Background);
-  BGFillRect(VTDC,&R,Background);
-//-->
+	//<!--by AKASI
+	//  FillRect(VTDC,&R,Background);
+	BGFillRect(VTDC, &R, Background);
+	//-->
 #else
-  FillRect(VTDC,&R,Background);
+	FillRect(VTDC, &R, Background);
 #endif
 }
 
@@ -3008,28 +3027,28 @@ BOOL DispDeleteLines(int Count, int YEnd)
 //	 TRUE  - screen is successfully updated
 //   FALSE - screen is not updated
 {
-  RECT R;
+	RECT R;
 
-  if (Active && CompletelyVisible &&
-      (YEnd+1-WinOrgY <= WinHeight))
-  {
-	R.left = 0;
-	R.right = ScreenWidth;
-	R.top = (CursorY-WinOrgY)*FontHeight;
-	R.bottom = (YEnd+1-WinOrgY)*FontHeight;
+	if (Active && CompletelyVisible &&
+		(YEnd + 1 - WinOrgY <= WinHeight))
+	{
+		R.left = 0;
+		R.right = ScreenWidth;
+		R.top = (CursorY - WinOrgY)*FontHeight;
+		R.bottom = (YEnd + 1 - WinOrgY)*FontHeight;
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  ScrollWindow(HVTWin,0,-FontHeight*Count,&R,&R);
-  BGScrollWindow(HVTWin,0,-FontHeight*Count,&R,&R);
-//-->
+		//<!--by AKASI
+		//  ScrollWindow(HVTWin,0,-FontHeight*Count,&R,&R);
+		BGScrollWindow(HVTWin, 0, -FontHeight * Count, &R, &R);
+		//-->
 #else
-  ScrollWindow(HVTWin,0,-FontHeight*Count,&R,&R);
+		ScrollWindow(HVTWin, 0, -FontHeight * Count, &R, &R);
 #endif
-	UpdateWindow(HVTWin);
-	return TRUE;
-  }
-  else
-	return FALSE;
+		UpdateWindow(HVTWin);
+		return TRUE;
+	}
+	else
+		return FALSE;
 }
 
 BOOL DispInsertLines(int Count, int YEnd)
@@ -3037,28 +3056,28 @@ BOOL DispInsertLines(int Count, int YEnd)
 //	 TRUE  - screen is successfully updated
 //   FALSE - screen is not updated
 {
-  RECT R;
+	RECT R;
 
-  if (Active && CompletelyVisible &&
-      (CursorY >= WinOrgY))
-  {
-    R.left = 0;
-    R.right = ScreenWidth;
-    R.top = (CursorY-WinOrgY)*FontHeight;
-    R.bottom = (YEnd+1-WinOrgY)*FontHeight;
+	if (Active && CompletelyVisible &&
+		(CursorY >= WinOrgY))
+	{
+		R.left = 0;
+		R.right = ScreenWidth;
+		R.top = (CursorY - WinOrgY)*FontHeight;
+		R.bottom = (YEnd + 1 - WinOrgY)*FontHeight;
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  ScrollWindow(HVTWin,0,FontHeight*Count,&R,&R);
-    BGScrollWindow(HVTWin,0,FontHeight*Count,&R,&R);
-//-->
+		//<!--by AKASI
+		//  ScrollWindow(HVTWin,0,FontHeight*Count,&R,&R);
+		BGScrollWindow(HVTWin, 0, FontHeight*Count, &R, &R);
+		//-->
 #else
-  ScrollWindow(HVTWin,0,FontHeight*Count,&R,&R);
+		ScrollWindow(HVTWin, 0, FontHeight*Count, &R, &R);
 #endif
-	UpdateWindow(HVTWin);
-    return TRUE;
-  }
-  else
-	return FALSE;
+		UpdateWindow(HVTWin);
+		return TRUE;
+	}
+	else
+		return FALSE;
 }
 
 BOOL IsLineVisible(int* X, int* Y)
@@ -3072,83 +3091,83 @@ BOOL IsLineVisible(int* X, int* Y)
 //	  Otherwise
 //	    no change. same as input value.
 {
-  if ((dScroll != 0) &&
-      (*Y>=SRegionTop) &&
-      (*Y<=SRegionBottom))
-  {
-    *Y = *Y + dScroll;
-    if ((*Y<SRegionTop) || (*Y>SRegionBottom))
-      return FALSE;
-  }
+	if ((dScroll != 0) &&
+		(*Y >= SRegionTop) &&
+		(*Y <= SRegionBottom))
+	{
+		*Y = *Y + dScroll;
+		if ((*Y < SRegionTop) || (*Y > SRegionBottom))
+			return FALSE;
+	}
 
-  if ((*Y<WinOrgY) ||
-      (*Y>=WinOrgY+WinHeight))
-    return FALSE;
+	if ((*Y < WinOrgY) ||
+		(*Y >= WinOrgY + WinHeight))
+		return FALSE;
 
-  /* screen coordinate -> window coordinate */
-  *X = (*X-WinOrgX)*FontWidth;
-  *Y = (*Y-WinOrgY)*FontHeight;
-  return TRUE;
+	/* screen coordinate -> window coordinate */
+	*X = (*X - WinOrgX)*FontWidth;
+	*Y = (*Y - WinOrgY)*FontHeight;
+	return TRUE;
 }
 
 //-------------- scrolling functions --------------------
 
 void AdjustScrollBar() /* called by ChangeWindowSize() */
 {
-  LONG XRange, YRange;
-  int ScrollPosX, ScrollPosY;
+	LONG XRange, YRange;
+	int ScrollPosX, ScrollPosY;
 
-  if (NumOfColumns-WinWidth>0)
-    XRange = NumOfColumns-WinWidth;
-  else
-    XRange = 0;
+	if (NumOfColumns - WinWidth > 0)
+		XRange = NumOfColumns - WinWidth;
+	else
+		XRange = 0;
 
-  if (BuffEnd-WinHeight>0)
-    YRange = BuffEnd-WinHeight;
-  else
-    YRange = 0;
+	if (BuffEnd - WinHeight > 0)
+		YRange = BuffEnd - WinHeight;
+	else
+		YRange = 0;
 
-  ScrollPosX = GetScrollPos(HVTWin,SB_HORZ);
-  ScrollPosY = GetScrollPos(HVTWin,SB_VERT);
-  if (ScrollPosX > XRange)
-    ScrollPosX = XRange;
-  if (ScrollPosY > YRange)
-    ScrollPosY = YRange;
+	ScrollPosX = GetScrollPos(HVTWin, SB_HORZ);
+	ScrollPosY = GetScrollPos(HVTWin, SB_VERT);
+	if (ScrollPosX > XRange)
+		ScrollPosX = XRange;
+	if (ScrollPosY > YRange)
+		ScrollPosY = YRange;
 
-  WinOrgX = ScrollPosX;
-  WinOrgY = ScrollPosY-PageStart;
-  NewOrgX = WinOrgX;
-  NewOrgY = WinOrgY;
+	WinOrgX = ScrollPosX;
+	WinOrgY = ScrollPosY - PageStart;
+	NewOrgX = WinOrgX;
+	NewOrgY = WinOrgY;
 
-  DontChangeSize = TRUE;
+	DontChangeSize = TRUE;
 
-  SetScrollRange(HVTWin,SB_HORZ,0,XRange,FALSE);
+	SetScrollRange(HVTWin, SB_HORZ, 0, XRange, FALSE);
 
-  if ((YRange == 0) && (ts.EnableScrollBuff>0))
-  {
-    SetScrollRange(HVTWin,SB_VERT,0,1,FALSE);
-  }
-  else {
-    SetScrollRange(HVTWin,SB_VERT,0,YRange,FALSE);
-  }
+	if ((YRange == 0) && (ts.EnableScrollBuff > 0))
+	{
+		SetScrollRange(HVTWin, SB_VERT, 0, 1, FALSE);
+	}
+	else {
+		SetScrollRange(HVTWin, SB_VERT, 0, YRange, FALSE);
+	}
 
-  SetScrollPos(HVTWin,SB_HORZ,ScrollPosX,TRUE);
-  SetScrollPos(HVTWin,SB_VERT,ScrollPosY,TRUE);
+	SetScrollPos(HVTWin, SB_HORZ, ScrollPosX, TRUE);
+	SetScrollPos(HVTWin, SB_VERT, ScrollPosY, TRUE);
 
-  DontChangeSize = FALSE;
+	DontChangeSize = FALSE;
 }
 
 void DispScrollToCursor(int CurX, int CurY)
 {
-  if (CurX < NewOrgX)
-    NewOrgX = CurX;
-  else if (CurX >= NewOrgX+WinWidth)
-    NewOrgX = CurX + 1 - WinWidth;
+	if (CurX < NewOrgX)
+		NewOrgX = CurX;
+	else if (CurX >= NewOrgX + WinWidth)
+		NewOrgX = CurX + 1 - WinWidth;
 
-  if (CurY < NewOrgY)
-    NewOrgY = CurY;
-  else if (CurY >= NewOrgY+WinHeight)
-    NewOrgY = CurY + 1 - WinHeight;
+	if (CurY < NewOrgY)
+		NewOrgY = CurY;
+	else if (CurY >= NewOrgY + WinHeight)
+		NewOrgY = CurY + 1 - WinHeight;
 }
 
 void DispScrollNLines(int Top, int Bottom, int Direction)
@@ -3158,195 +3177,195 @@ void DispScrollNLines(int Top, int Bottom, int Direction)
 //  Bottom: bottom line
 //  Direction: +: forward, -: backward
 {
-  if ((dScroll*Direction <0) ||
-      (dScroll*Direction >0) &&
-      ((SRegionTop!=Top) ||
-       (SRegionBottom!=Bottom)))
-    DispUpdateScroll();
-  SRegionTop = Top;
-  SRegionBottom = Bottom;
-  dScroll = dScroll + Direction;
-  if (Direction>0)
-    DispCountScroll(Direction);
-  else
-    DispCountScroll(-Direction);
+	if ((dScroll*Direction < 0) ||
+		(dScroll*Direction > 0) &&
+		((SRegionTop != Top) ||
+		(SRegionBottom != Bottom)))
+		DispUpdateScroll();
+	SRegionTop = Top;
+	SRegionBottom = Bottom;
+	dScroll = dScroll + Direction;
+	if (Direction > 0)
+		DispCountScroll(Direction);
+	else
+		DispCountScroll(-Direction);
 }
 
 void DispCountScroll(int n)
 {
-  ScrollCount = ScrollCount + n;
-  if (ScrollCount>=ts.ScrollThreshold) DispUpdateScroll();
+	ScrollCount = ScrollCount + n;
+	if (ScrollCount >= ts.ScrollThreshold) DispUpdateScroll();
 }
 
 void DispUpdateScroll()
 {
-  int d;
-  RECT R;
+	int d;
+	RECT R;
 
-  ScrollCount = 0;
+	ScrollCount = 0;
 
-  /* Update partial scroll */
-  if (dScroll != 0)
-  {
-    d = dScroll * FontHeight;
-    R.left = 0;
-    R.right = ScreenWidth;
-    R.top = (SRegionTop-WinOrgY)*FontHeight;
-    R.bottom = (SRegionBottom+1-WinOrgY)*FontHeight;
+	/* Update partial scroll */
+	if (dScroll != 0)
+	{
+		d = dScroll * FontHeight;
+		R.left = 0;
+		R.right = ScreenWidth;
+		R.top = (SRegionTop - WinOrgY)*FontHeight;
+		R.bottom = (SRegionBottom + 1 - WinOrgY)*FontHeight;
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  ScrollWindow(HVTWin,0,-d,&R,&R);
-    BGScrollWindow(HVTWin,0,-d,&R,&R);
-//-->
+		//<!--by AKASI
+		//  ScrollWindow(HVTWin,0,-d,&R,&R);
+		BGScrollWindow(HVTWin, 0, -d, &R, &R);
+		//-->
 #else
-  ScrollWindow(HVTWin,0,-d,&R,&R);
+		ScrollWindow(HVTWin, 0, -d, &R, &R);
 #endif
 
-    if ((SRegionTop==0) && (dScroll>0))
-	{ // update scroll bar if BuffEnd is changed
-	  if ((BuffEnd==WinHeight) &&
-          (ts.EnableScrollBuff>0))
-        SetScrollRange(HVTWin,SB_VERT,0,1,TRUE);
-      else
-        SetScrollRange(HVTWin,SB_VERT,0,BuffEnd-WinHeight,FALSE);
-      SetScrollPos(HVTWin,SB_VERT,WinOrgY+PageStart,TRUE);
+		if ((SRegionTop == 0) && (dScroll > 0))
+		{ // update scroll bar if BuffEnd is changed
+			if ((BuffEnd == WinHeight) &&
+				(ts.EnableScrollBuff > 0))
+				SetScrollRange(HVTWin, SB_VERT, 0, 1, TRUE);
+			else
+				SetScrollRange(HVTWin, SB_VERT, 0, BuffEnd - WinHeight, FALSE);
+			SetScrollPos(HVTWin, SB_VERT, WinOrgY + PageStart, TRUE);
+		}
+		dScroll = 0;
 	}
-    dScroll = 0;
-  }
 
-  /* Update normal scroll */
-  if (NewOrgX < 0) NewOrgX = 0;
-  if (NewOrgX>NumOfColumns-WinWidth)
-    NewOrgX = NumOfColumns-WinWidth;
-  if (NewOrgY < -PageStart) NewOrgY = -PageStart;
-  if (NewOrgY>BuffEnd-WinHeight-PageStart)
-    NewOrgY = BuffEnd-WinHeight-PageStart;
+	/* Update normal scroll */
+	if (NewOrgX < 0) NewOrgX = 0;
+	if (NewOrgX > NumOfColumns - WinWidth)
+		NewOrgX = NumOfColumns - WinWidth;
+	if (NewOrgY < -PageStart) NewOrgY = -PageStart;
+	if (NewOrgY > BuffEnd - WinHeight - PageStart)
+		NewOrgY = BuffEnd - WinHeight - PageStart;
 
-  /* ç≈â∫çsÇ≈ÇæÇØé©ìÆÉXÉNÉçÅ[ÉãÇ∑ÇÈê›íËÇÃèÍçá
-     NewOrgYÇ™ïœâªÇµÇƒÇ¢Ç»Ç≠ÇƒÇ‡ÉoÉbÉtÉ@çsêîÇ™ïœâªÇ∑ÇÈÇÃÇ≈çXêVÇ∑ÇÈ */
-  if (ts.AutoScrollOnlyInBottomLine != 0)
-  {
-    if ((BuffEnd==WinHeight) &&
-        (ts.EnableScrollBuff>0))
-      SetScrollRange(HVTWin,SB_VERT,0,1,TRUE);
-    else
-      SetScrollRange(HVTWin,SB_VERT,0,BuffEnd-WinHeight,FALSE);
-    SetScrollPos(HVTWin,SB_VERT,NewOrgY+PageStart,TRUE);
-  }
+	/* ÊúÄ‰∏ãË°å„Åß„Å†„ÅëËá™Âãï„Çπ„ÇØ„É≠„Éº„É´„Åô„ÇãË®≠ÂÆö„ÅÆÂ†¥Âêà
+	   NewOrgY„ÅåÂ§âÂåñ„Åó„Å¶„ÅÑ„Å™„Åè„Å¶„ÇÇ„Éê„ÉÉ„Éï„Ç°Ë°åÊï∞„ÅåÂ§âÂåñ„Åô„Çã„ÅÆ„ÅßÊõ¥Êñ∞„Åô„Çã */
+	if (ts.AutoScrollOnlyInBottomLine != 0)
+	{
+		if ((BuffEnd == WinHeight) &&
+			(ts.EnableScrollBuff > 0))
+			SetScrollRange(HVTWin, SB_VERT, 0, 1, TRUE);
+		else
+			SetScrollRange(HVTWin, SB_VERT, 0, BuffEnd - WinHeight, FALSE);
+		SetScrollPos(HVTWin, SB_VERT, NewOrgY + PageStart, TRUE);
+	}
 
-  if ((NewOrgX==WinOrgX) &&
-      (NewOrgY==WinOrgY)) return;
+	if ((NewOrgX == WinOrgX) &&
+		(NewOrgY == WinOrgY)) return;
 
-  if (NewOrgX==WinOrgX)
-  {
-    d = (NewOrgY-WinOrgY) * FontHeight;
+	if (NewOrgX == WinOrgX)
+	{
+		d = (NewOrgY - WinOrgY) * FontHeight;
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  ScrollWindow(HVTWin,0,-d,NULL,NULL);
-    BGScrollWindow(HVTWin,0,-d,NULL,NULL);
-//-->
+		//<!--by AKASI
+		//  ScrollWindow(HVTWin,0,-d,NULL,NULL);
+		BGScrollWindow(HVTWin, 0, -d, NULL, NULL);
+		//-->
 #else
-  ScrollWindow(HVTWin,0,-d,NULL,NULL);
+		ScrollWindow(HVTWin, 0, -d, NULL, NULL);
 #endif
-  }
-  else if (NewOrgY==WinOrgY)
-  {
-    d = (NewOrgX-WinOrgX) * FontWidth;
+	}
+	else if (NewOrgY == WinOrgY)
+	{
+		d = (NewOrgX - WinOrgX) * FontWidth;
 #ifdef ALPHABLEND_TYPE2
-//<!--by AKASI
-//  ScrollWindow(HVTWin,-d,0,NULL,NULL);
-    BGScrollWindow(HVTWin,-d,0,NULL,NULL);
-//-->
+		//<!--by AKASI
+		//  ScrollWindow(HVTWin,-d,0,NULL,NULL);
+		BGScrollWindow(HVTWin, -d, 0, NULL, NULL);
+		//-->
 #else
-  ScrollWindow(HVTWin,-d,0,NULL,NULL);
+		ScrollWindow(HVTWin, -d, 0, NULL, NULL);
 #endif
-  }
-  else
-    InvalidateRect(HVTWin,NULL,TRUE);
+	}
+	else
+		InvalidateRect(HVTWin, NULL, TRUE);
 
-  /* Update scroll bars */
-  if (NewOrgX!=WinOrgX)
-    SetScrollPos(HVTWin,SB_HORZ,NewOrgX,TRUE);
+	/* Update scroll bars */
+	if (NewOrgX != WinOrgX)
+		SetScrollPos(HVTWin, SB_HORZ, NewOrgX, TRUE);
 
-  if (ts.AutoScrollOnlyInBottomLine == 0 && NewOrgY!=WinOrgY)
-  {
-    if ((BuffEnd==WinHeight) &&
-        (ts.EnableScrollBuff>0))
-      SetScrollRange(HVTWin,SB_VERT,0,1,TRUE);
-    else
-      SetScrollRange(HVTWin,SB_VERT,0,BuffEnd-WinHeight,FALSE);
-    SetScrollPos(HVTWin,SB_VERT,NewOrgY+PageStart,TRUE);
-  }
+	if (ts.AutoScrollOnlyInBottomLine == 0 && NewOrgY != WinOrgY)
+	{
+		if ((BuffEnd == WinHeight) &&
+			(ts.EnableScrollBuff > 0))
+			SetScrollRange(HVTWin, SB_VERT, 0, 1, TRUE);
+		else
+			SetScrollRange(HVTWin, SB_VERT, 0, BuffEnd - WinHeight, FALSE);
+		SetScrollPos(HVTWin, SB_VERT, NewOrgY + PageStart, TRUE);
+	}
 
-  WinOrgX = NewOrgX;
-  WinOrgY = NewOrgY;
+	WinOrgX = NewOrgX;
+	WinOrgY = NewOrgY;
 
-  if (IsCaretOn()) CaretOn();
+	if (IsCaretOn()) CaretOn();
 }
 
 void DispScrollHomePos()
 {
-  NewOrgX = 0;
-  NewOrgY = 0;
-  DispUpdateScroll();
+	NewOrgX = 0;
+	NewOrgY = 0;
+	DispUpdateScroll();
 }
 
 void DispAutoScroll(POINT p)
 {
-  int X, Y;
+	int X, Y;
 
-  X = (p.x + FontWidth / 2) / FontWidth;
-  Y = p.y / FontHeight;
-  if (X<0)
-    NewOrgX = WinOrgX + X;
-  else if (X>=WinWidth)
-    NewOrgX = NewOrgX + X - WinWidth + 1;
-  if (Y<0)
-    NewOrgY = WinOrgY + Y;
-  else if (Y>=WinHeight)
-    NewOrgY = NewOrgY + Y - WinHeight + 1;
+	X = (p.x + FontWidth / 2) / FontWidth;
+	Y = p.y / FontHeight;
+	if (X < 0)
+		NewOrgX = WinOrgX + X;
+	else if (X >= WinWidth)
+		NewOrgX = NewOrgX + X - WinWidth + 1;
+	if (Y < 0)
+		NewOrgY = WinOrgY + Y;
+	else if (Y >= WinHeight)
+		NewOrgY = NewOrgY + Y - WinHeight + 1;
 
-  DispUpdateScroll();
+	DispUpdateScroll();
 }
 
 void DispHScroll(int Func, int Pos)
 {
-  switch (Func) {
+	switch (Func) {
 	case SCROLL_BOTTOM:
-      NewOrgX = NumOfColumns-WinWidth;
-      break;
+		NewOrgX = NumOfColumns - WinWidth;
+		break;
 	case SCROLL_LINEDOWN: NewOrgX = WinOrgX + 1; break;
 	case SCROLL_LINEUP: NewOrgX = WinOrgX - 1; break;
 	case SCROLL_PAGEDOWN:
-      NewOrgX = WinOrgX + WinWidth - 1;
-      break;
+		NewOrgX = WinOrgX + WinWidth - 1;
+		break;
 	case SCROLL_PAGEUP:
-      NewOrgX = WinOrgX - WinWidth + 1;
-      break;
+		NewOrgX = WinOrgX - WinWidth + 1;
+		break;
 	case SCROLL_POS: NewOrgX = Pos; break;
 	case SCROLL_TOP: NewOrgX = 0; break;
-  }
-  DispUpdateScroll();
+	}
+	DispUpdateScroll();
 }
 
 void DispVScroll(int Func, int Pos)
 {
-  switch (Func) {
+	switch (Func) {
 	case SCROLL_BOTTOM:
-      NewOrgY = BuffEnd-WinHeight-PageStart;
-      break;
+		NewOrgY = BuffEnd - WinHeight - PageStart;
+		break;
 	case SCROLL_LINEDOWN: NewOrgY = WinOrgY + 1; break;
 	case SCROLL_LINEUP: NewOrgY = WinOrgY - 1; break;
 	case SCROLL_PAGEDOWN:
-      NewOrgY = WinOrgY + WinHeight - 1;
-      break;
+		NewOrgY = WinOrgY + WinHeight - 1;
+		break;
 	case SCROLL_PAGEUP:
-      NewOrgY = WinOrgY - WinHeight + 1;
-      break;
-	case SCROLL_POS: NewOrgY = Pos-PageStart; break;
+		NewOrgY = WinOrgY - WinHeight + 1;
+		break;
+	case SCROLL_POS: NewOrgY = Pos - PageStart; break;
 	case SCROLL_TOP: NewOrgY = -PageStart; break;
-  }
-  DispUpdateScroll();
+	}
+	DispUpdateScroll();
 }
 
 //-------------- end of scrolling functions --------
@@ -3355,77 +3374,77 @@ void DispSetupFontDlg()
 //  Popup the Setup Font dialogbox and
 //  reset window
 {
-  BOOL Ok;
+	BOOL Ok;
 
-  ts.VTFlag = 1;
-  if (! LoadTTDLG()) return;
-  SetLogFont();
-  Ok = ChooseFontDlg(HVTWin,&VTlf,&ts);
-  FreeTTDLG();
-  if (! Ok) return;
+	ts.VTFlag = 1;
+	if (!LoadTTDLG()) return;
+	SetLogFont();
+	Ok = ChooseFontDlg(HVTWin, &VTlf, &ts);
+	FreeTTDLG();
+	if (!Ok) return;
 
-  strncpy_s(ts.VTFont, sizeof(ts.VTFont),VTlf.lfFaceName, _TRUNCATE);
-  ts.VTFontSize.x = VTlf.lfWidth;
-  ts.VTFontSize.y = VTlf.lfHeight;
-  ts.VTFontCharSet = VTlf.lfCharSet;
+	strncpy_s(ts.VTFont, sizeof(ts.VTFont), VTlf.lfFaceName, _TRUNCATE);
+	ts.VTFontSize.x = VTlf.lfWidth;
+	ts.VTFontSize.y = VTlf.lfHeight;
+	ts.VTFontCharSet = VTlf.lfCharSet;
 
-  ChangeFont();
+	ChangeFont();
 
-  DispChangeWinSize(WinWidth,WinHeight);
+	DispChangeWinSize(WinWidth, WinHeight);
 
-  ChangeCaret();
+	ChangeCaret();
 }
 
 void DispRestoreWinSize()
 //  Restore window size by double clik on caption bar
 {
-  if (ts.TermIsWin>0) return;
+	if (ts.TermIsWin > 0) return;
 
-  if ((WinWidth==NumOfColumns) && (WinHeight==NumOfLines))
-  {
-    if (WinWidthOld > NumOfColumns)
-      WinWidthOld = NumOfColumns;
-    if (WinHeightOld > BuffEnd)
-      WinHeightOld = BuffEnd;
-    DispChangeWinSize(WinWidthOld,WinHeightOld);
-  }
-  else {
-    SaveWinSize = TRUE;
-    DispChangeWinSize(NumOfColumns,NumOfLines);
-  }
+	if ((WinWidth == NumOfColumns) && (WinHeight == NumOfLines))
+	{
+		if (WinWidthOld > NumOfColumns)
+			WinWidthOld = NumOfColumns;
+		if (WinHeightOld > BuffEnd)
+			WinHeightOld = BuffEnd;
+		DispChangeWinSize(WinWidthOld, WinHeightOld);
+	}
+	else {
+		SaveWinSize = TRUE;
+		DispChangeWinSize(NumOfColumns, NumOfLines);
+	}
 }
 
 void DispSetWinPos()
 {
-  int CaretX, CaretY;
-  POINT Point;
-  RECT R;
+	int CaretX, CaretY;
+	POINT Point;
+	RECT R;
 
-  GetWindowRect(HVTWin,&R);
-  ts.VTPos.x = R.left;
-  ts.VTPos.y = R.top;
+	GetWindowRect(HVTWin, &R);
+	ts.VTPos.x = R.left;
+	ts.VTPos.y = R.top;
 
-  if (CanUseIME() && (ts.IMEInline > 0))
-  {
-    CaretX = (CursorX-WinOrgX)*FontWidth;
-    CaretY = (CursorY-WinOrgY)*FontHeight;
-    /* set IME conversion window pos. */
-    SetConversionWindow(HVTWin,CaretX,CaretY);
-  }
+	if (CanUseIME() && (ts.IMEInline > 0))
+	{
+		CaretX = (CursorX - WinOrgX)*FontWidth;
+		CaretY = (CursorY - WinOrgY)*FontHeight;
+		/* set IME conversion window pos. */
+		SetConversionWindow(HVTWin, CaretX, CaretY);
+	}
 
-  Point.x = 0;
-  Point.y = ScreenHeight;
-  ClientToScreen(HVTWin,&Point);
-  CompletelyVisible = (Point.y <= VirtualScreen.bottom);
+	Point.x = 0;
+	Point.y = ScreenHeight;
+	ClientToScreen(HVTWin, &Point);
+	CompletelyVisible = (Point.y <= VirtualScreen.bottom);
 
 #ifdef ALPHABLEND_TYPE2
-   if(BGEnable)
-	InvalidateRect(HVTWin, NULL, FALSE);
+	if (BGEnable)
+		InvalidateRect(HVTWin, NULL, FALSE);
 #endif
 }
 
 void DispMoveWindow(int x, int y) {
-	SetWindowPos(HVTWin, 0, x, y, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_NOACTIVATE);
+	SetWindowPos(HVTWin, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 	DispSetWinPos();
 	return;
 }
@@ -3436,7 +3455,7 @@ void DispSetActive(BOOL ActiveFlag)
 	if (Active) {
 		if (IsCaretOn()) {
 			CaretKillFocus(FALSE);
-			// ÉAÉNÉeÉBÉuéûÇÕñ≥èåèÇ…çƒï`âÊÇ∑ÇÈ
+			// „Ç¢„ÇØ„ÉÜ„Ç£„ÉñÊôÇ„ÅØÁÑ°Êù°‰ª∂„Å´ÂÜçÊèèÁîª„Åô„Çã
 			UpdateCaretPosition(TRUE);
 		}
 
@@ -3444,27 +3463,27 @@ void DispSetActive(BOOL ActiveFlag)
 		ActiveWin = IdVT;
 	}
 	else {
-		if ((ts.Language==IdJapanese || ts.Language==IdKorean || ts.Language==IdUtf8) &&
-		    CanUseIME())
+		if ((ts.Language == IdJapanese || ts.Language == IdKorean || ts.Language == IdUtf8) &&
+			CanUseIME())
 		{
 			/* position & font of conv. window -> default */
-			SetConversionWindow(HVTWin,-1,0);
+			SetConversionWindow(HVTWin, -1, 0);
 		}
 	}
 }
 
 int TCharAttrCmp(TCharAttr a, TCharAttr b)
 {
-  if (a.Attr == b.Attr &&
-      a.Attr2 == b.Attr2 &&
-      a.Fore == b.Fore &&
-      a.Back == b.Back)
-  {
-    return 0;
-  }
-  else {
-    return 1;
-  }
+	if (a.Attr == b.Attr &&
+		a.Attr2 == b.Attr2 &&
+		a.Fore == b.Fore &&
+		a.Back == b.Back)
+	{
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 void DispSetColor(unsigned int num, COLORREF color)
@@ -3479,14 +3498,14 @@ void DispSetColor(unsigned int num, COLORREF color)
 #ifdef ALPHABLEND_TYPE2
 	case CS_VT_NORMALFG:
 		BGVTColor[0] = color;
-		if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
-			ANSIColor[IdFore ] = BGVTColor[0]; // use text color for "white"
+		if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
+			ANSIColor[IdFore] = BGVTColor[0]; // use text color for "white"
 		}
 		break;
 	case CS_VT_NORMALBG:
 		BGVTColor[1] = color;
-		if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
-			ANSIColor[IdBack ] = BGVTColor[1]; // use background color for "Black"
+		if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
+			ANSIColor[IdBack] = BGVTColor[1]; // use background color for "Black"
 		}
 		if (ts.UseNormalBGColor) {
 			BGVTBoldColor[1] = BGVTColor[1];
@@ -3505,14 +3524,14 @@ void DispSetColor(unsigned int num, COLORREF color)
 #else
 	case CS_VT_NORMALFG:
 		ts.VTColor[0] = color;
-		if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
-			ANSIColor[IdFore ] = ts.VTColor[0]; // use text color for "white"
+		if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
+			ANSIColor[IdFore] = ts.VTColor[0]; // use text color for "white"
 		}
 		break;
 	case CS_VT_NORMALBG:
 		ts.VTColor[1] = color;
-		if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
-			ANSIColor[IdBack ] = ts.VTColor[1]; // use background color for "Black"
+		if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
+			ANSIColor[IdBack] = ts.VTColor[1]; // use background color for "Black"
 		}
 		if (ts.UseNormalBGColor) {
 			ts.VTBoldColor[1] = ts.VTColor[1];
@@ -3548,7 +3567,7 @@ void DispSetColor(unsigned int num, COLORREF color)
 			InvalidateRect(HTEKWin, NULL, FALSE);
 	}
 	else {
-		InvalidateRect(HVTWin,NULL,FALSE);
+		InvalidateRect(HVTWin, NULL, FALSE);
 	}
 }
 
@@ -3562,18 +3581,18 @@ void DispResetColor(unsigned int num)
 
 	TmpDC = GetDC(NULL);
 
-	switch(num) {
+	switch (num) {
 #ifdef ALPHABLEND_TYPE2
 	case CS_VT_NORMALFG:
 		BGVTColor[0] = ts.VTColor[0];
-		if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
-			ANSIColor[IdFore ] = ts.VTColor[0]; // use text color for "white"
+		if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
+			ANSIColor[IdFore] = ts.VTColor[0]; // use text color for "white"
 		}
 		break;
 	case CS_VT_NORMALBG:
 		BGVTColor[1] = ts.VTColor[1];
-		if ((ts.ColorFlag & CF_USETEXTCOLOR)!=0) {
-			ANSIColor[IdBack ] = ts.VTColor[1]; // use background color for "Black"
+		if ((ts.ColorFlag & CF_USETEXTCOLOR) != 0) {
+			ANSIColor[IdBack] = ts.VTColor[1]; // use background color for "Black"
 		}
 		if (ts.UseNormalBGColor) {
 			BGVTBoldColor[1] = ts.VTColor[1];
@@ -3673,7 +3692,7 @@ void DispResetColor(unsigned int num)
 			InvalidateRect(HTEKWin, NULL, FALSE);
 	}
 	else {
-		InvalidateRect(HVTWin,NULL,FALSE);
+		InvalidateRect(HVTWin, NULL, FALSE);
 	}
 }
 
@@ -3708,26 +3727,26 @@ COLORREF DispGetColor(unsigned int num)
 }
 
 void DispSetCurCharAttr(TCharAttr Attr) {
-  CurCharAttr = Attr;
-  UpdateBGBrush();
+	CurCharAttr = Attr;
+	UpdateBGBrush();
 }
 
 void UpdateBGBrush() {
-  if (Background != NULL) DeleteObject(Background);
+	if (Background != NULL) DeleteObject(Background);
 
-  if ((CurCharAttr.Attr2 & Attr2Back) != 0) {
-    if ((CurCharAttr.Back<16) && (CurCharAttr.Back&7)!=0)
-      Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back ^ 8]);
-    else
-      Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back]);
-  }
-  else {
+	if ((CurCharAttr.Attr2 & Attr2Back) != 0) {
+		if ((CurCharAttr.Back < 16) && (CurCharAttr.Back & 7) != 0)
+			Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back ^ 8]);
+		else
+			Background = CreateSolidBrush(ANSIColor[CurCharAttr.Back]);
+	}
+	else {
 #ifdef ALPHABLEND_TYPE2
-    Background = CreateSolidBrush(BGVTColor[1]);
+		Background = CreateSolidBrush(BGVTColor[1]);
 #else
-    Background = CreateSolidBrush(ts.VTColor[1]);
+		Background = CreateSolidBrush(ts.VTColor[1]);
 #endif  // ALPHABLEND_TYPE2
-  }
+	}
 }
 
 void DispShowWindow(int mode)
@@ -3743,21 +3762,21 @@ void DispShowWindow(int mode)
 		ShowWindow(HVTWin, SW_RESTORE);
 		break;
 	case WINDOW_RAISE: {
-		//âΩÇ‡ãNÇ´Ç»Ç¢Ç±Ç∆Ç†ÇË
+		//‰Ωï„ÇÇËµ∑„Åç„Å™„ÅÑ„Åì„Å®„ÅÇ„Çä
 		//  SetWindowPos(HVTWin, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 //#define RAISE_AND_GET_FORCUS
 #if defined(RAISE_AND_GET_FORCUS)
-		//ÉtÉHÅ[ÉJÉXÇíDÇ§
+		//„Éï„Ç©„Éº„Ç´„Çπ„ÇíÂ•™„ÅÜ
 		SetForegroundWindow(HVTWin);
 #else
-		//ÉtÉHÅ[ÉJÉXÇÕíDÇÌÇ∏ç≈è„ñ Ç…óàÇÈ
+		//„Éï„Ç©„Éº„Ç´„Çπ„ÅØÂ•™„Çè„ÅöÊúÄ‰∏äÈù¢„Å´Êù•„Çã
 		BringWindowToTop(HVTWin);
 		if (GetForegroundWindow() != HVTWin) {
 			FlashWindow(HVTWin, TRUE);
 		}
 #endif
 	}
-		break;
+					   break;
 	case WINDOW_LOWER:
 		SetWindowPos(HVTWin, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		break;
@@ -3779,7 +3798,7 @@ void DispResizeWin(int w, int h) {
 	RECT r;
 
 	if (w <= 0 || h <= 0) {
-		GetWindowRect(HVTWin,&r);
+		GetWindowRect(HVTWin, &r);
 		if (w <= 0) {
 			w = r.right - r.left;
 		}
@@ -3787,7 +3806,7 @@ void DispResizeWin(int w, int h) {
 			h = r.bottom - r.top;
 		}
 	}
-	SetWindowPos(HVTWin, 0, 0, 0, w, h, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+	SetWindowPos(HVTWin, 0, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 	AdjustSize = FALSE;
 }
 
@@ -3810,11 +3829,11 @@ void DispGetWindowPos(int *x, int *y, BOOL client) {
 		GetWindowPlacement(HVTWin, &wndpl);
 
 		switch (wndpl.showCmd) {
-		  case SW_SHOWMAXIMIZED:
+		case SW_SHOWMAXIMIZED:
 			*x = wndpl.ptMaxPosition.x;
 			*y = wndpl.ptMaxPosition.y;
 			break;
-		  default:
+		default:
 			*x = wndpl.rcNormalPosition.left;
 			*y = wndpl.rcNormalPosition.top;
 		}
@@ -3849,15 +3868,15 @@ void DispGetRootWinSize(int *x, int *y, BOOL inPixels)
 	GetClientRect(HVTWin, &client);
 
 	if (((mod = GetModuleHandle("user32.dll")) != NULL) &&
-	    (GetProcAddress(mod,"MonitorFromWindow") != NULL)) {
-		// É}ÉãÉ`ÉÇÉjÉ^Ç™ÉTÉ|Å[ÉgÇ≥ÇÍÇƒÇ¢ÇÈèÍçá
+		(GetProcAddress(mod, "MonitorFromWindow") != NULL)) {
+		// „Éû„É´„ÉÅ„É¢„Éã„Çø„Åå„Çµ„Éù„Éº„Éà„Åï„Çå„Å¶„ÅÑ„ÇãÂ†¥Âêà
 		monitor = MonitorFromWindow(HVTWin, MONITOR_DEFAULTTONEAREST);
 		monitorInfo.cbSize = sizeof(MONITORINFO);
 		GetMonitorInfo(monitor, &monitorInfo);
 		desktop = monitorInfo.rcWork;
 	}
 	else {
-		// É}ÉãÉ`ÉÇÉjÉ^Ç™ÉTÉ|Å[ÉgÇ≥ÇÍÇƒÇ¢Ç»Ç¢èÍçá
+		// „Éû„É´„ÉÅ„É¢„Éã„Çø„Åå„Çµ„Éù„Éº„Éà„Åï„Çå„Å¶„ÅÑ„Å™„ÅÑÂ†¥Âêà
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &desktop, 0);
 	}
 
@@ -3884,7 +3903,7 @@ int DispFindClosestColor(int red, int green, int blue)
 	if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
 		return -1;
 
-	for (i=0; i<256; i++) {
+	for (i = 0; i < 256; i++) {
 		diff_r = red - GetRValue(ANSIColor[i]);
 		diff_g = green - GetGValue(ANSIColor[i]);
 		diff_b = blue - GetBValue(ANSIColor[i]);

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (C) 2010-2017 TeraTerm Project
  * All rights reserved.
  *
@@ -25,10 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
- * WSAAsyncGetAddrInfo.c -- asynchronous version of getaddrinfo
- * Copyright(C) 2000-2003 Jun-ya Kato <kato@win6.jp>
- */
+ /*
+  * WSAAsyncGetAddrInfo.c -- asynchronous version of getaddrinfo
+  * Copyright(C) 2000-2003 Jun-ya Kato <kato@win6.jp>
+  */
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
@@ -39,10 +39,10 @@
 static unsigned __stdcall getaddrinfo_thread(void * p);
 
 HANDLE PASCAL WSAAsyncGetAddrInfo(HWND hWnd, unsigned int wMsg,
-                           const char *hostname,
-                           const char *portname,
-                           struct addrinfo *hints,
-                           struct addrinfo **res)
+	const char *hostname,
+	const char *portname,
+	struct addrinfo *hints,
+	struct addrinfo **res)
 {
 	HANDLE thread;
 	unsigned tid;
@@ -58,9 +58,9 @@ HANDLE PASCAL WSAAsyncGetAddrInfo(HWND hWnd, unsigned int wMsg,
 	/* packing arguments struct addrinfo_args */
 	ga->hWnd = hWnd;
 	ga->wMsg = wMsg;
-	ga->hostname = _strdup(hostname); // ƒ|ƒCƒ“ƒ^‚¾‚¯“n‚·‚ÆAƒXƒŒƒbƒhæ‚Å•s’è‚Æ‚È‚éB(2012.11.7 yutaka)
+	ga->hostname = _strdup(hostname); // ãƒã‚¤ãƒ³ã‚¿ã ã‘æ¸¡ã™ã¨ã€ã‚¹ãƒ¬ãƒƒãƒ‰å…ˆã§ä¸å®šã¨ãªã‚‹ã€‚(2012.11.7 yutaka)
 	ga->portname = _strdup(portname);
-	ga->hints = *hints; // ƒ|ƒCƒ“ƒ^‚¾‚¯“n‚·‚ÆAƒXƒŒƒbƒhæ‚Å•s’è‚Æ‚È‚éB(2016.3.11 yutaka)
+	ga->hints = *hints; // ãƒã‚¤ãƒ³ã‚¿ã ã‘æ¸¡ã™ã¨ã€ã‚¹ãƒ¬ãƒƒãƒ‰å…ˆã§ä¸å®šã¨ãªã‚‹ã€‚(2016.3.11 yutaka)
 	ga->res = res;
 
 	ga->lpHandle = (HANDLE *)malloc(sizeof(HANDLE));
@@ -82,7 +82,8 @@ HANDLE PASCAL WSAAsyncGetAddrInfo(HWND hWnd, unsigned int wMsg,
 		free(ga->portname);
 		free(ga);
 		return NULL;
-	} else
+	}
+	else
 		return (HANDLE)thread;
 }
 

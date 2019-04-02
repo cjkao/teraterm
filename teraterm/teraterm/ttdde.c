@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2004-2017 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* TERATERM.EXE, DDE routines */
+ /* TERATERM.EXE, DDE routines */
 #include "teraterm.h"
 #include "tttypes.h"
 #include <stdio.h>
@@ -104,7 +104,7 @@ static void BringupMacroWindow(BOOL flash_flag)
 		hwnd = GetNextWindow(hwnd, GW_HWNDNEXT);
 	}
 
-	// É}ÉNÉçÉEÉBÉìÉhÉEñ{ëÃ
+	// „Éû„ÇØ„É≠„Ç¶„Ç£„É≥„Éâ„Ç¶Êú¨‰Ωì
 	ShowWindow(HWndDdeCli, SW_NORMAL);
 	SetForegroundWindow(HWndDdeCli);
 	BringWindowToTop(HWndDdeCli);
@@ -123,9 +123,9 @@ void GetClientHWnd(PCHAR HWndStr)
 	while (b > 0)
 	{
 		if (b <= 0x39)
-			HCli = (HCli << 4) + (b-0x30);
+			HCli = (HCli << 4) + (b - 0x30);
 		else
-			HCli = (HCli << 4) + (b-0x37);
+			HCli = (HCli << 4) + (b - 0x37);
 		i++;
 		b = HWndStr[i];
 	}
@@ -134,7 +134,7 @@ void GetClientHWnd(PCHAR HWndStr)
 
 void Byte2HexStr(BYTE b, LPSTR HexStr)
 {
-	if (b<0xa0)
+	if (b < 0xa0)
 		HexStr[0] = 0x30 + (b >> 4);
 	else
 		HexStr[0] = 0x37 + (b >> 4);
@@ -150,11 +150,11 @@ void SetTopic()
 	WORD w;
 
 	w = HIWORD(HVTWin);
-	Byte2HexStr(HIBYTE(w),&(TopicName[0]));
-	Byte2HexStr(LOBYTE(w),&(TopicName[2]));
+	Byte2HexStr(HIBYTE(w), &(TopicName[0]));
+	Byte2HexStr(LOBYTE(w), &(TopicName[2]));
 	w = LOWORD(HVTWin);
-	Byte2HexStr(HIBYTE(w),&(TopicName[4]));
-	Byte2HexStr(LOBYTE(w),&(TopicName[6]));
+	Byte2HexStr(HIBYTE(w), &(TopicName[4]));
+	Byte2HexStr(LOBYTE(w), &(TopicName[6]));
 }
 
 HDDEDATA WildConnect(HSZ ServiceHsz, HSZ TopicHsz, UINT ClipFmt)
@@ -162,7 +162,7 @@ HDDEDATA WildConnect(HSZ ServiceHsz, HSZ TopicHsz, UINT ClipFmt)
 	HSZPAIR Pairs[2];
 	BOOL Ok;
 
-	Pairs[0].hszSvc  = Service;
+	Pairs[0].hszSvc = Service;
 	Pairs[0].hszTopic = Topic;
 	Pairs[1].hszSvc = NULL;
 	Pairs[1].hszTopic = NULL;
@@ -173,16 +173,16 @@ HDDEDATA WildConnect(HSZ ServiceHsz, HSZ TopicHsz, UINT ClipFmt)
 		Ok = TRUE;
 	else
 		if ((TopicHsz == 0) &&
-		    (DdeCmpStringHandles(Service, ServiceHsz) == 0))
+			(DdeCmpStringHandles(Service, ServiceHsz) == 0))
 			Ok = TRUE;
 		else
 			if ((DdeCmpStringHandles(Topic, TopicHsz) == 0) &&
-			    (ServiceHsz == 0))
+				(ServiceHsz == 0))
 				Ok = TRUE;
 
 	if (Ok)
 		return DdeCreateDataHandle(Inst, (LPBYTE)(&Pairs), sizeof(Pairs),
-		                           0, NULL, ClipFmt, 0);
+			0, NULL, ClipFmt, 0);
 	else
 		return 0;
 }
@@ -192,8 +192,8 @@ BOOL DDEGet1(LPBYTE b)
 	if (cv.DCount <= 0) return FALSE;
 	*b = ((LPSTR)cv.LogBuf)[cv.DStart];
 	cv.DStart++;
-	if (cv.DStart>=InBuffSize)
-		cv.DStart = cv.DStart-InBuffSize;
+	if (cv.DStart >= InBuffSize)
+		cv.DStart = cv.DStart - InBuffSize;
 	cv.DCount--;
 	return TRUE;
 }
@@ -207,12 +207,12 @@ LONG DDEGetDataLen()
 	Len = cv.DCount;
 	Start = cv.DStart;
 	Count = cv.DCount;
-	while (Count>0)
+	while (Count > 0)
 	{
 		b = ((LPSTR)cv.LogBuf)[Start];
-		if ((b==0x00) || (b==0x01)) Len++;
+		if ((b == 0x00) || (b == 0x01)) Len++;
 		Start++;
-		if (Start>=InBuffSize) Start = Start-InBuffSize;
+		if (Start >= InBuffSize) Start = Start - InBuffSize;
 		Count--;
 	}
 
@@ -228,16 +228,16 @@ HDDEDATA AcceptRequest(HSZ ItemHSz)
 	int i;
 	LONG Len;
 
-	if ((! DDELog) || (ConvH==0)) return 0;
+	if ((!DDELog) || (ConvH == 0)) return 0;
 
 	if (DdeCmpStringHandles(ItemHSz, Item2) == 0) // item "PARAM"
-		DH = DdeCreateDataHandle(Inst,ParamFileName,sizeof(ParamFileName),0,
-		                         Item2,CF_OEMTEXT,0);
+		DH = DdeCreateDataHandle(Inst, ParamFileName, sizeof(ParamFileName), 0,
+			Item2, CF_OEMTEXT, 0);
 	else if (DdeCmpStringHandles(ItemHSz, Item) == 0) // item "DATA"
 	{
-		if (cv.HLogBuf==0) return 0;
+		if (cv.HLogBuf == 0) return 0;
 
-		if (cv.LogBuf==NULL)
+		if (cv.LogBuf == NULL)
 		{
 			Unlock = TRUE;
 			cv.LogBuf = GlobalLock(cv.HLogBuf);
@@ -247,22 +247,22 @@ HDDEDATA AcceptRequest(HSZ ItemHSz)
 
 		Len = DDEGetDataLen();
 		if ((SyncMode) &&
-		    (SyncFreeSpace<Len))
+			(SyncFreeSpace < Len))
 			Len = SyncFreeSpace;
 
-		DH = DdeCreateDataHandle(Inst,NULL,Len+2,0,
-		                         Item,CF_OEMTEXT,0);
-		DP = DdeAccessData(DH,NULL);
+		DH = DdeCreateDataHandle(Inst, NULL, Len + 2, 0,
+			Item, CF_OEMTEXT, 0);
+		DP = DdeAccessData(DH, NULL);
 		if (DP != NULL)
 		{
 			i = 0;
 			while (i < Len)
 			{
 				if (DDEGet1(&b)) {
-					if ((b==0x00) || (b==0x01))
+					if ((b == 0x00) || (b == 0x01))
 					{
 						DP[i] = 0x01;
-						DP[i+1] = b + 1;
+						DP[i + 1] = b + 1;
 						i = i + 2;
 					}
 					else {
@@ -290,29 +290,29 @@ HDDEDATA AcceptRequest(HSZ ItemHSz)
 }
 
 HDDEDATA AcceptPoke(HSZ ItemHSz, UINT ClipFmt,
-                    HDDEDATA Data)
+	HDDEDATA Data)
 {
 	LPSTR DataPtr;
 	DWORD DataSize;
 
-	// òAë±ÇµÇƒXTYP_POKEÇ™ÉNÉâÉCÉAÉìÉgÅiÉ}ÉNÉçÅjÇ©ÇÁëóÇÁÇÍÇƒÇ≠ÇÈÇ∆ÅAÉTÅ[ÉoÅiñ{ëÃÅjë§Ç™Ç‹Çæ
-	// ÉRÉ}ÉìÉhÇÃì\ÇËïtÇØÇçsÇ¡ÇƒÇ¢Ç»Ç¢èÍçáÅATalkStatusÇÕ IdTalkCB Ç…Ç»ÇÃÇ≈ÅADDE_FNOTPROCESSEDÇ
-	// ï‘Ç∑Ç±Ç∆Ç™Ç†ÇÈÅBDDE_FBUSYÇ…ïœçXÅB
+	// ÈÄ£Á∂ö„Åó„Å¶XTYP_POKE„Åå„ÇØ„É©„Ç§„Ç¢„É≥„ÉàÔºà„Éû„ÇØ„É≠Ôºâ„Åã„ÇâÈÄÅ„Çâ„Çå„Å¶„Åè„Çã„Å®„ÄÅ„Çµ„Éº„ÉêÔºàÊú¨‰ΩìÔºâÂÅ¥„Åå„Åæ„Å†
+	// „Ç≥„Éû„É≥„Éâ„ÅÆË≤º„Çä‰ªò„Åë„ÇíË°å„Å£„Å¶„ÅÑ„Å™„ÅÑÂ†¥Âêà„ÄÅTalkStatus„ÅØ IdTalkCB „Å´„Å™„ÅÆ„Åß„ÄÅDDE_FNOTPROCESSED„Çí
+	// Ëøî„Åô„Åì„Å®„Åå„ÅÇ„Çã„ÄÇDDE_FBUSY„Å´Â§âÊõ¥„ÄÇ
 	// (2006.11.6 yutaka)
 	if (TalkStatus != IdTalkKeyb)
 		return (HDDEDATA)DDE_FBUSY;
 
-	if (ConvH==0) return DDE_FNOTPROCESSED;
+	if (ConvH == 0) return DDE_FNOTPROCESSED;
 
-	if ((ClipFmt!=CF_TEXT) && (ClipFmt!=CF_OEMTEXT)) return DDE_FNOTPROCESSED;
+	if ((ClipFmt != CF_TEXT) && (ClipFmt != CF_OEMTEXT)) return DDE_FNOTPROCESSED;
 
 	if (DdeCmpStringHandles(ItemHSz, Item) != 0) return DDE_FNOTPROCESSED;
 
-	DataPtr = DdeAccessData(Data,&DataSize);
-	if (DataPtr==NULL) return DDE_FNOTPROCESSED;
+	DataPtr = DdeAccessData(Data, &DataSize);
+	if (DataPtr == NULL) return DDE_FNOTPROCESSED;
 	CBStartSend(DataPtr, DataSize, FALSE);
 	DdeUnaccessData(Data);
-	if (TalkStatus==IdTalkCB)
+	if (TalkStatus == IdTalkCB)
 		return (HDDEDATA)DDE_FACK;
 	else
 		return DDE_FNOTPROCESSED;
@@ -324,13 +324,13 @@ WORD HexStr2Word(PCHAR Str)
 	BYTE b;
 	WORD w;
 
-	for (i=0; i<=3; i++)
+	for (i = 0; i <= 3; i++)
 	{
 		b = Str[i];
 		if (b <= 0x39)
-			w = (w << 4) + (b-0x30);
+			w = (w << 4) + (b - 0x30);
 		else
-		w = (w << 4) + (b-0x37);
+			w = (w << 4) + (b - 0x37);
 	}
 	return w;
 }
@@ -343,9 +343,9 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 
 	memset(Command, 0, sizeof(Command));
 
-	if ((ConvH==0) ||
+	if ((ConvH == 0) ||
 		(DdeCmpStringHandles(TopicHSz, Topic) != 0) ||
-		(DdeGetData(Data,Command,sizeof(Command),0) == 0))
+		(DdeGetData(Data, Command, sizeof(Command), 0) == 0))
 		return DDE_FNOTPROCESSED;
 
 	switch (Command[0]) {
@@ -355,32 +355,32 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			SetDdeComReady(1);
 		break;
 	case CmdSetFile:
-		strncpy_s(ParamFileName, sizeof(ParamFileName),&(Command[1]), _TRUNCATE);
+		strncpy_s(ParamFileName, sizeof(ParamFileName), &(Command[1]), _TRUNCATE);
 		break;
 	case CmdSetBinary:
 		ParamBinaryFlag = Command[1] & 1;
 		break;
 	case CmdSetLogOpt:
-		ts.LogBinary        = Command[LogOptBinary] - 0x30;
-		ts.Append           = Command[LogOptAppend] - 0x30;
+		ts.LogBinary = Command[LogOptBinary] - 0x30;
+		ts.Append = Command[LogOptAppend] - 0x30;
 		ts.LogTypePlainText = Command[LogOptPlainText] - 0x30;
-		ts.LogTimestamp     = Command[LogOptTimestamp] - 0x30;
-		ts.LogHideDialog    = Command[LogOptHideDialog] - 0x30;
+		ts.LogTimestamp = Command[LogOptTimestamp] - 0x30;
+		ts.LogHideDialog = Command[LogOptHideDialog] - 0x30;
 		ts.LogAllBuffIncludedInFirst = Command[LogOptIncScrBuff] - 0x30;
 		ts.LogTimestampType = Command[LogOptTimestampType] - 0x30;
 		break;
 	case CmdSetXmodemOpt:
 		ParamXmodemOpt = Command[1] & 3;
-		if (ParamXmodemOpt==0) ParamXmodemOpt = 1;
+		if (ParamXmodemOpt == 0) ParamXmodemOpt = 1;
 		break;
 	case CmdSetSync:
-		if (sscanf(&(Command[1]),"%u",&SyncFreeSpace)!=1)
+		if (sscanf(&(Command[1]), "%u", &SyncFreeSpace) != 1)
 			SyncFreeSpace = 0;
-		SyncMode = (SyncFreeSpace>0);
+		SyncMode = (SyncFreeSpace > 0);
 		SyncRecv = TRUE;
 		break;
 	case CmdBPlusRecv:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -390,10 +390,10 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdBPlusSend:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			FileVar->NumFname = 1;
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -403,18 +403,18 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdChangeDir:
-		strncpy_s(ts.FileDir, sizeof(ts.FileDir),ParamFileName, _TRUNCATE);
+		strncpy_s(ts.FileDir, sizeof(ts.FileDir), ParamFileName, _TRUNCATE);
 		break;
 	case CmdClearScreen:
 		switch (ParamFileName[0]) {
 		case '0':
-			PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdEditCLS,0);
+			PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdEditCLS, 0);
 			break;
 		case '1':
-			PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdEditCLB,0);
+			PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdEditCLB, 0);
 			break;
 		case '2':
-			PostMessage(HTEKWin,WM_USER_ACCELCOMMAND,IdCmdEditCLS,0);
+			PostMessage(HTEKWin, WM_USER_ACCELCOMMAND, IdCmdEditCLS, 0);
 			break;
 		}
 		break;
@@ -428,41 +428,41 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			break;
 		}
 		{
-		char Temp[MaxStrLen + 2];
-		strncpy_s(Temp, sizeof(Temp),"a ", _TRUNCATE); // dummy exe name
-		strncat_s(Temp,sizeof(Temp),ParamFileName,_TRUNCATE);
-		if (LoadTTSET())
-			(*ParseParam)(Temp, &ts, NULL);
-		FreeTTSET();
-		cv.NoMsg = 1; /* suppress error messages */
-		PostMessage(HVTWin,WM_USER_COMMSTART,0,0);
+			char Temp[MaxStrLen + 2];
+			strncpy_s(Temp, sizeof(Temp), "a ", _TRUNCATE); // dummy exe name
+			strncat_s(Temp, sizeof(Temp), ParamFileName, _TRUNCATE);
+			if (LoadTTSET())
+				(*ParseParam)(Temp, &ts, NULL);
+			FreeTTSET();
+			cv.NoMsg = 1; /* suppress error messages */
+			PostMessage(HVTWin, WM_USER_COMMSTART, 0, 0);
 		}
 		break;
 	case CmdDisconnect:
 		if (ParamFileName[0] == '0') {
-			PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdDisconnect,0);
+			PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdDisconnect, 0);
 		}
 		else {
-			PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdDisconnect,1);
+			PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdDisconnect, 1);
 		}
 		break;
 	case CmdEnableKeyb:
-		KeybEnabled = (ParamBinaryFlag!=0);
+		KeybEnabled = (ParamBinaryFlag != 0);
 		break;
 	case CmdGetTitle:
 		// title is transferred later by XTYP_REQUEST
-		strncpy_s(ParamFileName, sizeof(ParamFileName),ts.Title, _TRUNCATE);
+		strncpy_s(ParamFileName, sizeof(ParamFileName), ts.Title, _TRUNCATE);
 		break;
 	case CmdInit: // initialization signal from TTMACRO
 		if (StartupFlag) // in case of startup macro
 		{ // TTMACRO is waiting for connecting to the host
-			// ÉVÉäÉAÉãê⁄ë±Ç≈é©ìÆê⁄ë±Ç™ñ≥å¯ÇÃèÍçáÇÕÅAê⁄ë±É_ÉCÉAÉçÉOÇèoÇ≥Ç»Ç¢ (2006.9.15 maya)
-			if (!((ts.PortType==IdSerial) && (ts.ComAutoConnect == FALSE)) &&
-				((ts.PortType==IdSerial) || (ts.HostName[0]!=0)))
+			// „Ç∑„É™„Ç¢„É´Êé•Á∂ö„ÅßËá™ÂãïÊé•Á∂ö„ÅåÁÑ°Âäπ„ÅÆÂ†¥Âêà„ÅØ„ÄÅÊé•Á∂ö„ÉÄ„Ç§„Ç¢„É≠„Ç∞„ÇíÂá∫„Åï„Å™„ÅÑ (2006.9.15 maya)
+			if (!((ts.PortType == IdSerial) && (ts.ComAutoConnect == FALSE)) &&
+				((ts.PortType == IdSerial) || (ts.HostName[0] != 0)))
 			{
 				cv.NoMsg = 1;
 				// start connecting
-				PostMessage(HVTWin,WM_USER_COMMSTART,0,0);
+				PostMessage(HVTWin, WM_USER_COMMSTART, 0, 0);
 			}
 			else  // notify TTMACRO that I can not connect
 				SetDdeComReady(0);
@@ -471,11 +471,11 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 		break;
 	case CmdKmtFinish:
 	case CmdKmtRecv:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
-			if (Command[0]==CmdKmtFinish)
+			if (Command[0] == CmdKmtFinish)
 				i = IdKmtFinish;
 			else
 				i = IdKmtReceive;
@@ -486,14 +486,14 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 		break;
 	case CmdKmtGet:
 	case CmdKmtSend:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			FileVar->NumFname = 1;
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
-			if (Command[0]==CmdKmtGet)
+			if (Command[0] == CmdKmtGet)
 				i = IdKmtGet;
 			else
 				i = IdKmtSend;
@@ -503,8 +503,8 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdLoadKeyMap:
-		strncpy_s(ts.KeyCnfFN, sizeof(ts.KeyCnfFN),ParamFileName, _TRUNCATE);
-		PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdLoadKeyMap,0);
+		strncpy_s(ts.KeyCnfFN, sizeof(ts.KeyCnfFN), ParamFileName, _TRUNCATE);
+		PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdLoadKeyMap, 0);
 		break;
 
 	case CmdLogRotate:
@@ -517,11 +517,13 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 				LogVar->RotateMode = ROTATE_SIZE;
 				LogVar->RotateSize = s;
 
-			} else if (strncmp(p, "rotate", 6) == 0) {
+			}
+			else if (strncmp(p, "rotate", 6) == 0) {
 				s = atoi(&p[7]);
 				LogVar->RotateStep = s;
 
-			} else if (strncmp(p, "halt", 4) == 0) {
+			}
+			else if (strncmp(p, "halt", 4) == 0) {
 				LogVar->RotateMode = ROTATE_NONE;
 				LogVar->RotateSize = 0;
 				LogVar->RotateStep = 0;
@@ -530,26 +532,26 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 		break;
 
 	case CmdLogAutoClose:
-		AutoLogClose = (ParamBinaryFlag!=0);
+		AutoLogClose = (ParamBinaryFlag != 0);
 		break;
 
 	case CmdLogClose:
 		if (LogVar != NULL) FileTransEnd(OpLog);
 		break;
 	case CmdLogOpen:
-		if ((LogVar==NULL) && NewFileVar(&LogVar))
+		if ((LogVar == NULL) && NewFileVar(&LogVar))
 		{
 			BOOL ret;
 			LogVar->DirLen = 0;
 			LogVar->NoMsg = TRUE;
-			strncpy_s(LogVar->FullName, sizeof(LogVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(LogVar->FullName, sizeof(LogVar->FullName), ParamFileName, _TRUNCATE);
 			ParseStrftimeFileName(LogVar->FullName, sizeof(LogVar->FullName));
 			ret = LogStart();
 			if (ret) {
-				strncpy_s(ParamFileName, sizeof(ParamFileName),"1", _TRUNCATE);
+				strncpy_s(ParamFileName, sizeof(ParamFileName), "1", _TRUNCATE);
 			}
 			else {
-				strncpy_s(ParamFileName, sizeof(ParamFileName),"0", _TRUNCATE);
+				strncpy_s(ParamFileName, sizeof(ParamFileName), "0", _TRUNCATE);
 			}
 		}
 		else
@@ -572,7 +574,7 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 		}
 		break;
 	case CmdQVRecv:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -582,10 +584,10 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdQVSend:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			FileVar->NumFname = 1;
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -595,17 +597,17 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdRestoreSetup:
-		strncpy_s(ts.SetupFName, sizeof(ts.SetupFName),ParamFileName, _TRUNCATE);
-		PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdRestoreSetup,0);
+		strncpy_s(ts.SetupFName, sizeof(ts.SetupFName), ParamFileName, _TRUNCATE);
+		PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdRestoreSetup, 0);
 		break;
 	case CmdSendBreak:
-		PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdBreak,0);
+		PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdBreak, 0);
 		break;
 	case CmdSendFile:
-		if ((SendVar==NULL) && NewFileVar(&SendVar))
+		if ((SendVar == NULL) && NewFileVar(&SendVar))
 		{
 			SendVar->DirLen = 0;
-			strncpy_s(SendVar->FullName, sizeof(SendVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(SendVar->FullName, sizeof(SendVar->FullName), ParamFileName, _TRUNCATE);
 			ts.TransBin = ParamBinaryFlag;
 			SendVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -617,18 +619,18 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 	case CmdSendKCode:
 		w = HexStr2Word(ParamFileName);
 		c = HexStr2Word(&ParamFileName[4]);
-		PostMessage(HVTWin,WM_USER_KEYCODE,w,(LPARAM)c);
+		PostMessage(HVTWin, WM_USER_KEYCODE, w, (LPARAM)c);
 		break;
 	case CmdSetEcho:
 		ts.LocalEcho = ParamBinaryFlag;
-		if (cv.Ready && cv.TelFlag && (ts.TelEcho>0))
+		if (cv.Ready && cv.TelFlag && (ts.TelEcho > 0))
 			TelChangeEcho();
 		break;
 	case CmdSetDebug:
-		DebugFlag = (Command[1]-'0')%DEBUG_FLAG_MAXD;
+		DebugFlag = (Command[1] - '0') % DEBUG_FLAG_MAXD;
 		break;
 	case CmdSetTitle:
-		strncpy_s(ts.Title, sizeof(ts.Title),ParamFileName, _TRUNCATE);
+		strncpy_s(ts.Title, sizeof(ts.Title), ParamFileName, _TRUNCATE);
 		if (ts.AcceptTitleChangeRequest == IdTitleChangeRequestOverwrite) {
 			cv.TitleRemote[0] = '\0';
 		}
@@ -636,16 +638,16 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 		break;
 	case CmdShowTT:
 		switch (ParamFileName[0]) {
-		case '-': ShowWindow(HVTWin,SW_HIDE); break;
-		case '0': ShowWindow(HVTWin,SW_MINIMIZE); break;
-		case '1': ShowWindow(HVTWin,SW_RESTORE); break;
-		case '2': ShowWindow(HTEKWin,SW_HIDE); break;
-		case '3': ShowWindow(HTEKWin,SW_MINIMIZE); break;
+		case '-': ShowWindow(HVTWin, SW_HIDE); break;
+		case '0': ShowWindow(HVTWin, SW_MINIMIZE); break;
+		case '1': ShowWindow(HVTWin, SW_RESTORE); break;
+		case '2': ShowWindow(HTEKWin, SW_HIDE); break;
+		case '3': ShowWindow(HTEKWin, SW_MINIMIZE); break;
 		case '4':
-			PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdCtrlOpenTEK,0);
+			PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdCtrlOpenTEK, 0);
 			break;
 		case '5':
-			PostMessage(HVTWin,WM_USER_ACCELCOMMAND,IdCmdCtrlCloseTEK,0);
+			PostMessage(HVTWin, WM_USER_ACCELCOMMAND, IdCmdCtrlCloseTEK, 0);
 			break;
 		case '6': //steven add
 			if (HWndLog == NULL)
@@ -664,17 +666,17 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 				break;
 			else {
 				ShowWindow(HWndLog, SW_RESTORE);
-				// ägí£ÉXÉ^ÉCÉã WS_EX_NOACTIVATE èÛë‘ÇâèúÇ∑ÇÈ
+				// Êã°Âºµ„Çπ„Çø„Ç§„É´ WS_EX_NOACTIVATE Áä∂ÊÖã„ÇíËß£Èô§„Åô„Çã
 				SetForegroundWindow(HWndLog);
 			}
 			break;
 		}
 		break;
 	case CmdXmodemRecv:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			if (IsXopt1k(ts.XmodemOpt)) {
 				if (IsXoptCRC(ParamXmodemOpt)) {
 					// CRC
@@ -701,10 +703,10 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdXmodemSend:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			if (IsXoptCRC(ts.XmodemOpt)) {
 				if (IsXopt1k(ParamXmodemOpt)) {
 					ts.XmodemOpt = Xopt1kCRC;
@@ -729,7 +731,7 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdZmodemRecv:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -739,10 +741,10 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdZmodemSend:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			FileVar->NumFname = 1;
 			ts.XmodemBin = ParamBinaryFlag;
 			FileVar->NoMsg = TRUE;
@@ -754,7 +756,7 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 		break;
 
 	case CmdYmodemRecv:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->NoMsg = TRUE;
 			DdeCmnd = TRUE;
@@ -764,10 +766,10 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			return DDE_FNOTPROCESSED;
 		break;
 	case CmdYmodemSend:
-		if ((FileVar==NULL) && NewFileVar(&FileVar))
+		if ((FileVar == NULL) && NewFileVar(&FileVar))
 		{
 			FileVar->DirLen = 0;
-			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName),ParamFileName, _TRUNCATE);
+			strncpy_s(FileVar->FullName, sizeof(FileVar->FullName), ParamFileName, _TRUNCATE);
 			FileVar->NumFname = 1;
 			//ts.XmodemBin = ParamBinaryFlag;
 			FileVar->NoMsg = TRUE;
@@ -782,27 +784,27 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 	case CmdCallMenu:
 		i = atoi(ParamFileName);
 		if (i >= 51110 && i <= 51990) {
-			PostMessage(HTEKWin,WM_COMMAND,MAKELONG(i,0),0);
+			PostMessage(HTEKWin, WM_COMMAND, MAKELONG(i, 0), 0);
 		}
 		else {
-			PostMessage(HVTWin,WM_COMMAND,MAKELONG(i,0),0);
+			PostMessage(HVTWin, WM_COMMAND, MAKELONG(i, 0), 0);
 		}
 		break;
 
 	case CmdSetSecondFile:  // add 'scpsend' (2008.1.3 yutaka)
 		memset(ParamSecondFileName, 0, sizeof(ParamSecondFileName));
-		strncpy_s(ParamSecondFileName, sizeof(ParamSecondFileName),&(Command[1]), _TRUNCATE);
+		strncpy_s(ParamSecondFileName, sizeof(ParamSecondFileName), &(Command[1]), _TRUNCATE);
 		break;
 
 	case CmdScpSend:  // add 'scpsend' (2008.1.1 yutaka)
-		{
+	{
 		typedef int (CALLBACK *PSSH_start_scp)(char *, char *);
 		static PSSH_start_scp func = NULL;
 		static HMODULE h = NULL;
 		char msg[128];
 
 		if (func == NULL) {
-			if ( ((h = GetModuleHandle("ttxssh.dll")) == NULL) ) {
+			if (((h = GetModuleHandle("ttxssh.dll")) == NULL)) {
 				_snprintf_s(msg, sizeof(msg), _TRUNCATE, "GetModuleHandle(\"ttxssh.dll\")) %d", GetLastError());
 				goto scp_send_error;
 			}
@@ -819,21 +821,21 @@ HDDEDATA AcceptExecute(HSZ TopicHSz, HDDEDATA Data)
 			break;
 		}
 
-scp_send_error:
+	scp_send_error:
 		MessageBox(NULL, msg, "Tera Term: scpsend command error", MB_OK | MB_ICONERROR);
 		return DDE_FNOTPROCESSED;
-		}
-		break;
+	}
+	break;
 
 	case CmdScpRcv:
-		{
+	{
 		typedef int (CALLBACK *PSSH_start_scp)(char *, char *);
 		static PSSH_start_scp func = NULL;
 		static HMODULE h = NULL;
 		char msg[128];
 
 		if (func == NULL) {
-			if ( ((h = GetModuleHandle("ttxssh.dll")) == NULL) ) {
+			if (((h = GetModuleHandle("ttxssh.dll")) == NULL)) {
 				_snprintf_s(msg, sizeof(msg), _TRUNCATE, "GetModuleHandle(\"ttxssh.dll\")) %d", GetLastError());
 				goto scp_rcv_error;
 			}
@@ -850,14 +852,14 @@ scp_send_error:
 			break;
 		}
 
-scp_rcv_error:
+	scp_rcv_error:
 		MessageBox(NULL, msg, "Tera Term: scpsend command error", MB_OK | MB_ICONERROR);
 		return DDE_FNOTPROCESSED;
-		}
-		break;
+	}
+	break;
 
 	case CmdSetBaud:  // add 'setbaud' (2008.2.13 steven patch)
-		{
+	{
 		int val;
 
 		//OutputDebugPrintf("CmdSetBaud entered\n");
@@ -869,32 +871,32 @@ scp_rcv_error:
 		//OutputDebugPrintf("CmdSetBaud: %d (%d)\n", val, ts.Baud);
 		if (val > 0) {
 			ts.Baud = val;
-			CommResetSerial(&ts,&cv,FALSE);   // reset serial port
-			PostMessage(HVTWin,WM_USER_CHANGETITLE,0,0); // refresh title bar
+			CommResetSerial(&ts, &cv, FALSE);   // reset serial port
+			PostMessage(HVTWin, WM_USER_CHANGETITLE, 0, 0); // refresh title bar
 		}
-		}
-		break;
+	}
+	break;
 
 	case CmdSetFlowCtrl:
-		{
+	{
 		int val;
 
 		if (!cv.Open || cv.PortType != IdSerial)
 			return DDE_FNOTPROCESSED;
 
 		val = atoi(ParamFileName);
-		switch(val) {
-			case 1:
-			case 2:
-			case 3:
-				ts.Flow = val;
-				break;
+		switch (val) {
+		case 1:
+		case 2:
+		case 3:
+			ts.Flow = val;
+			break;
 		}
 		break;
-		}
+	}
 
 	case CmdSetRts:  // add 'setrts' (2008.3.12 maya)
-		{
+	{
 		int val, ret;
 
 		if (!cv.Open || cv.PortType != IdSerial || ts.Flow != IdFlowNone)
@@ -907,11 +909,11 @@ scp_rcv_error:
 		else {
 			ret = EscapeCommFunction(cv.ComID, SETRTS);
 		}
-		}
-		break;
+	}
+	break;
 
 	case CmdSetDtr:  // add 'setdtr' (2008.3.12 maya)
-		{
+	{
 		int val, ret;
 
 		if (!cv.Open || cv.PortType != IdSerial || ts.Flow != IdFlowNone)
@@ -924,11 +926,11 @@ scp_rcv_error:
 		else {
 			ret = EscapeCommFunction(cv.ComID, SETDTR);
 		}
-		}
-		break;
+	}
+	break;
 
 	case CmdGetModemStatus: // add 'getmodemstatus' (2015.1.8 yutaka)
-		{
+	{
 		DWORD val, n;
 
 		if (!cv.Open || cv.PortType != IdSerial)
@@ -948,13 +950,13 @@ scp_rcv_error:
 			n |= 0x08;
 
 		_snprintf_s(ParamFileName, sizeof(ParamFileName), _TRUNCATE, "%d", n);
-		}
-		break;
+	}
+	break;
 
 	case CmdGetHostname:  // add 'gethostname' (2008.12.15 maya)
 		if (cv.Open) {
 			if (cv.PortType == IdTCPIP) {
-				strncpy_s(ParamFileName, sizeof(ParamFileName),ts.HostName, _TRUNCATE);
+				strncpy_s(ParamFileName, sizeof(ParamFileName), ts.HostName, _TRUNCATE);
 			}
 			else if (cv.PortType == IdSerial) {
 				_snprintf_s(ParamFileName, sizeof(ParamFileName), _TRUNCATE, "COM%d", ts.ComPort);
@@ -986,7 +988,7 @@ scp_rcv_error:
 				+ ((ts.LogTypePlainText != 0) << 2)
 				+ ((ts.LogTimestamp != 0) << 3)
 				+ ((ts.LogHideDialog != 0) << 4);
-			strncpy_s(ParamFileName+1, sizeof(ParamFileName)-1, LogVar->FullName, _TRUNCATE);
+			strncpy_s(ParamFileName + 1, sizeof(ParamFileName) - 1, LogVar->FullName, _TRUNCATE);
 		}
 		else {
 			ParamFileName[0] = '0' - 1;
@@ -1001,78 +1003,78 @@ scp_rcv_error:
 }
 
 HDDEDATA CALLBACK DdeCallbackProc(UINT CallType, UINT Fmt, HCONV Conv,
-                                  HSZ HSz1, HSZ HSz2, HDDEDATA Data,
-                                  DWORD Data1, DWORD Data2)
+	HSZ HSz1, HSZ HSz2, HDDEDATA Data,
+	DWORD Data1, DWORD Data2)
 {
 	HDDEDATA Result;
 
-	if (Inst==0) return 0;
+	if (Inst == 0) return 0;
 	Result = 0;
 
 	switch (CallType) {
-		case XTYP_WILDCONNECT:
-			Result = WildConnect(HSz2, HSz1, Fmt);
-			break;
-		case XTYP_CONNECT:
-			if (Conv == 0)
+	case XTYP_WILDCONNECT:
+		Result = WildConnect(HSz2, HSz1, Fmt);
+		break;
+	case XTYP_CONNECT:
+		if (Conv == 0)
+		{
+			if ((DdeCmpStringHandles(Topic, HSz1) == 0) &&
+				(DdeCmpStringHandles(Service, HSz2) == 0))
 			{
-				if ((DdeCmpStringHandles(Topic, HSz1) == 0) &&
-				    (DdeCmpStringHandles(Service, HSz2) == 0))
-				{
-					if (cv.Ready)
-						SetDdeComReady(1);
-					Result = (HDDEDATA)TRUE;
-				}
-			}
-			break;
-		case XTYP_CONNECT_CONFIRM:
-			ConvH = Conv;
-			break;
-		case XTYP_ADVREQ:
-		case XTYP_REQUEST:
-			Result = AcceptRequest(HSz2);
-			break;
-
-	// ÉNÉâÉCÉAÉìÉg(ttpmacro.exe)Ç©ÇÁÉTÅ[Éo(ttermpro.exe)Ç÷ÉfÅ[É^Ç™ëóÇÁÇÍÇƒÇ≠ÇÈÇ∆ÅA
-	// Ç±ÇÃÉÅÉbÉZÅ[ÉWÉnÉìÉhÉâÇ÷îÚÇÒÇ≈Ç≠ÇÈÅB
-	// èàóùÇµÇΩÇÁ DDE_FACKÅAÉrÉWÅ[ÇÃèÍçáÇÕ DDE_FBUSY ÅAñ≥éãÇ∑ÇÈèÍçáÇÕ DDE_FNOTPROCESSED Ç
-	// ÉNÉâÉCÉAÉìÉgÇ÷ï‘Ç∑ïKóvÇ™Ç†ÇËÅAbreakï∂Ç™î≤ÇØÇƒÇ¢ÇΩÇÃÇ≈í«â¡ÇµÇΩÅB
-	// (2006.11.6 yutaka)
-		case XTYP_POKE:
-			Result = AcceptPoke(HSz2, Fmt, Data);
-			break;
-
-		case XTYP_ADVSTART:
-			if ((ConvH!=0) &&
-			    (DdeCmpStringHandles(Topic, HSz1) == 0) &&
-			    (DdeCmpStringHandles(Item, HSz2) == 0) &&
-			    ! AdvFlag)
-			{
-				AdvFlag = TRUE;
+				if (cv.Ready)
+					SetDdeComReady(1);
 				Result = (HDDEDATA)TRUE;
 			}
-			break;
-		case XTYP_ADVSTOP:
-			if ((ConvH!=0) &&
-			    (DdeCmpStringHandles(Topic, HSz1) == 0) &&
-			    (DdeCmpStringHandles(Item, HSz2) == 0) &&
-			    AdvFlag)
-			{
-				AdvFlag = FALSE;
-				Result = (HDDEDATA)TRUE;
-			}
-			break;
-		case XTYP_DISCONNECT:
-			// É}ÉNÉçèIóπéûÅAÉçÉOçÃéÊÇé©ìÆìIÇ…í‚é~Ç∑ÇÈÅB(2013.6.24 yutaka)
-			if (AutoLogClose) {
-				if (LogVar != NULL) FileTransEnd(OpLog);
-				AutoLogClose = FALSE;
-			}
-			ConvH = 0;
-			PostMessage(HVTWin,WM_USER_DDEEND,0,0);
-			break;
-		case XTYP_EXECUTE:
-			Result = AcceptExecute(HSz1, Data);
+		}
+		break;
+	case XTYP_CONNECT_CONFIRM:
+		ConvH = Conv;
+		break;
+	case XTYP_ADVREQ:
+	case XTYP_REQUEST:
+		Result = AcceptRequest(HSz2);
+		break;
+
+		// „ÇØ„É©„Ç§„Ç¢„É≥„Éà(ttpmacro.exe)„Åã„Çâ„Çµ„Éº„Éê(ttermpro.exe)„Å∏„Éá„Éº„Çø„ÅåÈÄÅ„Çâ„Çå„Å¶„Åè„Çã„Å®„ÄÅ
+		// „Åì„ÅÆ„É°„ÉÉ„Çª„Éº„Ç∏„Éè„É≥„Éâ„É©„Å∏È£õ„Çì„Åß„Åè„Çã„ÄÇ
+		// Âá¶ÁêÜ„Åó„Åü„Çâ DDE_FACK„ÄÅ„Éì„Ç∏„Éº„ÅÆÂ†¥Âêà„ÅØ DDE_FBUSY „ÄÅÁÑ°Ë¶ñ„Åô„ÇãÂ†¥Âêà„ÅØ DDE_FNOTPROCESSED „Çí
+		// „ÇØ„É©„Ç§„Ç¢„É≥„Éà„Å∏Ëøî„ÅôÂøÖË¶Å„Åå„ÅÇ„Çä„ÄÅbreakÊñá„ÅåÊäú„Åë„Å¶„ÅÑ„Åü„ÅÆ„ÅßËøΩÂä†„Åó„Åü„ÄÇ
+		// (2006.11.6 yutaka)
+	case XTYP_POKE:
+		Result = AcceptPoke(HSz2, Fmt, Data);
+		break;
+
+	case XTYP_ADVSTART:
+		if ((ConvH != 0) &&
+			(DdeCmpStringHandles(Topic, HSz1) == 0) &&
+			(DdeCmpStringHandles(Item, HSz2) == 0) &&
+			!AdvFlag)
+		{
+			AdvFlag = TRUE;
+			Result = (HDDEDATA)TRUE;
+		}
+		break;
+	case XTYP_ADVSTOP:
+		if ((ConvH != 0) &&
+			(DdeCmpStringHandles(Topic, HSz1) == 0) &&
+			(DdeCmpStringHandles(Item, HSz2) == 0) &&
+			AdvFlag)
+		{
+			AdvFlag = FALSE;
+			Result = (HDDEDATA)TRUE;
+		}
+		break;
+	case XTYP_DISCONNECT:
+		// „Éû„ÇØ„É≠ÁµÇ‰∫ÜÊôÇ„ÄÅ„É≠„Ç∞Êé°Âèñ„ÇíËá™ÂãïÁöÑ„Å´ÂÅúÊ≠¢„Åô„Çã„ÄÇ(2013.6.24 yutaka)
+		if (AutoLogClose) {
+			if (LogVar != NULL) FileTransEnd(OpLog);
+			AutoLogClose = FALSE;
+		}
+		ConvH = 0;
+		PostMessage(HVTWin, WM_USER_DDEEND, 0, 0);
+		break;
+	case XTYP_EXECUTE:
+		Result = AcceptExecute(HSz1, Data);
 	}  /* switch (CallType) */
 
 	return Result;
@@ -1086,12 +1088,12 @@ BOOL InitDDE()
 
 	Ok = TRUE;
 
-	if (DdeInitialize(&Inst,(PFNCALLBACK)DdeCallbackProc,0,0) == DMLERR_NO_ERROR)
+	if (DdeInitialize(&Inst, (PFNCALLBACK)DdeCallbackProc, 0, 0) == DMLERR_NO_ERROR)
 	{
-		Service= DdeCreateStringHandle(Inst, ServiceName, CP_WINANSI);
-		Topic  = DdeCreateStringHandle(Inst, TopicName, CP_WINANSI);
-		Item   = DdeCreateStringHandle(Inst, ItemName, CP_WINANSI);
-		Item2  = DdeCreateStringHandle(Inst, ItemName2, CP_WINANSI);
+		Service = DdeCreateStringHandle(Inst, ServiceName, CP_WINANSI);
+		Topic = DdeCreateStringHandle(Inst, TopicName, CP_WINANSI);
+		Item = DdeCreateStringHandle(Inst, ItemName, CP_WINANSI);
+		Item2 = DdeCreateStringHandle(Inst, ItemName2, CP_WINANSI);
 
 		Ok = DdeNameService(Inst, Service, 0, DNS_REGISTER) != 0;
 	}
@@ -1109,14 +1111,14 @@ BOOL InitDDE()
 		if (Ok) DDELog = TRUE;
 	}
 
-	if (! Ok) EndDDE();
+	if (!Ok) EndDDE();
 	return Ok;
 }
 
 void SendDDEReady()
 {
 	GetClientHWnd(TopicName);
-	PostMessage(HWndDdeCli,WM_USER_DDEREADY,0,0);
+	PostMessage(HWndDdeCli, WM_USER_DDEREADY, 0, 0);
 }
 
 void EndDDE()
@@ -1151,8 +1153,8 @@ void EndDDE()
 	}
 	TopicName[0] = 0;
 
-	if (HWndDdeCli!=NULL)
-		PostMessage(HWndDdeCli,WM_USER_DDECMNDEND,0,0);
+	if (HWndDdeCli != NULL)
+		PostMessage(HWndDdeCli, WM_USER_DDECMNDEND, 0, 0);
 	HWndDdeCli = NULL;
 	AdvFlag = FALSE;
 
@@ -1163,34 +1165,34 @@ void EndDDE()
 
 void DDEAdv()
 {
-	if ((ConvH==0) ||
-	    (! AdvFlag) ||
-	    (cv.DCount==0))
+	if ((ConvH == 0) ||
+		(!AdvFlag) ||
+		(cv.DCount == 0))
 		return;
 
-	if ((! SyncMode) ||
-	    SyncMode && SyncRecv)
+	if ((!SyncMode) ||
+		SyncMode && SyncRecv)
 	{
-		if (SyncFreeSpace<10)
-			SyncFreeSpace=0;
+		if (SyncFreeSpace < 10)
+			SyncFreeSpace = 0;
 		else
-			SyncFreeSpace=SyncFreeSpace-10;
-		DdePostAdvise(Inst,Topic,Item);
+			SyncFreeSpace = SyncFreeSpace - 10;
+		DdePostAdvise(Inst, Topic, Item);
 		SyncRecv = FALSE;
 	}
 }
 
 void EndDdeCmnd(int Result)
 {
-	if ((ConvH==0) || (HWndDdeCli==NULL) || (! DdeCmnd)) return;
-	PostMessage(HWndDdeCli,WM_USER_DDECMNDEND,(WPARAM)Result,0);
+	if ((ConvH == 0) || (HWndDdeCli == NULL) || (!DdeCmnd)) return;
+	PostMessage(HWndDdeCli, WM_USER_DDECMNDEND, (WPARAM)Result, 0);
 	DdeCmnd = FALSE;
 }
 
 void SetDdeComReady(WORD Ready)
 {
-	if (HWndDdeCli==NULL) return;
-	PostMessage(HWndDdeCli,WM_USER_DDECOMREADY,Ready,0);
+	if (HWndDdeCli == NULL) return;
+	PostMessage(HWndDdeCli, WM_USER_DDECOMREADY, Ready, 0);
 }
 
 void RunMacro(PCHAR FName, BOOL Startup)
@@ -1201,12 +1203,12 @@ void RunMacro(PCHAR FName, BOOL Startup)
 {
 	PROCESS_INFORMATION pi;
 	int i;
-	char Cmnd[MAX_PATH+36]; // "TTPMACRO /D="(12) + TopicName(20) + " "(1) + MAX_PATH + " /S"(3)
+	char Cmnd[MAX_PATH + 36]; // "TTPMACRO /D="(12) + TopicName(20) + " "(1) + MAX_PATH + " /S"(3)
 	STARTUPINFO si;
 	DWORD pri = NORMAL_PRIORITY_CLASS;
 
-	// Control menuÇ©ÇÁÇÃÉ}ÉNÉçåƒÇ—èoÇµÇ≈ÅAÇ∑Ç≈Ç…É}ÉNÉçãNìÆíÜÇÃèÍçáÅA
-	// äYìñÇ∑ÇÈ"ttpmacro"ÇÉtÉâÉbÉVÉÖÇ∑ÇÈÅB
+	// Control menu„Åã„Çâ„ÅÆ„Éû„ÇØ„É≠Âëº„Å≥Âá∫„Åó„Åß„ÄÅ„Åô„Åß„Å´„Éû„ÇØ„É≠Ëµ∑Âãï‰∏≠„ÅÆÂ†¥Âêà„ÄÅ
+	// Ë©≤ÂΩì„Åô„Çã"ttpmacro"„Çí„Éï„É©„ÉÉ„Ç∑„É•„Åô„Çã„ÄÇ
 	// (2010.4.2 yutaka, maya)
 	if ((FName == NULL && Startup == FALSE) && ConvH != 0) {
 		BringupMacroWindow(TRUE);
@@ -1214,36 +1216,36 @@ void RunMacro(PCHAR FName, BOOL Startup)
 	}
 
 	SetTopic();
-	if (! InitDDE()) return;
-	strncpy_s(Cmnd, sizeof(Cmnd),"TTPMACRO /D=", _TRUNCATE);
-	strncat_s(Cmnd,sizeof(Cmnd),TopicName,_TRUNCATE);
-	if (FName!=NULL)
+	if (!InitDDE()) return;
+	strncpy_s(Cmnd, sizeof(Cmnd), "TTPMACRO /D=", _TRUNCATE);
+	strncat_s(Cmnd, sizeof(Cmnd), TopicName, _TRUNCATE);
+	if (FName != NULL)
 	{
-		strncat_s(Cmnd,sizeof(Cmnd)," ",_TRUNCATE);
+		strncat_s(Cmnd, sizeof(Cmnd), " ", _TRUNCATE);
 		i = strlen(Cmnd);
-		strncat_s(Cmnd,sizeof(Cmnd),FName,_TRUNCATE);
+		strncat_s(Cmnd, sizeof(Cmnd), FName, _TRUNCATE);
 		QuoteFName(&Cmnd[i]);
 	}
 
 	StartupFlag = Startup;
 	if (Startup)
-		strncat_s(Cmnd,sizeof(Cmnd)," /S",_TRUNCATE); // "startup" flag
+		strncat_s(Cmnd, sizeof(Cmnd), " /S", _TRUNCATE); // "startup" flag
 
 #if 0
-	if (WinExec(Cmnd,SW_MINIMIZE) < 32)
+	if (WinExec(Cmnd, SW_MINIMIZE) < 32)
 		EndDDE();
 #else
 
-	// ÉçÉOçÃéÊíÜÇ‡â∫Ç∞Ç»Ç¢Ç±Ç∆Ç…Ç∑ÇÈÅB(2005.8.14 yutaka)
+	// „É≠„Ç∞Êé°Âèñ‰∏≠„ÇÇ‰∏ã„Åí„Å™„ÅÑ„Åì„Å®„Å´„Åô„Çã„ÄÇ(2005.8.14 yutaka)
 #if 0
-	// Tera Termñ{ëÃÇ≈ÉçÉOçÃéÊíÜÇ…É}ÉNÉçÇé¿çsÇ∑ÇÈÇ∆ÅAÉ}ÉNÉçÇÃìÆçÏÇ™í‚é~Ç∑ÇÈÇ±Ç∆Ç™
-	// Ç†ÇÈÇΩÇﬂÅAÉvÉçÉZÉXÇÃóDêÊìxÇ1Ç¬â∫Ç∞Çƒé¿çsÇ≥ÇπÇÈÅB(2004/9/5 yutaka)
-	// ÉçÉOçÃéÊíÜÇÃÇ›Ç…â∫Ç∞ÇÈÅB(2004/11/28 yutaka)
+	// Tera TermÊú¨‰Ωì„Åß„É≠„Ç∞Êé°Âèñ‰∏≠„Å´„Éû„ÇØ„É≠„ÇíÂÆüË°å„Åô„Çã„Å®„ÄÅ„Éû„ÇØ„É≠„ÅÆÂãï‰Ωú„ÅåÂÅúÊ≠¢„Åô„Çã„Åì„Å®„Åå
+	// „ÅÇ„Çã„Åü„ÇÅ„ÄÅ„Éó„É≠„Çª„Çπ„ÅÆÂÑ™ÂÖàÂ∫¶„Çí1„Å§‰∏ã„Åí„Å¶ÂÆüË°å„Åï„Åõ„Çã„ÄÇ(2004/9/5 yutaka)
+	// „É≠„Ç∞Êé°Âèñ‰∏≠„ÅÆ„Åø„Å´‰∏ã„Åí„Çã„ÄÇ(2004/11/28 yutaka)
 	if (FileLog || BinLog) {
 		pri = BELOW_NORMAL_PRIORITY_CLASS;
 	}
-	// ébíËèàíuÇ∆ÇµÇƒÅAèÌÇ…â∫Ç∞ÇÈÇ±Ç∆Ç…Ç∑ÇÈÅB(2005/5/15 yutaka)
-	// É}ÉNÉçÇ…ÇÊÇÈtelneté©ìÆÉçÉOÉCÉìÇ™é∏îsÇ∑ÇÈÇ±Ç∆Ç™Ç†ÇÈÇÃÇ≈ÅAâ∫Ç∞Ç»Ç¢Ç±Ç∆Ç…Ç∑ÇÈÅB(2005/5/23 yutaka)
+	// Êö´ÂÆöÂá¶ÁΩÆ„Å®„Åó„Å¶„ÄÅÂ∏∏„Å´‰∏ã„Åí„Çã„Åì„Å®„Å´„Åô„Çã„ÄÇ(2005/5/15 yutaka)
+	// „Éû„ÇØ„É≠„Å´„Çà„ÇãtelnetËá™Âãï„É≠„Ç∞„Ç§„É≥„ÅåÂ§±Êïó„Åô„Çã„Åì„Å®„Åå„ÅÇ„Çã„ÅÆ„Åß„ÄÅ‰∏ã„Åí„Å™„ÅÑ„Åì„Å®„Å´„Åô„Çã„ÄÇ(2005/5/23 yutaka)
 	pri = BELOW_NORMAL_PRIORITY_CLASS;
 #endif
 
@@ -1261,7 +1263,7 @@ void RunMacro(PCHAR FName, BOOL Startup)
 		pri,
 		NULL, NULL,
 		&si, &pi) == 0) {
-			EndDDE();
+		EndDDE();
 	}
 #endif
 }

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2006-2017 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* TERATERM.EXE, Clipboard routines */
+ /* TERATERM.EXE, Clipboard routines */
 #include "teraterm.h"
 #include "tttypes.h"
 #include "vtdisp.h"
@@ -67,10 +67,10 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 
 PCHAR CBOpen(LONG MemSize)
 {
-	if (MemSize==0) {
+	if (MemSize == 0) {
 		return (NULL);
 	}
-	if (CBCopyHandle!=NULL) {
+	if (CBCopyHandle != NULL) {
 		return (NULL);
 	}
 	CBCopyPtr = NULL;
@@ -94,7 +94,7 @@ void CBClose()
 	BOOL Empty;
 	int WideCharLength;
 
-	if (CBCopyHandle==NULL) {
+	if (CBCopyHandle == NULL) {
 		return;
 	}
 
@@ -107,8 +107,8 @@ void CBClose()
 	}
 
 	Empty = FALSE;
-	if (CBCopyPtr!=NULL) {
-		Empty = (CBCopyPtr[0]==0);
+	if (CBCopyPtr != NULL) {
+		Empty = (CBCopyPtr[0] == 0);
 	}
 
 	GlobalUnlock(CBCopyHandle);
@@ -116,7 +116,7 @@ void CBClose()
 
 	if (OpenClipboard(HVTWin)) {
 		EmptyClipboard();
-		if (! Empty) {
+		if (!Empty) {
 			SetClipboardData(CF_TEXT, CBCopyHandle);
 			if (CBCopyWidePtr) {
 				SetClipboardData(CF_UNICODETEXT, CBCopyWideHandle);
@@ -131,10 +131,10 @@ void CBClose()
 
 void CBStartSend(PCHAR DataPtr, int DataSize, BOOL EchoOnly)
 {
-	if (! cv.Ready) {
+	if (!cv.Ready) {
 		return;
 	}
-	if (TalkStatus!=IdTalkKeyb) {
+	if (TalkStatus != IdTalkKeyb) {
 		return;
 	}
 
@@ -153,14 +153,14 @@ void CBStartSend(PCHAR DataPtr, int DataSize, BOOL EchoOnly)
 	CBRetryEcho = FALSE;
 	CBSendCR = FALSE;
 
-	if ((CBMemHandle = GlobalAlloc(GHND, DataSize+1)) != NULL) {
+	if ((CBMemHandle = GlobalAlloc(GHND, DataSize + 1)) != NULL) {
 		if ((CBMemPtr = GlobalLock(CBMemHandle)) != NULL) {
 			memcpy(CBMemPtr, DataPtr, DataSize);
-			// WM_COPYDATA ‚Å?‚ç‚ê‚Ä?‚½ƒf[ƒ^‚Í NUL Terminate ‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Å NUL ‚ğ•t‰Á‚·‚é
+			// WM_COPYDATA ã§?ã‚‰ã‚Œã¦?ãŸãƒ‡ãƒ¼ã‚¿ã¯ NUL Terminate ã•ã‚Œã¦ã„ãªã„ã®ã§ NUL ã‚’ä»˜åŠ ã™ã‚‹
 			CBMemPtr[DataSize] = 0;
 			GlobalUnlock(CBMemHandle);
-			CBMemPtr=NULL;
-			TalkStatus=IdTalkCB;
+			CBMemPtr = NULL;
+			TalkStatus = IdTalkCB;
 		}
 	}
 
@@ -169,11 +169,11 @@ void CBStartSend(PCHAR DataPtr, int DataSize, BOOL EchoOnly)
 	}
 }
 
-// ƒN?ƒbƒvƒ{[ƒhƒoƒbƒtƒ@‚Ì?”ö‚É?‚é CR / LF ‚ğ‚·‚×‚Äí?‚·‚é
+// ã‚¯?ãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒãƒƒãƒ•ã‚¡ã®?å°¾ã«?ã‚‹ CR / LF ã‚’ã™ã¹ã¦å‰Š?ã™ã‚‹
 BOOL TrimTrailingNL(BOOL AddCR, BOOL Bracketed) {
 	PCHAR tail;
 	if (ts.PasteFlag & CPF_TRIM_TRAILING_NL) {
-		for (tail = CBMemPtr+strlen(CBMemPtr)-1; tail >= CBMemPtr; tail--) {
+		for (tail = CBMemPtr + strlen(CBMemPtr) - 1; tail >= CBMemPtr; tail--) {
 			if (*tail != '\r' && *tail != '\n') {
 				break;
 			}
@@ -184,7 +184,7 @@ BOOL TrimTrailingNL(BOOL AddCR, BOOL Bracketed) {
 	return TRUE;
 }
 
-// ‰üs‚ğ CR+LF ‚É³‹K‰»‚·‚é
+// æ”¹è¡Œã‚’ CR+LF ã«æ­£è¦åŒ–ã™ã‚‹
 BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 	char *p, *p2;
 	unsigned int len, need_len, alloc_len;
@@ -196,11 +196,11 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 
 	p = CBMemPtr;
 
-	// “\‚è•t‚¯ƒf[ƒ^‚Ì’·‚³(len)A‚¨‚æ‚Ñ³‹K‰»Œã‚Ìƒf[ƒ^‚Ì’·‚³(need_len)‚ÌƒJƒE?ƒg
-	for (len=0, need_len=0, p=CBMemPtr; *p != '\0'; p++, len++, need_len++) {
+	// è²¼ã‚Šä»˜ã‘ãƒ‡ãƒ¼ã‚¿ã®é•·ã•(len)ã€ãŠã‚ˆã³æ­£è¦åŒ–å¾Œã®ãƒ‡ãƒ¼ã‚¿ã®é•·ã•(need_len)ã®ã‚«ã‚¦?ãƒˆ
+	for (len = 0, need_len = 0, p = CBMemPtr; *p != '\0'; p++, len++, need_len++) {
 		if (*p == CR) {
 			need_len++;
-			if (*(p+1) == LF) {
+			if (*(p + 1) == LF) {
 				len++;
 				p++;
 			}
@@ -210,31 +210,31 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 		}
 	}
 
-	// ³‹K‰»Œã‚àƒf[ƒ^’·‚ª•Ï‚í‚ç‚È‚¢ => ³‹K‰»‚Í•K—v‚È‚µ
+	// æ­£è¦åŒ–å¾Œã‚‚ãƒ‡ãƒ¼ã‚¿é•·ãŒå¤‰ã‚ã‚‰ãªã„ => æ­£è¦åŒ–ã¯å¿…è¦ãªã—
 	if (need_len == len) {
 		return TRUE;
 	}
 
-	// AddCR / Bracketed ‚Ì?‚Í‚»‚Ì•ª‚Ìƒoƒbƒtƒ@‚àŒvZ‚É“ü‚ê‚é
-	// ?‚Ü‚è‚±‚±‚Å‚Í‚â‚è‚½‚­‚È‚¢‚ñ‚¾‚¯‚ê‚Ç
+	// AddCR / Bracketed ã®?ã¯ãã®åˆ†ã®ãƒãƒƒãƒ•ã‚¡ã‚‚è¨ˆç®—ã«å…¥ã‚Œã‚‹
+	// ?ã¾ã‚Šã“ã“ã§ã¯ã‚„ã‚ŠãŸããªã„ã‚“ã ã‘ã‚Œã©
 	alloc_len = need_len + 1;
 	if (AddCR) {
 		alloc_len++;
 	}
 	if (Bracketed) {
-		// è”²‚«
+		// æ‰‹æŠœã
 		alloc_len += 12;
 	}
 
-	// ƒoƒbƒtƒ@ƒTƒCƒY‚ª³‹K‰»Œã‚É•K—v‚Æ‚È‚é’l‚æ‚è¬‚³‚¢ê?‚Íƒoƒbƒtƒ@‚ğŠm•Û‚µ’¼‚·
+	// ãƒãƒƒãƒ•ã‚¡ã‚µã‚¤ã‚ºãŒæ­£è¦åŒ–å¾Œã«å¿…è¦ã¨ãªã‚‹å€¤ã‚ˆã‚Šå°ã•ã„å ´?ã¯ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºä¿ã—ç›´ã™
 	if (GlobalSize(CBMemHandle) < alloc_len) {
 		GlobalUnlock(CBMemHandle);
 		CBMemPtr = NULL;
 		if ((TmpHandle = GlobalReAlloc(CBMemHandle, alloc_len, 0)) == NULL) {
-			// ???Ä?‚è?‚Ä¸”s
+			// ???å†?ã‚Š?ã¦å¤±æ•—
 			CBMemPtr = GlobalLock(CBMemHandle);
 
-			// ‚Æ‚è?‚¦‚¸³‹K‰»‚È‚µ‚Å“\‚è•t‚¯‚é?‚É‚·‚é
+			// ã¨ã‚Š?ãˆãšæ­£è¦åŒ–ãªã—ã§è²¼ã‚Šä»˜ã‘ã‚‹?ã«ã™ã‚‹
 			return TRUE;
 		}
 		CBMemHandle = TmpHandle;
@@ -274,7 +274,7 @@ BOOL NormalizeLineBreak(BOOL AddCR, BOOL Bracketed) {
 	return TRUE;
 }
 
-// ƒtƒ@ƒC?‚É’è‹`‚³‚ê‚½•¶?—ñ‚ªAtext‚ÉŠÜ‚Ü‚ê‚é‚©‚ğ’²‚×‚éB
+// ãƒ•ã‚¡ã‚¤?ã«å®šç¾©ã•ã‚ŒãŸæ–‡?åˆ—ãŒã€textã«å«ã¾ã‚Œã‚‹ã‹ã‚’èª¿ã¹ã‚‹ã€‚
 BOOL search_dict(char *filename, char *text)
 {
 	BOOL ret = FALSE;
@@ -288,7 +288,7 @@ BOOL search_dict(char *filename, char *text)
 	if ((fp = fopen(filename, "r")) == NULL)
 		return FALSE;
 
-	// TODO: ˆês‚ª256byte‚ğ’´‚¦‚Ä‚¢‚éê?‚Ìl—¶
+	// TODO: ä¸€è¡ŒãŒ256byteã‚’è¶…ãˆã¦ã„ã‚‹å ´?ã®è€ƒæ…®
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
 		len = strlen(buf);
 		if (len <= 1) {
@@ -309,11 +309,11 @@ BOOL search_dict(char *filename, char *text)
 }
 
 /*
- * ƒN?ƒbƒvƒ{[ƒh‚Ì“à—e‚ğŠm”F‚µA“\‚è•t‚¯‚ğs‚¤‚©Šm”Fƒ_ƒCƒA?ƒO‚ğo‚·B
+ * ã‚¯?ãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã®å†…å®¹ã‚’ç¢ºèªã—ã€è²¼ã‚Šä»˜ã‘ã‚’è¡Œã†ã‹ç¢ºèªãƒ€ã‚¤ã‚¢?ã‚°ã‚’å‡ºã™ã€‚
  *
- * •Ô‚è’l:
- *   TRUE  -> –â‘è‚È‚µA“\‚è•t‚¯‚ğÀ{
- *   FALSE -> “\‚è•t‚¯?~
+ * è¿”ã‚Šå€¤:
+ *   TRUE  -> å•é¡Œãªã—ã€è²¼ã‚Šä»˜ã‘ã‚’å®Ÿæ–½
+ *   FALSE -> è²¼ã‚Šä»˜ã‘?æ­¢
  */
 BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 {
@@ -325,20 +325,20 @@ BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		return TRUE;
 	}
 
-/*
- * ConfirmChangePasteCR ‚Ì?“®–â‘è
- * ˆÈ‰º‚Ì“®ì‚Å–â‘è‚È‚¢‚©B
- *
- *		ChangePasteCR	!ChangePasteCR
- *		AddCR	!AddCR	AddCR	!AddCR
- * ‰üs?‚è	o	o	x(2)	o
- * ‰üs–³‚µ	o(1)	x	x	x
- *
- * ChangePasteCR ‚Í AddCR ‚Ì?‚ÉŠm”F‚ğs‚¤‚©(1‚ÅŠm”F‚·‚é)‚Æ‚¢‚¤İ’è‚¾‚ªA
- * !ChangePasteCR ‚Ì?‚ğl‚¦‚é‚ÆAAddCR ‚Ì?‚Íí‚É CR ‚ª“ü‚Á‚Ä‚¢‚é‚Ì‚É
- * Šm”F‚ğs‚í‚È‚¢?‚©‚ç 2 ‚Ìê?‚Å‚àŠm”F‚Í•s—p‚Æ‚¢‚¤ˆÓv•\¦‚Æ‚à‚Æ‚ê‚éB
- * 2 ‚Ì“®ì‚Í‚Ç‚¿‚ç‚ª‚¢‚¢‚©?
- */
+	/*
+	 * ConfirmChangePasteCR ã®?å‹•å•é¡Œ
+	 * ä»¥ä¸‹ã®å‹•ä½œã§å•é¡Œãªã„ã‹ã€‚
+	 *
+	 *		ChangePasteCR	!ChangePasteCR
+	 *		AddCR	!AddCR	AddCR	!AddCR
+	 * æ”¹è¡Œ?ã‚Š	o	o	x(2)	o
+	 * æ”¹è¡Œç„¡ã—	o(1)	x	x	x
+	 *
+	 * ChangePasteCR ã¯ AddCR ã®?ã«ç¢ºèªã‚’è¡Œã†ã‹(1ã§ç¢ºèªã™ã‚‹)ã¨ã„ã†è¨­å®šã ãŒã€
+	 * !ChangePasteCR ã®?ã‚’è€ƒãˆã‚‹ã¨ã€AddCR ã®?ã¯å¸¸ã« CR ãŒå…¥ã£ã¦ã„ã‚‹ã®ã«
+	 * ç¢ºèªã‚’è¡Œã‚ãªã„?ã‹ã‚‰ 2 ã®å ´?ã§ã‚‚ç¢ºèªã¯ä¸ç”¨ã¨ã„ã†æ„æ€è¡¨ç¤ºã¨ã‚‚ã¨ã‚Œã‚‹ã€‚
+	 * 2 ã®å‹•ä½œã¯ã©ã¡ã‚‰ãŒã„ã„ã‹?
+	 */
 
 	if (AddCR) {
 		if (ts.PasteFlag & CPF_CONFIRM_CHANGEPASTE_CR) {
@@ -346,22 +346,22 @@ BOOL CheckClipboardContent(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		}
 	}
 	else {
-		pos = strcspn(CBMemPtr, "\r\n");  // ‰üs‚ªŠÜ‚Ü‚ê‚Ä‚¢‚½‚ç
+		pos = strcspn(CBMemPtr, "\r\n");  // æ”¹è¡ŒãŒå«ã¾ã‚Œã¦ã„ãŸã‚‰
 		if (CBMemPtr[pos] != '\0') {
 			confirm = TRUE;
 		}
 	}
 
-	// «?‚ğƒT[ƒ`‚·‚é
+	// è¾?ã‚’ã‚µãƒ¼ãƒã™ã‚‹
 	if (!confirm && search_dict(ts.ConfirmChangePasteStringFile, CBMemPtr)) {
 		confirm = TRUE;
 	}
 
 	if (confirm) {
 		ret = DialogBox(hInst, MAKEINTRESOURCE(IDD_CLIPBOARD_DIALOG),
-		                HWin, (DLGPROC)OnClipboardDlgProc);
+			HWin, (DLGPROC)OnClipboardDlgProc);
 		/*
-		 * ˆÈ‘O‚Íƒ_ƒCƒA?ƒO‚Ì“à—e‚ğƒN?ƒbƒvƒ{[ƒh‚É?‚«–ß‚µ‚Ä‚¢‚½‚¯‚ê‚ÇA•K—v?
+		 * ä»¥å‰ã¯ãƒ€ã‚¤ã‚¢?ã‚°ã®å†…å®¹ã‚’ã‚¯?ãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«?ãæˆ»ã—ã¦ã„ãŸã‘ã‚Œã©ã€å¿…è¦?
 		 */
 	}
 
@@ -381,10 +381,10 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 	HGLOBAL TmpHandle;
 	unsigned int StrLen = 0, BuffLen = 0;
 
-	if (! cv.Ready) {
+	if (!cv.Ready) {
 		return;
 	}
-	if (TalkStatus!=IdTalkKeyb) {
+	if (TalkStatus != IdTalkKeyb) {
 		return;
 	}
 
@@ -457,15 +457,15 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		CloseClipboard();
 	}
 
-	// “\‚è•t‚¯‚Ì?”õ‚ª³í‚Éo?‚½ê?‚Í IdTalkCB ‚Æ‚È‚é
+	// è²¼ã‚Šä»˜ã‘ã®?å‚™ãŒæ­£å¸¸ã«å‡º?ãŸå ´?ã¯ IdTalkCB ã¨ãªã‚‹
 
 	if (TalkStatus != IdTalkCB) {
-		// ?”õ‚ªs‚¦‚È‚©‚Á‚½ê?‚Í“\‚è•t‚¯‚ğ?’f‚·‚é
+		// ?å‚™ãŒè¡Œãˆãªã‹ã£ãŸå ´?ã¯è²¼ã‚Šä»˜ã‘ã‚’?æ–­ã™ã‚‹
 		CBEndPaste();
 		return;
 	}
 
-	// “\‚è•t‚¯‘O‚ÉƒN?ƒbƒvƒ{[ƒh‚Ì“à—e‚ğŠm”F/‰ÁH?‚·‚éê?‚Í‚±‚±‚Ås‚¤
+	// è²¼ã‚Šä»˜ã‘å‰ã«ã‚¯?ãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã®å†…å®¹ã‚’ç¢ºèª/åŠ å·¥?ã™ã‚‹å ´?ã¯ã“ã“ã§è¡Œã†
 
 	if (!TrimTrailingNL(AddCR, Bracketed)) {
 		CBEndPaste();
@@ -482,7 +482,7 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		return;
 	}
 
-	// AddCR / Bracket —p‚Ì—Ìˆæ‚ª?‚é‚©‚ÌŠm”FA–³‚¯‚ê‚Î’Ç‰ÁŠm•Û
+	// AddCR / Bracket ç”¨ã®é ˜åŸŸãŒ?ã‚‹ã‹ã®ç¢ºèªã€ç„¡ã‘ã‚Œã°è¿½åŠ ç¢ºä¿
 	StrLen = strlen(CBMemPtr);
 	BuffLen = StrLen + 1; // strlen + NUL
 	if (AddCR) {
@@ -497,10 +497,10 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 		CBMemPtr = NULL;
 		if ((TmpHandle = GlobalReAlloc(CBMemHandle, BuffLen, 0)) == NULL) {
 			/*
-			 * •s‘«•ª‚ÌŠm•Û¸”s‚µ‚½?‚Í CR/Bracket –³‚µ‚Å“\‚è•t‚¯‚ğs‚¤‚×‚«‚©A
-			 * ‚»‚ê‚Æ‚à“\‚è•t‚¯©‘Ì‚ğ?~‚·‚é(CBEndPaste()‚ğŒÄ‚Ô)‚×‚«‚©B
+			 * ä¸è¶³åˆ†ã®ç¢ºä¿å¤±æ•—ã—ãŸ?ã¯ CR/Bracket ç„¡ã—ã§è²¼ã‚Šä»˜ã‘ã‚’è¡Œã†ã¹ãã‹ã€
+			 * ãã‚Œã¨ã‚‚è²¼ã‚Šä»˜ã‘è‡ªä½“ã‚’?æ­¢ã™ã‚‹(CBEndPaste()ã‚’å‘¼ã¶)ã¹ãã‹ã€‚
 			 */
-			// CBEndPaste();
+			 // CBEndPaste();
 			return;
 		}
 		CBMemHandle = TmpHandle;
@@ -514,7 +514,7 @@ void CBStartPaste(HWND HWin, BOOL AddCR, BOOL Bracketed)
 
 	if (Bracketed) {
 		BuffLen = GlobalSize(CBMemHandle);
-		memmove_s(CBMemPtr+BracketStartLen, BuffLen-BracketStartLen, CBMemPtr, StrLen);
+		memmove_s(CBMemPtr + BracketStartLen, BuffLen - BracketStartLen, CBMemPtr, StrLen);
 		memcpy_s(CBMemPtr, BuffLen, BracketStart, BracketStartLen);
 		strncat_s(CBMemPtr, BuffLen, BracketEnd, _TRUNCATE);
 	}
@@ -531,10 +531,10 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer)
 	UINT Cf;
 	LPWSTR tmpPtrWide = NULL;
 
-	if (! cv.Ready) {
+	if (!cv.Ready) {
 		return;
 	}
-	if (TalkStatus!=IdTalkKeyb) {
+	if (TalkStatus != IdTalkKeyb) {
 		return;
 	}
 
@@ -584,8 +584,8 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer)
 				if ((tmpPtr = (char *)calloc(sizeof(char), len)) != NULL) {
 					WideCharToMultiByte(CP_ACP, 0, tmpPtrWide, -1, tmpPtr, len, NULL, NULL);
 				}
-				// WideCharToMultiByte ‚Å“¾‚ç‚ê‚é‚Ì‚Í?”ö‚Ì \0 ?‚İ‚Ì’·‚³
-				// \0 ‚ğƒG?ƒR[ƒh‘ÎÛ‚ÉŠÜ‚ß‚È‚¢ˆ×‚É 1 Œ¸‚ç‚·
+				// WideCharToMultiByte ã§å¾—ã‚‰ã‚Œã‚‹ã®ã¯?å°¾ã® \0 ?ã¿ã®é•·ã•
+				// \0 ã‚’ã‚¨?ã‚³ãƒ¼ãƒ‰å¯¾è±¡ã«å«ã‚ãªã„ç‚ºã« 1 æ¸›ã‚‰ã™
 				len--;
 				GlobalUnlock(tmpHandle);
 			}
@@ -611,7 +611,7 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer)
 					if (footer_len > 0) {
 						strncat_s(CBMemPtr, b64_len, footer, _TRUNCATE);
 					}
-					TalkStatus=IdTalkCB;
+					TalkStatus = IdTalkCB;
 					GlobalUnlock(CBMemPtr);
 					CBMemPtr = NULL;
 				}
@@ -632,12 +632,12 @@ void CBStartPasteB64(HWND HWin, PCHAR header, PCHAR footer)
 	}
 }
 
-// ‚±‚ÌŠÖ?‚ÍƒN?ƒbƒvƒ{[ƒh‚¨‚æ‚ÑDDEƒf[ƒ^‚ğ’[?‚Ö?‚è?‚ŞB
+// ã“ã®é–¢?ã¯ã‚¯?ãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãŠã‚ˆã³DDEãƒ‡ãƒ¼ã‚¿ã‚’ç«¯?ã¸?ã‚Š?ã‚€ã€‚
 //
-// CBMemHandleƒn?ƒh?‚ÍƒO?[ƒo?•Ï?‚È‚Ì‚ÅA‚±‚ÌŠÖ?‚ªI—¹‚·‚é‚Ü‚Å‚ÍA
-// ?‚ÌƒN?ƒbƒvƒ{[ƒh‚¨‚æ‚ÑDDEƒf[ƒ^‚ğ??‚·‚é‚±‚Æ‚Í‚Å‚«‚È‚¢i”jŠü‚³‚ê‚é‰Â”\«?‚èjB
-// ‚Ü‚½Aƒf[ƒ^—ñ‚Å null-terminate ‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğ‘O’ñ‚Æ‚µ‚Ä‚¢‚é‚½‚ßAŒã‘±‚Ìƒf[ƒ^—ñ‚Í
-// –³?‚³‚ê‚éB
+// CBMemHandleãƒ?ãƒ‰?ã¯ã‚°?ãƒ¼ãƒ?å¤‰?ãªã®ã§ã€ã“ã®é–¢?ãŒçµ‚äº†ã™ã‚‹ã¾ã§ã¯ã€
+// ?ã®ã‚¯?ãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãŠã‚ˆã³DDEãƒ‡ãƒ¼ã‚¿ã‚’??ã™ã‚‹ã“ã¨ã¯ã§ããªã„ï¼ˆç ´æ£„ã•ã‚Œã‚‹å¯èƒ½æ€§?ã‚Šï¼‰ã€‚
+// ã¾ãŸã€ãƒ‡ãƒ¼ã‚¿åˆ—ã§ null-terminate ã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’å‰æã¨ã—ã¦ã„ã‚‹ãŸã‚ã€å¾Œç¶šã®ãƒ‡ãƒ¼ã‚¿åˆ—ã¯
+// ç„¡?ã•ã‚Œã‚‹ã€‚
 // (2006.11.6 yutaka)
 void CBSend()
 {
@@ -645,8 +645,8 @@ void CBSend()
 	BOOL EndFlag;
 	static DWORD lastcr;
 	DWORD now;
-	char *token , *toFree;
-	if (CBMemHandle==NULL) {
+	char *token, *toFree;
+	if (CBMemHandle == NULL) {
 		return;
 	}
 
@@ -663,29 +663,29 @@ void CBSend()
 	}
 
 	if (CBRetrySend) {
-		CBRetryEcho = (ts.LocalEcho>0);
-		c = CommTextOut(&cv,(PCHAR)&CBByte,1);
-		CBRetrySend = (c==0);
+		CBRetryEcho = (ts.LocalEcho > 0);
+		c = CommTextOut(&cv, (PCHAR)&CBByte, 1);
+		CBRetrySend = (c == 0);
 		if (CBRetrySend) {
 			return;
 		}
 	}
 
 	if (CBRetryEcho) {
-		c = CommTextEcho(&cv,(PCHAR)&CBByte,1);
-		CBRetryEcho = (c==0);
+		c = CommTextEcho(&cv, (PCHAR)&CBByte, 1);
+		CBRetryEcho = (c == 0);
 		if (CBRetryEcho) {
 			return;
 		}
 	}
 
 	CBMemPtr = GlobalLock(CBMemHandle);
-	if (CBMemPtr==NULL) {
+	if (CBMemPtr == NULL) {
 		return;
 	}
 
 	do {
-		if (CBSendCR && (CBMemPtr[CBMemPtr2]==0x0a)) {
+		if (CBSendCR && (CBMemPtr[CBMemPtr2] == 0x0a)) {
 			CBMemPtr2++;
 			// added PasteDelayPerLine (2009.4.12 maya)
 			if (CBInsertDelay) {
@@ -696,60 +696,59 @@ void CBSend()
 			}
 		}
 
-		EndFlag = (CBMemPtr[CBMemPtr2]==0);
-		if (! EndFlag) {
+		EndFlag = (CBMemPtr[CBMemPtr2] == 0);
+		if (!EndFlag) {
 			CBByte = CBMemPtr[CBMemPtr2];
 			CBMemPtr2++;
-// Decoding characters which are encoded by MACRO
-//   to support NUL character sending
-//
-//  [encoded character] --> [decoded character]
-//         01 01        -->     00
-//         01 02        -->     01
-			if (CBByte==0x01) { /* 0x01 from MACRO */
+			// Decoding characters which are encoded by MACRO
+			//   to support NUL character sending
+			//
+			//  [encoded character] --> [decoded character]
+			//         01 01        -->     00
+			//         01 02        -->     01
+			if (CBByte == 0x01) { /* 0x01 from MACRO */
 				CBByte = CBMemPtr[CBMemPtr2];
 				CBMemPtr2++;
 				CBByte = CBByte - 1; // character just after 0x01
 			}
 		}
 		else {
-			
-			toFree=token = strdup(CBMemPtr);
+
+			toFree = token = strdup(CBMemPtr);
 			checklock(strupr(token));
 			free(toFree);
 			CBEndPaste();
 			return;
 		}
 
-		if (! EndFlag) {
-			c = CommTextOut(&cv,(PCHAR)&CBByte,1);
-			CBSendCR = (CBByte==0x0D);
-			CBRetrySend = (c==0);
-			if ((! CBRetrySend) &&
-			    (ts.LocalEcho>0)) {
-				c = CommTextEcho(&cv,(PCHAR)&CBByte,1);
-				CBRetryEcho = (c==0);
+		if (!EndFlag) {
+			c = CommTextOut(&cv, (PCHAR)&CBByte, 1);
+			CBSendCR = (CBByte == 0x0D);
+			CBRetrySend = (c == 0);
+			if ((!CBRetrySend) &&
+				(ts.LocalEcho > 0)) {
+				c = CommTextEcho(&cv, (PCHAR)&CBByte, 1);
+				CBRetryEcho = (c == 0);
 			}
 		}
 		else {
-			c=0;
+			c = 0;
 		}
-	}
-	while (c>0);
+	} while (c > 0);
 
-	if (CBMemPtr!=NULL) {
+	if (CBMemPtr != NULL) {
 		GlobalUnlock(CBMemHandle);
-		CBMemPtr=NULL;
+		CBMemPtr = NULL;
 	}
 }
 
 void CBEcho()
 {
-	if (CBMemHandle==NULL) {
+	if (CBMemHandle == NULL) {
 		return;
 	}
 
-	if (CBRetryEcho && CommTextEcho(&cv,(PCHAR)&CBByte,1) == 0) {
+	if (CBRetryEcho && CommTextEcho(&cv, (PCHAR)&CBByte, 1) == 0) {
 		return;
 	}
 
@@ -758,7 +757,7 @@ void CBEcho()
 	}
 
 	do {
-		if (CBSendCR && (CBMemPtr[CBMemPtr2]==0x0a)) {
+		if (CBSendCR && (CBMemPtr[CBMemPtr2] == 0x0a)) {
 			CBMemPtr2++;
 		}
 
@@ -777,21 +776,21 @@ void CBEcho()
 		//  [encoded character] --> [decoded character]
 		//         01 01        -->     00
 		//         01 02        -->     01
-		if (CBByte==0x01) { /* 0x01 from MACRO */
+		if (CBByte == 0x01) { /* 0x01 from MACRO */
 			CBByte = CBMemPtr[CBMemPtr2];
 			CBMemPtr2++;
 			CBByte = CBByte - 1; // character just after 0x01
 		}
 
-		CBSendCR = (CBByte==0x0D);
+		CBSendCR = (CBByte == 0x0D);
 
-	} while (CommTextEcho(&cv,(PCHAR)&CBByte,1) > 0);
+	} while (CommTextEcho(&cv, (PCHAR)&CBByte, 1) > 0);
 
 	CBRetryEcho = TRUE;
 
 	if (CBMemHandle != NULL) {
 		GlobalUnlock(CBMemHandle);
-		CBMemPtr=NULL;
+		CBMemPtr = NULL;
 	}
 }
 
@@ -799,8 +798,8 @@ void CBEndPaste()
 {
 	TalkStatus = IdTalkKeyb;
 
-	if (CBMemHandle!=NULL) {
-		if (CBMemPtr!=NULL) {
+	if (CBMemHandle != NULL) {
+		if (CBMemPtr != NULL) {
 			GlobalUnlock(CBMemHandle);
 		}
 		GlobalFree(CBMemHandle);
@@ -853,10 +852,10 @@ HGLOBAL CBAllocClipboardMem(char *text)
 
 	len = strlen(text);
 
-	hMem = GlobalAlloc(GMEM_MOVEABLE, len+1);
+	hMem = GlobalAlloc(GMEM_MOVEABLE, len + 1);
 	if (hMem) {
 		buf = GlobalLock(hMem);
-		strncpy_s(buf, len+1, text, _TRUNCATE);
+		strncpy_s(buf, len + 1, text, _TRUNCATE);
 		GlobalUnlock(hMem);
 	}
 
@@ -878,251 +877,251 @@ static LRESULT CALLBACK OnClipboardDlgProc(HWND hDlgWnd, UINT msg, WPARAM wp, LP
 	static init_width, init_height;
 
 	switch (msg) {
-		case WM_INITDIALOG:
-			font = (HFONT)SendMessage(hDlgWnd, WM_GETFONT, 0, 0);
-			GetObject(font, sizeof(LOGFONT), &logfont);
-			if (get_lang_font("DLG_TAHOMA_FONT", hDlgWnd, &logfont, &DlgClipboardFont, ts.UILanguageFile)) {
-				SendDlgItemMessage(hDlgWnd, IDC_EDIT, WM_SETFONT, (WPARAM)DlgClipboardFont, MAKELPARAM(TRUE,0));
-				SendDlgItemMessage(hDlgWnd, IDOK, WM_SETFONT, (WPARAM)DlgClipboardFont, MAKELPARAM(TRUE,0));
-				SendDlgItemMessage(hDlgWnd, IDCANCEL, WM_SETFONT, (WPARAM)DlgClipboardFont, MAKELPARAM(TRUE,0));
+	case WM_INITDIALOG:
+		font = (HFONT)SendMessage(hDlgWnd, WM_GETFONT, 0, 0);
+		GetObject(font, sizeof(LOGFONT), &logfont);
+		if (get_lang_font("DLG_TAHOMA_FONT", hDlgWnd, &logfont, &DlgClipboardFont, ts.UILanguageFile)) {
+			SendDlgItemMessage(hDlgWnd, IDC_EDIT, WM_SETFONT, (WPARAM)DlgClipboardFont, MAKELPARAM(TRUE, 0));
+			SendDlgItemMessage(hDlgWnd, IDOK, WM_SETFONT, (WPARAM)DlgClipboardFont, MAKELPARAM(TRUE, 0));
+			SendDlgItemMessage(hDlgWnd, IDCANCEL, WM_SETFONT, (WPARAM)DlgClipboardFont, MAKELPARAM(TRUE, 0));
+		}
+		else {
+			DlgClipboardFont = NULL;
+		}
+
+		GetWindowText(hDlgWnd, uimsg, sizeof(uimsg));
+		get_lang_msg("DLG_CLIPBOARD_TITLE", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
+		SetWindowText(hDlgWnd, ts.UIMsg);
+		GetDlgItemText(hDlgWnd, IDCANCEL, uimsg, sizeof(uimsg));
+		get_lang_msg("BTN_CANCEL", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
+		SetDlgItemText(hDlgWnd, IDCANCEL, ts.UIMsg);
+		GetDlgItemText(hDlgWnd, IDOK, uimsg, sizeof(uimsg));
+		get_lang_msg("BTN_OK", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
+		SetDlgItemText(hDlgWnd, IDOK, ts.UIMsg);
+
+		SendMessage(GetDlgItem(hDlgWnd, IDC_EDIT), WM_SETTEXT, 0, (LPARAM)CBMemPtr);
+
+		if (ActiveWin == IdVT) { // VT Window
+			/*
+			 * Caret off ?ã« GetCaretPos() ã§æ­£ç¢ºãªå ´?ãŒå–ã‚Œãªã„ã®ã§ã€
+			 * vtdisp.c å†…?ã§ç®¡?ã—ã¦ã„ã‚‹å€¤ã‹ã‚‰è¨ˆç®—ã™ã‚‹
+			 */
+			DispConvScreenToWin(CursorX, CursorY, &p.x, &p.y);
+		}
+		else if (!GetCaretPos(&p)) { // Tek Window
+			/*
+			 * Tek Window ã¯å†…?ç®¡?ã®å€¤ã‚’å–ã‚‹ã®ãŒé¢å€’ãªã®ã§ GetCaretPos() ã‚’ä½¿ã†
+			 * GetCaretPos() ãŒã‚¨?ãƒ¼ã«ãªã£ãŸå ´?ã¯å¿µã®ãŸã‚ 0, 0 ã‚’å…¥ã‚Œã¦ãŠã
+			 */
+			p.x = 0;
+			p.y = 0;
+		}
+
+		// x, y ã®ä¸¡æ–¹ãŒ 0 ã®?ã¯è¦ªã‚¦ã‚£?ãƒ‰ã‚¦ã®??ã«ç§»å‹•ã•ã›ã‚‰ã‚Œã‚‹ã®ã§ã€
+		// ãã‚Œã‚’é˜²ãç‚ºã« x ã‚’ 1 ã«ã™ã‚‹
+		if (p.x == 0 && p.y == 0) {
+			p.x = 1;
+		}
+
+		ClientToScreen(GetParent(hDlgWnd), &p);
+
+		// ã‚­??ãƒƒãƒˆãŒç”»é¢ã‹ã‚‰ã¯ã¿å‡ºã—ã¦ã„ã‚‹ã¨ãã«è²¼ã‚Šä»˜ã‘ã‚’ã™ã‚‹ã¨
+		// ç¢ºèªã‚¦ã‚¤?ãƒ‰ã‚¦ãŒè¦‹ãˆã‚‹ã¨ã“ã‚ã«è¡¨ç¤ºã•ã‚Œãªã„ã“ã¨ãŒ?ã‚‹ã€‚
+		// ã‚¦ã‚¤?ãƒ‰ã‚¦ã‹ã‚‰ã¯ã¿å‡ºã—ãŸå ´?ã«èª¿ç¯€ã™ã‚‹ (2008.4.24 maya)
+		if (!HasMultiMonitorSupport()) {
+			// NT4.0, 95 ã¯ãƒ?ãƒ?ãƒ‹ã‚¿APIã«éå¯¾?
+			SystemParametersInfo(SPI_GETWORKAREA, 0, &rc_dsk, 0);
+		}
+		else {
+			HMONITOR hm;
+			POINT pt;
+			MONITORINFO mi;
+
+			pt.x = p.x;
+			pt.y = p.y;
+			hm = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+
+			mi.cbSize = sizeof(MONITORINFO);
+			GetMonitorInfo(hm, &mi);
+			rc_dsk = mi.rcWork;
+		}
+		GetWindowRect(hDlgWnd, &rc_dlg);
+		dlg_height = rc_dlg.bottom - rc_dlg.top;
+		dlg_width = rc_dlg.right - rc_dlg.left;
+		if (p.y < rc_dsk.top) {
+			p.y = rc_dsk.top;
+		}
+		else if (p.y + dlg_height > rc_dsk.bottom) {
+			p.y = rc_dsk.bottom - dlg_height;
+		}
+		if (p.x < rc_dsk.left) {
+			p.x = rc_dsk.left;
+		}
+		else if (p.x + dlg_width > rc_dsk.right) {
+			p.x = rc_dsk.right - dlg_width;
+		}
+
+		SetWindowPos(hDlgWnd, NULL, p.x, p.y,
+			0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+		// ãƒ€ã‚¤ã‚¢?ã‚°ã®?æœŸã‚µã‚¤ã‚ºã‚’ä¿å­˜
+		GetWindowRect(hDlgWnd, &rc_dlg);
+		init_width = rc_dlg.right - rc_dlg.left;
+		init_height = rc_dlg.bottom - rc_dlg.top;
+
+		// ç¾åœ¨ã‚µã‚¤ã‚ºã‹ã‚‰å¿…è¦ãªå€¤ã‚’è¨ˆç®—
+		GetClientRect(hDlgWnd, &rc_dlg);
+		GetWindowRect(GetDlgItem(hDlgWnd, IDC_EDIT), &rc_edit);
+		GetWindowRect(GetDlgItem(hDlgWnd, IDOK), &rc_ok);
+
+		p.x = rc_dlg.right;
+		p.y = rc_dlg.bottom;
+		ClientToScreen(hDlgWnd, &p);
+		ok2right = p.x - rc_ok.left;
+		edit2bottom = p.y - rc_edit.bottom;
+		edit2ok = rc_ok.left - rc_edit.right;
+
+		// ã‚µã‚¤ã‚ºã‚’?å…ƒ
+		SetWindowPos(hDlgWnd, NULL, 0, 0,
+			ts.PasteDialogSize.cx, ts.PasteDialogSize.cy,
+			SWP_NOZORDER | SWP_NOMOVE);
+
+		// ?ã‚µã‚¤ã‚ºã‚¢ã‚¤ã‚³?ã‚’å³ä¸‹ã«è¡¨ç¤ºã•ã›ãŸã„ã®ã§ã€ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã‚’ä»˜ã‘ã‚‹ã€‚
+		InitCommonControls();
+		hStatus = CreateStatusWindow(
+			WS_CHILD | WS_VISIBLE |
+			CCS_BOTTOM | SBARS_SIZEGRIP, NULL, hDlgWnd, 1);
+
+		return TRUE;
+
+	case WM_COMMAND:
+		switch (LOWORD(wp)) {
+		case IDOK:
+		{
+			unsigned len = SendMessage(GetDlgItem(hDlgWnd, IDC_EDIT), WM_GETTEXTLENGTH, 0, 0);
+			HGLOBAL hMem;
+			INT_PTR result = IDCANCEL;
+
+			if (CBMemHandle == NULL) {
+				CBMemHandle = GlobalAlloc(GHND, len + 1);
 			}
-			else {
-				DlgClipboardFont = NULL;
-			}
-
-			GetWindowText(hDlgWnd, uimsg, sizeof(uimsg));
-			get_lang_msg("DLG_CLIPBOARD_TITLE", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
-			SetWindowText(hDlgWnd, ts.UIMsg);
-			GetDlgItemText(hDlgWnd, IDCANCEL, uimsg, sizeof(uimsg));
-			get_lang_msg("BTN_CANCEL", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
-			SetDlgItemText(hDlgWnd, IDCANCEL, ts.UIMsg);
-			GetDlgItemText(hDlgWnd, IDOK, uimsg, sizeof(uimsg));
-			get_lang_msg("BTN_OK", ts.UIMsg, sizeof(ts.UIMsg), uimsg, ts.UILanguageFile);
-			SetDlgItemText(hDlgWnd, IDOK, ts.UIMsg);
-
-			SendMessage(GetDlgItem(hDlgWnd, IDC_EDIT), WM_SETTEXT, 0, (LPARAM)CBMemPtr);
-
-			if (ActiveWin == IdVT) { // VT Window
-				/*
-				 * Caret off ?‚É GetCaretPos() ‚Å³Šm‚Èê?‚ªæ‚ê‚È‚¢‚Ì‚ÅA
-				 * vtdisp.c “à?‚ÅŠÇ?‚µ‚Ä‚¢‚é’l‚©‚çŒvZ‚·‚é
-				 */
-				DispConvScreenToWin(CursorX, CursorY, &p.x, &p.y);
-			}
-			else if (!GetCaretPos(&p)) { // Tek Window
-				/*
-				 * Tek Window ‚Í“à?ŠÇ?‚Ì’l‚ğæ‚é‚Ì‚ª–Ê“|‚È‚Ì‚Å GetCaretPos() ‚ğg‚¤
-				 * GetCaretPos() ‚ªƒG?[‚É‚È‚Á‚½ê?‚Í”O‚Ì‚½‚ß 0, 0 ‚ğ“ü‚ê‚Ä‚¨‚­
-				 */
-				p.x = 0;
-				p.y = 0;
-			}
-
-			// x, y ‚Ì—¼•û‚ª 0 ‚Ì?‚ÍeƒEƒB?ƒhƒE‚Ì??‚ÉˆÚ“®‚³‚¹‚ç‚ê‚é‚Ì‚ÅA
-			// ‚»‚ê‚ğ–h‚®ˆ×‚É x ‚ğ 1 ‚É‚·‚é
-			if (p.x == 0 && p.y == 0) {
-				p.x = 1;
-			}
-
-			ClientToScreen(GetParent(hDlgWnd), &p);
-
-			// ƒL??ƒbƒg‚ª‰æ–Ê‚©‚ç‚Í‚İo‚µ‚Ä‚¢‚é‚Æ‚«‚É“\‚è•t‚¯‚ğ‚·‚é‚Æ
-			// Šm”FƒEƒC?ƒhƒE‚ªŒ©‚¦‚é‚Æ‚±‚ë‚É•\¦‚³‚ê‚È‚¢‚±‚Æ‚ª?‚éB
-			// ƒEƒC?ƒhƒE‚©‚ç‚Í‚İo‚µ‚½ê?‚É’²ß‚·‚é (2008.4.24 maya)
-			if (!HasMultiMonitorSupport()) {
-				// NT4.0, 95 ‚Íƒ}?ƒ`?ƒjƒ^API‚É”ñ‘Î?
-				SystemParametersInfo(SPI_GETWORKAREA, 0, &rc_dsk, 0);
-			}
-			else {
-				HMONITOR hm;
-				POINT pt;
-				MONITORINFO mi;
-
-				pt.x = p.x;
-				pt.y = p.y;
-				hm = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
-
-				mi.cbSize = sizeof(MONITORINFO);
-				GetMonitorInfo(hm, &mi);
-				rc_dsk = mi.rcWork;
-			}
-			GetWindowRect(hDlgWnd, &rc_dlg);
-			dlg_height = rc_dlg.bottom-rc_dlg.top;
-			dlg_width  = rc_dlg.right-rc_dlg.left;
-			if (p.y < rc_dsk.top) {
-				p.y = rc_dsk.top;
-			}
-			else if (p.y + dlg_height > rc_dsk.bottom) {
-				p.y = rc_dsk.bottom - dlg_height;
-			}
-			if (p.x < rc_dsk.left) {
-				p.x = rc_dsk.left;
-			}
-			else if (p.x + dlg_width > rc_dsk.right) {
-				p.x = rc_dsk.right - dlg_width;
-			}
-
-			SetWindowPos(hDlgWnd, NULL, p.x, p.y,
-			             0, 0, SWP_NOSIZE | SWP_NOZORDER);
-
-			// ƒ_ƒCƒA?ƒO‚Ì?ŠúƒTƒCƒY‚ğ•Û‘¶
-			GetWindowRect(hDlgWnd, &rc_dlg);
-			init_width = rc_dlg.right - rc_dlg.left;
-			init_height = rc_dlg.bottom - rc_dlg.top;
-
-			// Œ»İƒTƒCƒY‚©‚ç•K—v‚È’l‚ğŒvZ
-			GetClientRect(hDlgWnd,                                 &rc_dlg);
-			GetWindowRect(GetDlgItem(hDlgWnd, IDC_EDIT),           &rc_edit);
-			GetWindowRect(GetDlgItem(hDlgWnd, IDOK),               &rc_ok);
-
-			p.x = rc_dlg.right;
-			p.y = rc_dlg.bottom;
-			ClientToScreen(hDlgWnd, &p);
-			ok2right = p.x - rc_ok.left;
-			edit2bottom = p.y - rc_edit.bottom;
-			edit2ok = rc_ok.left - rc_edit.right;
-
-			// ƒTƒCƒY‚ğ?Œ³
-			SetWindowPos(hDlgWnd, NULL, 0, 0,
-			             ts.PasteDialogSize.cx, ts.PasteDialogSize.cy,
-			             SWP_NOZORDER | SWP_NOMOVE);
-
-			// ?ƒTƒCƒYƒAƒCƒR?‚ğ‰E‰º‚É•\¦‚³‚¹‚½‚¢‚Ì‚ÅAƒXƒe[ƒ^ƒXƒo[‚ğ•t‚¯‚éB
-			InitCommonControls();
-			hStatus = CreateStatusWindow(
-				WS_CHILD | WS_VISIBLE |
-				CCS_BOTTOM | SBARS_SIZEGRIP, NULL, hDlgWnd, 1);
-
-			return TRUE;
-
-		case WM_COMMAND:
-			switch (LOWORD(wp)) {
-				case IDOK:
-				{
-					unsigned len = SendMessage(GetDlgItem(hDlgWnd, IDC_EDIT), WM_GETTEXTLENGTH, 0, 0);
-					HGLOBAL hMem;
-					INT_PTR result = IDCANCEL;
-
-					if (CBMemHandle == NULL) {
-						CBMemHandle = GlobalAlloc(GHND, len+1);
-					}
-					else if (GlobalSize(CBMemHandle) <= len) {
-						if (CBMemPtr) {
-							GlobalUnlock(CBMemHandle);
-							CBMemPtr = NULL;
-						}
-						hMem = GlobalReAlloc(CBMemHandle, len+1, 0);
-						if (hMem) {
-							CBMemHandle = hMem;
-							CBMemPtr = GlobalLock(CBMemHandle);
-						}
-						else {
-							/*
-							 * ???‚ªŠm•Û‚Å‚«‚È‚©‚Á‚½ê?‚Í‚Ç‚¤‚·‚é‚×‚«‚©B
-							 *
-							 * ƒ_ƒCƒA?ƒO‚Å?‚«Š·‚¦‚ªs‚í‚ê‚½ê?‚ğl‚¦‚é‚Æ
-							 * ƒL??ƒZ?ˆµ‚¢‚É‚·‚é•û‚ª–³“ï‚¾‚ªA‘å’ï‚Í?‚«Š·‚¦‚ğ
-							 * s‚í‚È‚¢‚Æv‚í‚ê‚é‚Ì‚ÅA‚»‚Ìê?‚Í?—Ìˆæ‚Ì“à—e‚ğ
-							 * “\‚è•t‚¯‚½•û‚ªeØB
-							 *
-							 * æ‚è?‚¦‚¸‚ÍˆÀ‘S‘¤‚É“|‚µA?—Ìˆæ‚ğŠJ•ú‚µ‚Ä“\‚è•t‚¯‚ª
-							 * s‚í‚ê‚È‚¢‚æ‚¤‚É‚·‚éB
-							 */
-							GlobalFree(CBMemHandle);
-							CBMemHandle = NULL;
-						}
-					}
-
-					if (CBMemHandle) {
-						if (CBMemPtr == NULL) {
-							CBMemPtr = GlobalLock(CBMemHandle);
-						}
-						SendMessage(GetDlgItem(hDlgWnd, IDC_EDIT), WM_GETTEXT, GlobalSize(CBMemHandle), (LPARAM)CBMemPtr);
-						result = IDOK;
-					}
-
-					if (DlgClipboardFont != NULL) {
-						DeleteObject(DlgClipboardFont);
-					}
-
-					DestroyWindow(hStatus);
-					EndDialog(hDlgWnd, result);
+			else if (GlobalSize(CBMemHandle) <= len) {
+				if (CBMemPtr) {
+					GlobalUnlock(CBMemHandle);
+					CBMemPtr = NULL;
 				}
-					break;
-
-				case IDCANCEL:
-					if (DlgClipboardFont != NULL) {
-						DeleteObject(DlgClipboardFont);
-					}
-
-					DestroyWindow(hStatus);
-					EndDialog(hDlgWnd, IDCANCEL);
-					break;
-
-				default:
-					return FALSE;
+				hMem = GlobalReAlloc(CBMemHandle, len + 1, 0);
+				if (hMem) {
+					CBMemHandle = hMem;
+					CBMemPtr = GlobalLock(CBMemHandle);
+				}
+				else {
+					/*
+					 * ???ãŒç¢ºä¿ã§ããªã‹ã£ãŸå ´?ã¯ã©ã†ã™ã‚‹ã¹ãã‹ã€‚
+					 *
+					 * ãƒ€ã‚¤ã‚¢?ã‚°ã§?ãæ›ãˆãŒè¡Œã‚ã‚ŒãŸå ´?ã‚’è€ƒãˆã‚‹ã¨
+					 * ã‚­??ã‚»?æ‰±ã„ã«ã™ã‚‹æ–¹ãŒç„¡é›£ã ãŒã€å¤§æŠµã¯?ãæ›ãˆã‚’
+					 * è¡Œã‚ãªã„ã¨æ€ã‚ã‚Œã‚‹ã®ã§ã€ãã®å ´?ã¯?é ˜åŸŸã®å†…å®¹ã‚’
+					 * è²¼ã‚Šä»˜ã‘ãŸæ–¹ãŒè¦ªåˆ‡ã€‚
+					 *
+					 * å–ã‚Š?ãˆãšã¯å®‰å…¨å´ã«å€’ã—ã€?é ˜åŸŸã‚’é–‹æ”¾ã—ã¦è²¼ã‚Šä»˜ã‘ãŒ
+					 * è¡Œã‚ã‚Œãªã„ã‚ˆã†ã«ã™ã‚‹ã€‚
+					 */
+					GlobalFree(CBMemHandle);
+					CBMemHandle = NULL;
+				}
 			}
 
-		case WM_SIZE:
-			{
-				// Ä”z’u
-				POINT p;
-				int dlg_w, dlg_h;
-
-				GetClientRect(hDlgWnd,                                 &rc_dlg);
-				dlg_w = rc_dlg.right;
-				dlg_h = rc_dlg.bottom;
-
-				GetWindowRect(GetDlgItem(hDlgWnd, IDC_EDIT),           &rc_edit);
-				GetWindowRect(GetDlgItem(hDlgWnd, IDOK),               &rc_ok);
-				GetWindowRect(GetDlgItem(hDlgWnd, IDCANCEL),           &rc_cancel);
-
-				// OK
-				p.x = rc_ok.left;
-				p.y = rc_ok.top;
-				ScreenToClient(hDlgWnd, &p);
-				SetWindowPos(GetDlgItem(hDlgWnd, IDOK), 0,
-				             dlg_w - ok2right, p.y, 0, 0,
-				             SWP_NOSIZE | SWP_NOZORDER);
-
-				// CANCEL
-				p.x = rc_cancel.left;
-				p.y = rc_cancel.top;
-				ScreenToClient(hDlgWnd, &p);
-				SetWindowPos(GetDlgItem(hDlgWnd, IDCANCEL), 0,
-				             dlg_w - ok2right, p.y, 0, 0,
-				             SWP_NOSIZE | SWP_NOZORDER);
-
-				// EDIT
-				p.x = rc_edit.left;
-				p.y = rc_edit.top;
-				ScreenToClient(hDlgWnd, &p);
-				SetWindowPos(GetDlgItem(hDlgWnd, IDC_EDIT), 0,
-				             0, 0, dlg_w - p.x - edit2ok - ok2right, dlg_h - p.y - edit2bottom,
-				             SWP_NOMOVE | SWP_NOZORDER);
-
-				// ƒTƒCƒY‚ğ•Û‘¶
-				GetWindowRect(hDlgWnd, &rc_dlg);
-				ts.PasteDialogSize.cx = rc_dlg.right - rc_dlg.left;
-				ts.PasteDialogSize.cy = rc_dlg.bottom - rc_dlg.top;
-
-				// status bar
-				SendMessage(hStatus , msg , wp , lp);
+			if (CBMemHandle) {
+				if (CBMemPtr == NULL) {
+					CBMemPtr = GlobalLock(CBMemHandle);
+				}
+				SendMessage(GetDlgItem(hDlgWnd, IDC_EDIT), WM_GETTEXT, GlobalSize(CBMemHandle), (LPARAM)CBMemPtr);
+				result = IDOK;
 			}
-			return TRUE;
 
-		case WM_GETMINMAXINFO:
-			{
-				// ƒ_ƒCƒA?ƒO‚Ì?ŠúƒTƒCƒY‚æ‚è¬‚³‚­‚Å‚«‚È‚¢‚æ‚¤‚É‚·‚é
-				LPMINMAXINFO lpmmi;
-				lpmmi = (LPMINMAXINFO)lp;
-				lpmmi->ptMinTrackSize.x = init_width;
-				lpmmi->ptMinTrackSize.y = init_height;
+			if (DlgClipboardFont != NULL) {
+				DeleteObject(DlgClipboardFont);
 			}
-			return FALSE;
+
+			DestroyWindow(hStatus);
+			EndDialog(hDlgWnd, result);
+		}
+		break;
+
+		case IDCANCEL:
+			if (DlgClipboardFont != NULL) {
+				DeleteObject(DlgClipboardFont);
+			}
+
+			DestroyWindow(hStatus);
+			EndDialog(hDlgWnd, IDCANCEL);
+			break;
 
 		default:
 			return FALSE;
+		}
+
+	case WM_SIZE:
+	{
+		// å†é…ç½®
+		POINT p;
+		int dlg_w, dlg_h;
+
+		GetClientRect(hDlgWnd, &rc_dlg);
+		dlg_w = rc_dlg.right;
+		dlg_h = rc_dlg.bottom;
+
+		GetWindowRect(GetDlgItem(hDlgWnd, IDC_EDIT), &rc_edit);
+		GetWindowRect(GetDlgItem(hDlgWnd, IDOK), &rc_ok);
+		GetWindowRect(GetDlgItem(hDlgWnd, IDCANCEL), &rc_cancel);
+
+		// OK
+		p.x = rc_ok.left;
+		p.y = rc_ok.top;
+		ScreenToClient(hDlgWnd, &p);
+		SetWindowPos(GetDlgItem(hDlgWnd, IDOK), 0,
+			dlg_w - ok2right, p.y, 0, 0,
+			SWP_NOSIZE | SWP_NOZORDER);
+
+		// CANCEL
+		p.x = rc_cancel.left;
+		p.y = rc_cancel.top;
+		ScreenToClient(hDlgWnd, &p);
+		SetWindowPos(GetDlgItem(hDlgWnd, IDCANCEL), 0,
+			dlg_w - ok2right, p.y, 0, 0,
+			SWP_NOSIZE | SWP_NOZORDER);
+
+		// EDIT
+		p.x = rc_edit.left;
+		p.y = rc_edit.top;
+		ScreenToClient(hDlgWnd, &p);
+		SetWindowPos(GetDlgItem(hDlgWnd, IDC_EDIT), 0,
+			0, 0, dlg_w - p.x - edit2ok - ok2right, dlg_h - p.y - edit2bottom,
+			SWP_NOMOVE | SWP_NOZORDER);
+
+		// ã‚µã‚¤ã‚ºã‚’ä¿å­˜
+		GetWindowRect(hDlgWnd, &rc_dlg);
+		ts.PasteDialogSize.cx = rc_dlg.right - rc_dlg.left;
+		ts.PasteDialogSize.cy = rc_dlg.bottom - rc_dlg.top;
+
+		// status bar
+		SendMessage(hStatus, msg, wp, lp);
+	}
+	return TRUE;
+
+	case WM_GETMINMAXINFO:
+	{
+		// ãƒ€ã‚¤ã‚¢?ã‚°ã®?æœŸã‚µã‚¤ã‚ºã‚ˆã‚Šå°ã•ãã§ããªã„ã‚ˆã†ã«ã™ã‚‹
+		LPMINMAXINFO lpmmi;
+		lpmmi = (LPMINMAXINFO)lp;
+		lpmmi->ptMinTrackSize.x = init_width;
+		lpmmi->ptMinTrackSize.y = init_height;
+	}
+	return FALSE;
+
+	default:
+		return FALSE;
 	}
 	return TRUE;
 }

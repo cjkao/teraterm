@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2006-2019 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* misc. routines  */
+ /* misc. routines  */
 #include "teraterm.h"
 #include <sys/stat.h>
 #include <sys/utime.h>
@@ -43,9 +43,9 @@
 
 /* OS version with GetVersionEx(*1)
 
-                dwMajorVersion   dwMinorVersion    dwPlatformId
+				dwMajorVersion   dwMinorVersion    dwPlatformId
 Windows95       4                0                 VER_PLATFORM_WIN32_WINDOWS
-Windows98       4                10                VER_PLATFORM_WIN32_WINDOWS 
+Windows98       4                10                VER_PLATFORM_WIN32_WINDOWS
 WindowsMe       4                90                VER_PLATFORM_WIN32_WINDOWS
 WindowsNT4.0    4                0                 VER_PLATFORM_WIN32_NT
 Windows2000     5                0                 VER_PLATFORM_WIN32_NT
@@ -59,15 +59,15 @@ Windows8.1(*3)  6                3                 VER_PLATFORM_WIN32_NT
 Windows10(*2)   6                2                 VER_PLATFORM_WIN32_NT
 Windows10(*3)   10               0                 VER_PLATFORM_WIN32_NT
 
-(*1) GetVersionEx()Ç™ c4996 warning Ç∆Ç»ÇÈÇÃÇÕÅAVS2013(_MSC_VER=1800) Ç©ÇÁÇ≈Ç∑ÅB
-(*2) manifestÇ… supportedOS Id Çí«â¡ÇµÇƒÇ¢Ç»Ç¢ÅB
-(*3) manifestÇ… supportedOS Id Çí«â¡ÇµÇƒÇ¢ÇÈÅB
+(*1) GetVersionEx()„Åå c4996 warning „Å®„Å™„Çã„ÅÆ„ÅØ„ÄÅVS2013(_MSC_VER=1800) „Åã„Çâ„Åß„Åô„ÄÇ
+(*2) manifest„Å´ supportedOS Id „ÇíËøΩÂä†„Åó„Å¶„ÅÑ„Å™„ÅÑ„ÄÇ
+(*3) manifest„Å´ supportedOS Id „ÇíËøΩÂä†„Åó„Å¶„ÅÑ„Çã„ÄÇ
 */
 
 // for isInvalidFileNameChar / replaceInvalidFileNameChar
 static char *invalidFileNameChars = "\\/:*?\"<>|";
 
-// ÉtÉ@ÉCÉãÇ…égópÇ∑ÇÈÇ±Ç∆Ç™Ç≈Ç´Ç»Ç¢ï∂éö
+// „Éï„Ç°„Ç§„É´„Å´‰ΩøÁî®„Åô„Çã„Åì„Å®„Åå„Åß„Åç„Å™„ÅÑÊñáÂ≠ó
 // cf. Naming Files, Paths, and Namespaces
 //     http://msdn.microsoft.com/en-us/library/aa365247.aspx
 // (2013.3.9 yutaka)
@@ -75,7 +75,7 @@ static char *invalidFileNameStrings[] = {
 	"AUX", "CLOCK$", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
 	"CON", "CONFIG$", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
 	"NUL", "PRN",
-	".", "..", 
+	".", "..",
 	NULL
 };
 
@@ -124,9 +124,9 @@ void b64encode(PCHAR d, int dsize, PCHAR s, int len)
 		state++;
 
 		if (state == 3) {
-			*dst++ = b64enc_table[(b>>18) & 0x3f];
-			*dst++ = b64enc_table[(b>>12) & 0x3f];
-			*dst++ = b64enc_table[(b>>6) & 0x3f];
+			*dst++ = b64enc_table[(b >> 18) & 0x3f];
+			*dst++ = b64enc_table[(b >> 12) & 0x3f];
+			*dst++ = b64enc_table[(b >> 6) & 0x3f];
 			*dst++ = b64enc_table[b & 0x3f];
 			dsize -= 4;
 			state = 0;
@@ -138,15 +138,15 @@ void b64encode(PCHAR d, int dsize, PCHAR s, int len)
 
 	if (dsize >= 5) {
 		if (state == 1) {
-			*dst++ = b64enc_table[(b>>2) & 0x3f];
-			*dst++ = b64enc_table[(b<<4) & 0x3f];
+			*dst++ = b64enc_table[(b >> 2) & 0x3f];
+			*dst++ = b64enc_table[(b << 4) & 0x3f];
 			*dst++ = '=';
 			*dst++ = '=';
 		}
 		else if (state == 2) {
-			*dst++ = b64enc_table[(b>>10) & 0x3f];
-			*dst++ = b64enc_table[(b>>4) & 0x3f];
-			*dst++ = b64enc_table[(b<<2) & 0x3f];
+			*dst++ = b64enc_table[(b >> 10) & 0x3f];
+			*dst++ = b64enc_table[(b >> 4) & 0x3f];
+			*dst++ = b64enc_table[(b << 2) & 0x3f];
 			*dst++ = '=';
 		}
 	}
@@ -205,7 +205,7 @@ int b64decode(PCHAR dst, int dsize, PCHAR src)
 		dst[len] = 0;
 	}
 	else {
-		dst[dsize-1] = 0;
+		dst[dsize - 1] = 0;
 	}
 	return len;
 }
@@ -217,34 +217,34 @@ BOOL GetFileNamePos(PCHAR PathName, int far *DirLen, int far *FNPos)
 
 	*DirLen = 0;
 	*FNPos = 0;
-	if (PathName==NULL)
+	if (PathName == NULL)
 		return FALSE;
 
-	if ((strlen(PathName)>=2) && (PathName[1]==':'))
+	if ((strlen(PathName) >= 2) && (PathName[1] == ':'))
 		Ptr = &PathName[2];
 	else
 		Ptr = PathName;
-	if (Ptr[0]=='\\' || Ptr[0]=='/')
+	if (Ptr[0] == '\\' || Ptr[0] == '/')
 		Ptr = CharNext(Ptr);
 
 	DirPtr = Ptr;
 	FNPtr = Ptr;
-	while (Ptr[0]!=0) {
+	while (Ptr[0] != 0) {
 		b = Ptr[0];
 		PtrOld = Ptr;
 		Ptr = CharNext(Ptr);
 		switch (b) {
-			case ':':
-				return FALSE;
-			case '/':	/* FALLTHROUGH */
-			case '\\':
-				DirPtr = PtrOld;
-				FNPtr = Ptr;
-				break;
+		case ':':
+			return FALSE;
+		case '/':	/* FALLTHROUGH */
+		case '\\':
+			DirPtr = PtrOld;
+			FNPtr = Ptr;
+			break;
 		}
 	}
-	*DirLen = DirPtr-PathName;
-	*FNPos = FNPtr-PathName;
+	*DirLen = DirPtr - PathName;
+	*FNPos = FNPtr - PathName;
 	return TRUE;
 }
 
@@ -252,23 +252,23 @@ BOOL ExtractFileName(PCHAR PathName, PCHAR FileName, int destlen)
 {
 	int i, j;
 
-	if (FileName==NULL)
+	if (FileName == NULL)
 		return FALSE;
-	if (! GetFileNamePos(PathName,&i,&j))
+	if (!GetFileNamePos(PathName, &i, &j))
 		return FALSE;
-	strncpy_s(FileName,destlen,&PathName[j],_TRUNCATE);
-	return (strlen(FileName)>0);
+	strncpy_s(FileName, destlen, &PathName[j], _TRUNCATE);
+	return (strlen(FileName) > 0);
 }
 
 BOOL ExtractDirName(PCHAR PathName, PCHAR DirName)
 {
 	int i, j;
 
-	if (DirName==NULL)
+	if (DirName == NULL)
 		return FALSE;
-	if (! GetFileNamePos(PathName,&i,&j))
+	if (!GetFileNamePos(PathName, &i, &j))
 		return FALSE;
-	memmove(DirName,PathName,i); // do not use memcpy
+	memmove(DirName, PathName, i); // do not use memcpy
 	DirName[i] = 0;
 	return TRUE;
 }
@@ -285,7 +285,7 @@ void FitFileName(PCHAR FileName, int destlen, PCHAR DefExt)
 	i = 0;
 	j = 0;
 	/* filename started with a dot is illeagal */
-	if (FileName[0]=='.') {
+	if (FileName[0] == '.') {
 		Temp[0] = '_';  /* insert an underscore char */
 		j++;
 	}
@@ -293,32 +293,32 @@ void FitFileName(PCHAR FileName, int destlen, PCHAR DefExt)
 	do {
 		b = FileName[i];
 		i++;
-		if (b=='.')
+		if (b == '.')
 			NumOfDots++;
-		if ((b!=0) &&
-		    (j < MAX_PATH-1)) {
+		if ((b != 0) &&
+			(j < MAX_PATH - 1)) {
 			Temp[j] = b;
 			j++;
 		}
-	} while (b!=0);
+	} while (b != 0);
 	Temp[j] = 0;
 
-	if ((NumOfDots==0) &&
-	    (DefExt!=NULL)) {
+	if ((NumOfDots == 0) &&
+		(DefExt != NULL)) {
 		/* add the default extension */
-		strncat_s(Temp,sizeof(Temp),DefExt,_TRUNCATE);
+		strncat_s(Temp, sizeof(Temp), DefExt, _TRUNCATE);
 	}
 
-	strncpy_s(FileName,destlen,Temp,_TRUNCATE);
+	strncpy_s(FileName, destlen, Temp, _TRUNCATE);
 }
 
 // Append a slash to the end of a path name
 void AppendSlash(PCHAR Path, int destlen)
 {
 	if (strcmp(CharPrev((LPCTSTR)Path,
-	           (LPCTSTR)(&Path[strlen(Path)])),
-	           "\\") != 0) {
-		strncat_s(Path,destlen,"\\",_TRUNCATE);
+		(LPCTSTR)(&Path[strlen(Path)])),
+		"\\") != 0) {
+		strncat_s(Path, destlen, "\\", _TRUNCATE);
 	}
 }
 
@@ -326,9 +326,9 @@ void AppendSlash(PCHAR Path, int destlen)
 void DeleteSlash(PCHAR Path)
 {
 	size_t i;
-	for (i=strlen(Path)-1; i>=0; i--) {
-		if (i ==0 && Path[i] == '\\' ||
-		    Path[i] == '\\' && !_ismbblead(Path[i-1])) {
+	for (i = strlen(Path) - 1; i >= 0; i--) {
+		if (i == 0 && Path[i] == '\\' ||
+			Path[i] == '\\' && !_ismbblead(Path[i - 1])) {
 			Path[i] = '\0';
 		}
 		else {
@@ -348,19 +348,19 @@ void Str2Hex(PCHAR Str, PCHAR Hex, int Len, int MaxHexLen, BOOL ConvSP)
 		low = 0x1F;
 
 	j = 0;
-	for (i=0; i<=Len-1; i++) {
+	for (i = 0; i <= Len - 1; i++) {
 		b = Str[i];
-		if ((b!='$') && (b>low) && (b<0x7f)) {
+		if ((b != '$') && (b > low) && (b < 0x7f)) {
 			if (j < MaxHexLen) {
 				Hex[j] = b;
 				j++;
 			}
 		}
 		else {
-			if (j < MaxHexLen-2) {
+			if (j < MaxHexLen - 2) {
 				Hex[j] = '$';
 				j++;
-				if (b<=0x9f) {
+				if (b <= 0x9f) {
 					Hex[j] = (char)((b >> 4) + 0x30);
 				}
 				else {
@@ -382,13 +382,13 @@ void Str2Hex(PCHAR Str, PCHAR Hex, int Len, int MaxHexLen, BOOL ConvSP)
 
 BYTE ConvHexChar(BYTE b)
 {
-	if ((b>='0') && (b<='9')) {
+	if ((b >= '0') && (b <= '9')) {
 		return (b - 0x30);
 	}
-	else if ((b>='A') && (b<='F')) {
+	else if ((b >= 'A') && (b <= 'F')) {
 		return (b - 0x37);
 	}
-	else if ((b>='a') && (b<='f')) {
+	else if ((b >= 'a') && (b <= 'f')) {
 		return (b - 0x57);
 	}
 	else {
@@ -404,9 +404,9 @@ int Hex2Str(PCHAR Hex, PCHAR Str, int MaxLen)
 	j = 0;
 	imax = strlen(Hex);
 	i = 0;
-	while ((i < imax) && (j<MaxLen)) {
+	while ((i < imax) && (j < MaxLen)) {
 		b = Hex[i];
-		if (b=='$') {
+		if (b == '$') {
 			i++;
 			if (i < imax) {
 				c = Hex[i];
@@ -429,7 +429,7 @@ int Hex2Str(PCHAR Hex, PCHAR Str, int MaxLen)
 		j++;
 		i++;
 	}
-	if (j<MaxLen) {
+	if (j < MaxLen) {
 		Str[j] = 0;
 	}
 
@@ -439,21 +439,21 @@ int Hex2Str(PCHAR Hex, PCHAR Str, int MaxLen)
 BOOL DoesFileExist(PCHAR FName)
 {
 	// check if a file exists or not
-	// ÉtÉHÉãÉ_Ç‹ÇΩÇÕÉtÉ@ÉCÉãÇ™Ç†ÇÍÇŒ TRUE Çï‘Ç∑
+	// „Éï„Ç©„É´„ÉÄ„Åæ„Åü„ÅØ„Éï„Ç°„Ç§„É´„Åå„ÅÇ„Çå„Å∞ TRUE „ÇíËøî„Åô
 	struct _stat st;
 
-	return (_stat(FName,&st)==0);
+	return (_stat(FName, &st) == 0);
 }
 
 BOOL DoesFolderExist(PCHAR FName)
 {
 	// check if a folder exists or not
-	// É}ÉNÉçå›ä∑ê´ÇÃÇΩÇﬂ
-	// DoesFileExist ÇÕè]óàí ÇËÉtÉHÉãÉ_Ç‹ÇΩÇÕÉtÉ@ÉCÉãÇ™Ç†ÇÍÇŒ TRUE Çï‘Çµ
-	// DoesFileExist ÇÕÉtÉHÉãÉ_Ç™Ç†ÇÈèÍçáÇÃÇ› TRUE Çï‘Ç∑ÅB
+	// „Éû„ÇØ„É≠‰∫íÊèõÊÄß„ÅÆ„Åü„ÇÅ
+	// DoesFileExist „ÅØÂæìÊù•ÈÄö„Çä„Éï„Ç©„É´„ÉÄ„Åæ„Åü„ÅØ„Éï„Ç°„Ç§„É´„Åå„ÅÇ„Çå„Å∞ TRUE „ÇíËøî„Åó
+	// DoesFileExist „ÅØ„Éï„Ç©„É´„ÉÄ„Åå„ÅÇ„ÇãÂ†¥Âêà„ÅÆ„Åø TRUE „ÇíËøî„Åô„ÄÇ
 	struct _stat st;
 
-	if (_stat(FName,&st)==0) {
+	if (_stat(FName, &st) == 0) {
 		if ((st.st_mode & _S_IFDIR) > 0) {
 			return TRUE;
 		}
@@ -470,7 +470,7 @@ long GetFSize(PCHAR FName)
 {
 	struct _stat st;
 
-	if (_stat(FName,&st)==-1) {
+	if (_stat(FName, &st) == -1) {
 		return 0;
 	}
 	return (long)st.st_size;
@@ -480,7 +480,7 @@ long GetFMtime(PCHAR FName)
 {
 	struct _stat st;
 
-	if (_stat(FName,&st)==-1) {
+	if (_stat(FName, &st) == -1) {
 		return 0;
 	}
 	return (long)st.st_mtime;
@@ -500,35 +500,35 @@ void uint2str(UINT i, PCHAR Str, int destlen, int len)
 	char Temp[20];
 
 	memset(Temp, 0, sizeof(Temp));
-	_snprintf_s(Temp,sizeof(Temp),_TRUNCATE,"%u",i);
+	_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%u", i);
 	Temp[len] = 0;
-	strncpy_s(Str,destlen,Temp,_TRUNCATE);
+	strncpy_s(Str, destlen, Temp, _TRUNCATE);
 }
 
 void QuoteFName(PCHAR FName)
 {
 	int i;
 
-	if (FName[0]==0) {
+	if (FName[0] == 0) {
 		return;
 	}
-	if (strchr(FName,' ')==NULL) {
+	if (strchr(FName, ' ') == NULL) {
 		return;
 	}
 	i = strlen(FName);
-	memmove(&(FName[1]),FName,i);
+	memmove(&(FName[1]), FName, i);
 	FName[0] = '\"';
-	FName[i+1] = '\"';
-	FName[i+2] = 0;
+	FName[i + 1] = '\"';
+	FName[i + 2] = 0;
 }
 
-// ÉtÉ@ÉCÉãñºÇ…égópÇ≈Ç´Ç»Ç¢ï∂éöÇ™ä‹Ç‹ÇÍÇƒÇ¢ÇÈÇ©ämÇ©ÇﬂÇÈ (2006.8.28 maya)
+// „Éï„Ç°„Ç§„É´Âêç„Å´‰ΩøÁî®„Åß„Åç„Å™„ÅÑÊñáÂ≠ó„ÅåÂê´„Åæ„Çå„Å¶„ÅÑ„Çã„ÅãÁ¢∫„Åã„ÇÅ„Çã (2006.8.28 maya)
 int isInvalidFileNameChar(PCHAR FName)
 {
 	int i, len;
 	char **p, c;
 
-	// É`ÉFÉbÉNëŒè€ÇÃï∂éöÇã≠âªÇµÇΩÅB(2013.3.9 yutaka)
+	// „ÉÅ„Çß„ÉÉ„ÇØÂØæË±°„ÅÆÊñáÂ≠ó„ÇíÂº∑Âåñ„Åó„Åü„ÄÇ(2013.3.9 yutaka)
 	p = invalidFileNameStrings;
 	while (*p) {
 		if (_strcmpi(FName, *p) == 0) {
@@ -538,7 +538,7 @@ int isInvalidFileNameChar(PCHAR FName)
 	}
 
 	len = strlen(FName);
-	for (i=0; i<len; i++) {
+	for (i = 0; i < len; i++) {
 		if (_ismbblead(FName[i])) {
 			i++;
 			continue;
@@ -548,7 +548,7 @@ int isInvalidFileNameChar(PCHAR FName)
 		}
 	}
 
-	// ÉtÉ@ÉCÉãñºÇÃññîˆÇ…ÉsÉäÉIÉhÇ®ÇÊÇ—ãÛîíÇÕNGÅB
+	// „Éï„Ç°„Ç§„É´Âêç„ÅÆÊú´Â∞æ„Å´„Éî„É™„Ç™„Éâ„Åä„Çà„Å≥Á©∫ÁôΩ„ÅØNG„ÄÇ
 	c = FName[len - 1];
 	if (c == '.' || c == ' ')
 		return 1;
@@ -556,18 +556,18 @@ int isInvalidFileNameChar(PCHAR FName)
 	return 0;
 }
 
-// ÉtÉ@ÉCÉãñºÇ…égópÇ≈Ç´Ç»Ç¢ï∂éöÇ c Ç…íuÇ´ä∑Ç¶ÇÈ
-// c Ç… 0 ÇéwíËÇµÇΩèÍçáÇÕï∂éöÇçÌèúÇ∑ÇÈ
+// „Éï„Ç°„Ç§„É´Âêç„Å´‰ΩøÁî®„Åß„Åç„Å™„ÅÑÊñáÂ≠ó„Çí c „Å´ÁΩÆ„ÅçÊèõ„Åà„Çã
+// c „Å´ 0 „ÇíÊåáÂÆö„Åó„ÅüÂ†¥Âêà„ÅØÊñáÂ≠ó„ÇíÂâäÈô§„Åô„Çã
 void replaceInvalidFileNameChar(PCHAR FName, unsigned char c)
 {
-	int i, j=0, len;
+	int i, j = 0, len;
 
 	if ((c >= 0 && c < ' ') || strchr(invalidFileNameChars, c)) {
 		c = 0;
 	}
 
 	len = strlen(FName);
-	for (i=0; i<len; i++) {
+	for (i = 0; i < len; i++) {
 		if (_ismbblead(FName[i])) {
 			FName[j++] = FName[i];
 			FName[j++] = FName[++i];
@@ -585,51 +585,51 @@ void replaceInvalidFileNameChar(PCHAR FName, unsigned char c)
 	FName[j] = 0;
 }
 
-// strftime Ç…ìnÇπÇ»Ç¢ï∂éöÇ™ä‹Ç‹ÇÍÇƒÇ¢ÇÈÇ©ämÇ©ÇﬂÇÈ (2006.8.28 maya)
+// strftime „Å´Ê∏°„Åõ„Å™„ÅÑÊñáÂ≠ó„ÅåÂê´„Åæ„Çå„Å¶„ÅÑ„Çã„ÅãÁ¢∫„Åã„ÇÅ„Çã (2006.8.28 maya)
 int isInvalidStrftimeChar(PCHAR FName)
 {
 	int i, len, p;
 
 	len = strlen(FName);
-	for (i=0; i<len; i++) {
+	for (i = 0; i < len; i++) {
 		if (FName[i] == '%') {
-			if (FName[i+1] != 0) {
-				p = i+1;
-				if (FName[i+2] != 0 && FName[i+1] == '#') {
-					p = i+2;
+			if (FName[i + 1] != 0) {
+				p = i + 1;
+				if (FName[i + 2] != 0 && FName[i + 1] == '#') {
+					p = i + 2;
 				}
 				switch (FName[p]) {
-					case 'a':
-					case 'A':
-					case 'b':
-					case 'B':
-					case 'c':
-					case 'd':
-					case 'H':
-					case 'I':
-					case 'j':
-					case 'm':
-					case 'M':
-					case 'p':
-					case 'S':
-					case 'U':
-					case 'w':
-					case 'W':
-					case 'x':
-					case 'X':
-					case 'y':
-					case 'Y':
-					case 'z':
-					case 'Z':
-					case '%':
-						i = p;
-						break;
-					default:
-						return 1;
+				case 'a':
+				case 'A':
+				case 'b':
+				case 'B':
+				case 'c':
+				case 'd':
+				case 'H':
+				case 'I':
+				case 'j':
+				case 'm':
+				case 'M':
+				case 'p':
+				case 'S':
+				case 'U':
+				case 'w':
+				case 'W':
+				case 'x':
+				case 'X':
+				case 'y':
+				case 'Y':
+				case 'z':
+				case 'Z':
+				case '%':
+					i = p;
+					break;
+				default:
+					return 1;
 				}
 			}
 			else {
-				// % Ç≈èIÇÌÇ¡ÇƒÇ¢ÇÈèÍçáÇÕÉGÉâÅ[Ç∆Ç∑ÇÈ
+				// % „ÅßÁµÇ„Çè„Å£„Å¶„ÅÑ„ÇãÂ†¥Âêà„ÅØ„Ç®„É©„Éº„Å®„Åô„Çã
 				return 1;
 			}
 		}
@@ -638,62 +638,62 @@ int isInvalidStrftimeChar(PCHAR FName)
 	return 0;
 }
 
-// strftime Ç…ìnÇπÇ»Ç¢ï∂éöÇçÌèúÇ∑ÇÈ (2006.8.28 maya)
+// strftime „Å´Ê∏°„Åõ„Å™„ÅÑÊñáÂ≠ó„ÇíÂâäÈô§„Åô„Çã (2006.8.28 maya)
 void deleteInvalidStrftimeChar(PCHAR FName)
 {
-	int i, j=0, len, p;
+	int i, j = 0, len, p;
 
 	len = strlen(FName);
-	for (i=0; i<len; i++) {
+	for (i = 0; i < len; i++) {
 		if (FName[i] == '%') {
-			if (FName[i+1] != 0) {
-				p = i+1;
-				if (FName[i+2] != 0 && FName[i+1] == '#') {
-					p = i+2;
+			if (FName[i + 1] != 0) {
+				p = i + 1;
+				if (FName[i + 2] != 0 && FName[i + 1] == '#') {
+					p = i + 2;
 				}
 				switch (FName[p]) {
-					case 'a':
-					case 'A':
-					case 'b':
-					case 'B':
-					case 'c':
-					case 'd':
-					case 'H':
-					case 'I':
-					case 'j':
-					case 'm':
-					case 'M':
-					case 'p':
-					case 'S':
-					case 'U':
-					case 'w':
-					case 'W':
-					case 'x':
-					case 'X':
-					case 'y':
-					case 'Y':
-					case 'z':
-					case 'Z':
-					case '%':
-						FName[j] = FName[i]; // %
+				case 'a':
+				case 'A':
+				case 'b':
+				case 'B':
+				case 'c':
+				case 'd':
+				case 'H':
+				case 'I':
+				case 'j':
+				case 'm':
+				case 'M':
+				case 'p':
+				case 'S':
+				case 'U':
+				case 'w':
+				case 'W':
+				case 'x':
+				case 'X':
+				case 'y':
+				case 'Y':
+				case 'z':
+				case 'Z':
+				case '%':
+					FName[j] = FName[i]; // %
+					j++;
+					i++;
+					if (p - i == 2) {
+						FName[j] = FName[i]; // #
 						j++;
 						i++;
-						if (p-i == 2) {
-							FName[j] = FName[i]; // #
-							j++;
-							i++;
-						}
-						FName[j] = FName[i];
-						j++;
-						break;
-					default:
-						i++; // %
-						if (p-i == 2) {
-							i++; // #
-						}
+					}
+					FName[j] = FName[i];
+					j++;
+					break;
+				default:
+					i++; // %
+					if (p - i == 2) {
+						i++; // #
+					}
 				}
 			}
-			// % Ç≈èIÇÌÇ¡ÇƒÇ¢ÇÈèÍçáÇÕÉRÉsÅ[ÇµÇ»Ç¢
+			// % „ÅßÁµÇ„Çè„Å£„Å¶„ÅÑ„ÇãÂ†¥Âêà„ÅØ„Ç≥„Éî„Éº„Åó„Å™„ÅÑ
 		}
 		else {
 			FName[j] = FName[i];
@@ -704,7 +704,7 @@ void deleteInvalidStrftimeChar(PCHAR FName)
 	FName[j] = 0;
 }
 
-// ÉtÉãÉpÉXÇ©ÇÁÅAÉtÉ@ÉCÉãñºïîï™ÇÃÇ›Ç strftime Ç≈ïœä∑Ç∑ÇÈ (2006.8.28 maya)
+// „Éï„É´„Éë„Çπ„Åã„Çâ„ÄÅ„Éï„Ç°„Ç§„É´ÂêçÈÉ®ÂàÜ„ÅÆ„Åø„Çí strftime „ÅßÂ§âÊèõ„Åô„Çã (2006.8.28 maya)
 void ParseStrftimeFileName(PCHAR FName, int destlen)
 {
 	char filename[MAX_PATH];
@@ -714,32 +714,32 @@ void ParseStrftimeFileName(PCHAR FName, int destlen)
 	time_t time_local;
 	struct tm *tm_local;
 
-	// ÉtÉ@ÉCÉãñºïîï™ÇÃÇ›Ç flename Ç…äiî[
-	ExtractFileName(FName, filename ,sizeof(filename));
+	// „Éï„Ç°„Ç§„É´ÂêçÈÉ®ÂàÜ„ÅÆ„Åø„Çí flename „Å´Ê†ºÁ¥ç
+	ExtractFileName(FName, filename, sizeof(filename));
 
-	// strftime Ç…égópÇ≈Ç´Ç»Ç¢ï∂éöÇçÌèú
+	// strftime „Å´‰ΩøÁî®„Åß„Åç„Å™„ÅÑÊñáÂ≠ó„ÇíÂâäÈô§
 	deleteInvalidStrftimeChar(filename);
 
-	// åªç›éûçèÇéÊìæ
+	// ÁèæÂú®ÊôÇÂàª„ÇíÂèñÂæó
 	time(&time_local);
 	tm_local = localtime(&time_local);
 
-	// éûçèï∂éöóÒÇ…ïœä∑
+	// ÊôÇÂàªÊñáÂ≠óÂàó„Å´Â§âÊèõ
 	if (strftime(buf, sizeof(buf), filename, tm_local) == 0) {
 		strncpy_s(buf, sizeof(buf), filename, _TRUNCATE);
 	}
 
-	// ÉtÉ@ÉCÉãñºÇ…égópÇ≈Ç´Ç»Ç¢ï∂éöÇçÌèú
+	// „Éï„Ç°„Ç§„É´Âêç„Å´‰ΩøÁî®„Åß„Åç„Å™„ÅÑÊñáÂ≠ó„ÇíÂâäÈô§
 	deleteInvalidFileNameChar(buf);
 
 	c = strrchr(FName, '\\');
 	if (c != NULL) {
 		ExtractDirName(FName, dirname);
 		strncpy_s(FName, destlen, dirname, _TRUNCATE);
-		AppendSlash(FName,destlen);
+		AppendSlash(FName, destlen);
 		strncat_s(FName, destlen, buf, _TRUNCATE);
 	}
-	else { // "\"Çä‹Ç‹Ç»Ç¢(ÉtÉãÉpÉXÇ≈Ç»Ç¢)èÍçáÇ…ëŒâû (2006.11.30 maya)
+	else { // "\"„ÇíÂê´„Åæ„Å™„ÅÑ(„Éï„É´„Éë„Çπ„Åß„Å™„ÅÑ)Â†¥Âêà„Å´ÂØæÂøú (2006.11.30 maya)
 		strncpy_s(FName, destlen, buf, _TRUNCATE);
 	}
 }
@@ -750,46 +750,46 @@ void ConvFName(PCHAR HomeDir, PCHAR Temp, int templen, PCHAR DefExt, PCHAR FName
 	int DirLen, FNPos;
 
 	FName[0] = 0;
-	if ( ! GetFileNamePos(Temp,&DirLen,&FNPos) ) {
+	if (!GetFileNamePos(Temp, &DirLen, &FNPos)) {
 		return;
 	}
-	FitFileName(&Temp[FNPos],templen - FNPos,DefExt);
-	if ( DirLen==0 ) {
-		strncpy_s(FName,destlen,HomeDir,_TRUNCATE);
-		AppendSlash(FName,destlen);
+	FitFileName(&Temp[FNPos], templen - FNPos, DefExt);
+	if (DirLen == 0) {
+		strncpy_s(FName, destlen, HomeDir, _TRUNCATE);
+		AppendSlash(FName, destlen);
 	}
-	strncat_s(FName,destlen,Temp,_TRUNCATE);
+	strncat_s(FName, destlen, Temp, _TRUNCATE);
 }
 
-// "\n" Çâ¸çsÇ…ïœä∑Ç∑ÇÈ (2006.7.29 maya)
-// "\t" ÇÉ^ÉuÇ…ïœä∑Ç∑ÇÈ (2006.11.6 maya)
+// "\n" „ÇíÊîπË°å„Å´Â§âÊèõ„Åô„Çã (2006.7.29 maya)
+// "\t" „Çí„Çø„Éñ„Å´Â§âÊèõ„Åô„Çã (2006.11.6 maya)
 void RestoreNewLine(PCHAR Text)
 {
-	int i, j=0, size=strlen(Text);
-	char *buf = (char *)_alloca(size+1);
+	int i, j = 0, size = strlen(Text);
+	char *buf = (char *)_alloca(size + 1);
 
-	memset(buf, 0, size+1);
-	for (i=0; i<size; i++) {
-		if (Text[i] == '\\' && i<size ) {
-			switch (Text[i+1]) {
-				case '\\':
-					buf[j] = '\\';
-					i++;
-					break;
-				case 'n':
-					buf[j] = '\n';
-					i++;
-					break;
-				case 't':
-					buf[j] = '\t';
-					i++;
-					break;
-				case '0':
-					buf[j] = '\0';
-					i++;
-					break;
-				default:
-					buf[j] = '\\';
+	memset(buf, 0, size + 1);
+	for (i = 0; i < size; i++) {
+		if (Text[i] == '\\' && i < size) {
+			switch (Text[i + 1]) {
+			case '\\':
+				buf[j] = '\\';
+				i++;
+				break;
+			case 'n':
+				buf[j] = '\n';
+				i++;
+				break;
+			case 't':
+				buf[j] = '\t';
+				i++;
+				break;
+			case '0':
+				buf[j] = '\0';
+				i++;
+				break;
+			default:
+				buf[j] = '\\';
 			}
 			j++;
 		}
@@ -810,27 +810,27 @@ BOOL GetNthString(PCHAR Source, int Nth, int Size, PCHAR Dest)
 	j = 0;
 	k = 0;
 
-	while (i<Nth && Source[j] != 0) {
+	while (i < Nth && Source[j] != 0) {
 		if (Source[j++] == ',') {
 			i++;
 		}
 	}
 
 	if (i == Nth) {
-		while (Source[j] != 0 && Source[j] != ',' && k<Size-1) {
+		while (Source[j] != 0 && Source[j] != ',' && k < Size - 1) {
 			Dest[k++] = Source[j++];
 		}
 	}
 
 	Dest[k] = 0;
-	return (i>=Nth);
+	return (i >= Nth);
 }
 
 void GetNthNum(PCHAR Source, int Nth, int far *Num)
 {
 	char T[15];
 
-	GetNthString(Source,Nth,sizeof(T),T);
+	GetNthString(Source, Nth, sizeof(T), T);
 	if (sscanf(T, "%d", Num) != 1) {
 		*Num = 0;
 	}
@@ -845,7 +845,7 @@ int GetNthNum2(PCHAR Source, int Nth, int defval)
 	if (sscanf(T, "%d", &v) != 1) {
 		v = defval;
 	}
-	
+
 	return v;
 }
 
@@ -882,8 +882,8 @@ void GetDownloadFolder(char *dest, int destlen)
 
 void WINAPI GetDefaultFName(char *home, char *file, char *dest, int destlen)
 {
-	// My Documents Ç… file Ç™Ç†ÇÈèÍçáÅA
-	// ÇªÇÍÇì«Ç›çûÇﬁÇÊÇ§Ç…ÇµÇΩÅB(2007.2.18 maya)
+	// My Documents „Å´ file „Åå„ÅÇ„ÇãÂ†¥Âêà„ÄÅ
+	// „Åù„Çå„ÇíË™≠„ÅøËæº„ÇÄ„Çà„ÅÜ„Å´„Åó„Åü„ÄÇ(2007.2.18 maya)
 	char MyDoc[MAX_PATH];
 	char MyDocSetupFName[MAX_PATH];
 	LPITEMIDLIST pidl;
@@ -900,7 +900,7 @@ void WINAPI GetDefaultFName(char *home, char *file, char *dest, int destlen)
 		goto homedir;
 	}
 	strncpy_s(MyDocSetupFName, sizeof(MyDocSetupFName), MyDoc, _TRUNCATE);
-	AppendSlash(MyDocSetupFName,sizeof(MyDocSetupFName));
+	AppendSlash(MyDocSetupFName, sizeof(MyDocSetupFName));
 	strncat_s(MyDocSetupFName, sizeof(MyDocSetupFName), file, _TRUNCATE);
 	if (GetFileAttributes(MyDocSetupFName) != -1) {
 		strncpy_s(dest, destlen, MyDocSetupFName, _TRUNCATE);
@@ -909,12 +909,12 @@ void WINAPI GetDefaultFName(char *home, char *file, char *dest, int destlen)
 
 homedir:
 	strncpy_s(dest, destlen, home, _TRUNCATE);
-	AppendSlash(dest,destlen);
+	AppendSlash(dest, destlen);
 	strncat_s(dest, destlen, file, _TRUNCATE);
 }
 
-// ÉfÉtÉHÉãÉgÇÃ TERATERM.INI ÇÃÉtÉãÉpÉXÇ ttpmacro Ç©ÇÁÇ‡
-// éÊìæÇ∑ÇÈÇΩÇﬂÇ…í«â¡ÇµÇΩÅB(2007.2.18 maya)
+// „Éá„Éï„Ç©„É´„Éà„ÅÆ TERATERM.INI „ÅÆ„Éï„É´„Éë„Çπ„Çí ttpmacro „Åã„Çâ„ÇÇ
+// ÂèñÂæó„Åô„Çã„Åü„ÇÅ„Å´ËøΩÂä†„Åó„Åü„ÄÇ(2007.2.18 maya)
 void GetDefaultSetupFName(char *home, char *dest, int destlen)
 {
 	GetDefaultFName(home, "TERATERM.INI", dest, destlen);
@@ -928,7 +928,7 @@ void GetUILanguageFile(char *buf, int buflen)
 	char CurDir[MAX_PATH];
 
 	/* Get home directory */
-	if (GetModuleFileName(NULL,Temp,sizeof(Temp)) == 0) {
+	if (GetModuleFileName(NULL, Temp, sizeof(Temp)) == 0) {
 		memset(buf, 0, buflen);
 		return;
 	}
@@ -936,10 +936,10 @@ void GetUILanguageFile(char *buf, int buflen)
 
 	/* Get SetupFName */
 	GetDefaultSetupFName(HomeDir, SetupFName, sizeof(SetupFName));
-	
+
 	/* Get LanguageFile name */
 	GetPrivateProfileString("Tera Term", "UILanguageFile", "",
-	                        Temp, sizeof(Temp), SetupFName);
+		Temp, sizeof(Temp), SetupFName);
 
 	GetCurrentDirectory(sizeof(CurDir), CurDir);
 	SetCurrentDirectory(HomeDir);
@@ -947,7 +947,7 @@ void GetUILanguageFile(char *buf, int buflen)
 	SetCurrentDirectory(CurDir);
 }
 
-// éwíËÇµÇΩÉGÉìÉgÉäÇ teraterm.ini Ç©ÇÁì«Ç›éÊÇÈ (2009.3.23 yutaka)
+// ÊåáÂÆö„Åó„Åü„Ç®„É≥„Éà„É™„Çí teraterm.ini „Åã„ÇâË™≠„ÅøÂèñ„Çã (2009.3.23 yutaka)
 void GetOnOffEntryInifile(char *entry, char *buf, int buflen)
 {
 	char HomeDir[MAX_PATH];
@@ -955,7 +955,7 @@ void GetOnOffEntryInifile(char *entry, char *buf, int buflen)
 	char SetupFName[MAX_PATH];
 
 	/* Get home directory */
-	if (GetModuleFileName(NULL,Temp,sizeof(Temp)) == 0) {
+	if (GetModuleFileName(NULL, Temp, sizeof(Temp)) == 0) {
 		strncpy_s(buf, buflen, "off", _TRUNCATE);
 		return;
 	}
@@ -963,10 +963,10 @@ void GetOnOffEntryInifile(char *entry, char *buf, int buflen)
 
 	/* Get SetupFName */
 	GetDefaultSetupFName(HomeDir, SetupFName, sizeof(SetupFName));
-	
+
 	/* Get LanguageFile name */
 	GetPrivateProfileString("Tera Term", entry, "off",
-	                        Temp, sizeof(Temp), SetupFName);
+		Temp, sizeof(Temp), SetupFName);
 
 	strncpy_s(buf, buflen, Temp, _TRUNCATE);
 }
@@ -979,8 +979,8 @@ void get_lang_msg(PCHAR key, PCHAR buf, int buf_len, PCHAR def, const char *iniF
 int get_lang_font(PCHAR key, HWND dlg, PLOGFONT logfont, HFONT *font, const char *iniFile)
 {
 	if (GetI18nLogfont("Tera Term", key, logfont,
-	                   GetDeviceCaps(GetDC(dlg),LOGPIXELSY),
-	                   iniFile) == FALSE) {
+		GetDeviceCaps(GetDC(dlg), LOGPIXELSY),
+		iniFile) == FALSE) {
 		return FALSE;
 	}
 
@@ -996,7 +996,7 @@ int get_lang_font(PCHAR key, HWND dlg, PLOGFONT logfont, HFONT *font, const char
 //
 int CALLBACK setDefaultFolder(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
-	if(uMsg == BFFM_INITIALIZED) {
+	if (uMsg == BFFM_INITIALIZED) {
 		SendMessage(hwnd, BFFM_SETSELECTION, (WPARAM)TRUE, lpData);
 	}
 	return 0;
@@ -1005,22 +1005,22 @@ int CALLBACK setDefaultFolder(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData
 BOOL doSelectFolder(HWND hWnd, char *path, int pathlen, char *def, char *msg)
 {
 	BROWSEINFO      bi;
-	LPITEMIDLIST    pidlRoot;      // ÉuÉâÉEÉYÇÃÉãÅ[ÉgPIDL
-	LPITEMIDLIST    pidlBrowse;    // ÉÜÅ[ÉUÅ[Ç™ëIëÇµÇΩPIDL
+	LPITEMIDLIST    pidlRoot;      // „Éñ„É©„Ç¶„Ç∫„ÅÆ„É´„Éº„ÉàPIDL
+	LPITEMIDLIST    pidlBrowse;    // „É¶„Éº„Ç∂„Éº„ÅåÈÅ∏Êäû„Åó„ÅüPIDL
 	char buf[MAX_PATH];
 	BOOL ret = FALSE;
 
-	// É_ÉCÉAÉçÉOï\é¶éûÇÃÉãÅ[ÉgÉtÉHÉãÉ_ÇÃPIDLÇéÊìæ
-	// Å¶à»â∫ÇÕÉfÉXÉNÉgÉbÉvÇÉãÅ[ÉgÇ∆ÇµÇƒÇ¢ÇÈÅBÉfÉXÉNÉgÉbÉvÇÉãÅ[ÉgÇ∆Ç∑ÇÈ
-	//   èÍçáÇÕÅAíPÇ… bi.pidlRoot Ç…ÇOÇê›íËÇ∑ÇÈÇæÇØÇ≈Ç‡ÇÊÇ¢ÅBÇªÇÃëºÇÃì¡
-	//   éÍÉtÉHÉãÉ_ÇÉãÅ[ÉgÇ∆Ç∑ÇÈéñÇ‡Ç≈Ç´ÇÈÅBè⁄ç◊ÇÕSHGetSpecialFolderLoca
-	//   tionÇÃÉwÉãÉvÇéQè∆ÇÃéñÅB
+	// „ÉÄ„Ç§„Ç¢„É≠„Ç∞Ë°®Á§∫ÊôÇ„ÅÆ„É´„Éº„Éà„Éï„Ç©„É´„ÉÄ„ÅÆPIDL„ÇíÂèñÂæó
+	// ‚Äª‰ª•‰∏ã„ÅØ„Éá„Çπ„ÇØ„Éà„ÉÉ„Éó„Çí„É´„Éº„Éà„Å®„Åó„Å¶„ÅÑ„Çã„ÄÇ„Éá„Çπ„ÇØ„Éà„ÉÉ„Éó„Çí„É´„Éº„Éà„Å®„Åô„Çã
+	//   Â†¥Âêà„ÅØ„ÄÅÂçò„Å´ bi.pidlRoot „Å´Ôºê„ÇíË®≠ÂÆö„Åô„Çã„Å†„Åë„Åß„ÇÇ„Çà„ÅÑ„ÄÇ„Åù„ÅÆ‰ªñ„ÅÆÁâπ
+	//   ÊÆä„Éï„Ç©„É´„ÉÄ„Çí„É´„Éº„Éà„Å®„Åô„Çã‰∫ã„ÇÇ„Åß„Åç„Çã„ÄÇË©≥Á¥∞„ÅØSHGetSpecialFolderLoca
+	//   tion„ÅÆ„Éò„É´„Éó„ÇíÂèÇÁÖß„ÅÆ‰∫ã„ÄÇ
 	if (!SUCCEEDED(SHGetSpecialFolderLocation(hWnd, CSIDL_DESKTOP, &pidlRoot))) {
 		return FALSE;
 	}
 
-	// BROWSEINFOç\ë¢ëÃÇÃèâä˙ílê›íË
-	// Å¶BROWSEINFOç\ë¢ëÃÇÃäeÉÅÉìÉoÇÃè⁄ç◊ê‡ñæÇ‡ÉwÉãÉvÇéQè∆
+	// BROWSEINFOÊßãÈÄ†‰Ωì„ÅÆÂàùÊúüÂÄ§Ë®≠ÂÆö
+	// ‚ÄªBROWSEINFOÊßãÈÄ†‰Ωì„ÅÆÂêÑ„É°„É≥„Éê„ÅÆË©≥Á¥∞Ë™¨Êòé„ÇÇ„Éò„É´„Éó„ÇíÂèÇÁÖß
 	bi.hwndOwner = hWnd;
 	bi.pidlRoot = pidlRoot;
 	bi.pszDisplayName = buf;
@@ -1028,19 +1028,19 @@ BOOL doSelectFolder(HWND hWnd, char *path, int pathlen, char *def, char *msg)
 	bi.ulFlags = 0;
 	bi.lpfn = setDefaultFolder;
 	bi.lParam = (LPARAM)def;
-	// ÉtÉHÉãÉ_ëIëÉ_ÉCÉAÉçÉOÇÃï\é¶ 
+	// „Éï„Ç©„É´„ÉÄÈÅ∏Êäû„ÉÄ„Ç§„Ç¢„É≠„Ç∞„ÅÆË°®Á§∫ 
 	pidlBrowse = SHBrowseForFolder(&bi);
-	if (pidlBrowse != NULL) {  
-		// PIDLå`éÆÇÃñﬂÇËílÇÃÉtÉ@ÉCÉãÉVÉXÉeÉÄÇÃÉpÉXÇ…ïœä∑
+	if (pidlBrowse != NULL) {
+		// PIDLÂΩ¢Âºè„ÅÆÊàª„ÇäÂÄ§„ÅÆ„Éï„Ç°„Ç§„É´„Ç∑„Çπ„ÉÜ„É†„ÅÆ„Éë„Çπ„Å´Â§âÊèõ
 		if (SHGetPathFromIDList(pidlBrowse, buf)) {
-			// éÊìæê¨å˜
+			// ÂèñÂæóÊàêÂäü
 			strncpy_s(path, pathlen, buf, _TRUNCATE);
 			ret = TRUE;
 		}
-		// SHBrowseForFolderÇÃñﬂÇËílPIDLÇâï˙
+		// SHBrowseForFolder„ÅÆÊàª„ÇäÂÄ§PIDL„ÇíËß£Êîæ
 		CoTaskMemFree(pidlBrowse);
 	}
-	// ÉNÉäÅ[ÉìÉAÉbÉvèàóù
+	// „ÇØ„É™„Éº„É≥„Ç¢„ÉÉ„ÉóÂá¶ÁêÜ
 	CoTaskMemFree(pidlRoot);
 
 	return ret;
@@ -1115,13 +1115,13 @@ BOOL _myVerifyVersionInfo(
 	GetVersionEx(&osvi);
 
 	if (dwTypeMask & VER_BUILDNUMBER) {
-		cond = (WORD)((dwlConditionMask >> (2*3)) & 0x07);
+		cond = (WORD)((dwlConditionMask >> (2 * 3)) & 0x07);
 		if (!vercmp(lpVersionInformation->dwBuildNumber, osvi.dwBuildNumber, cond)) {
 			return FALSE;
 		}
 	}
 	if (dwTypeMask & VER_PLATFORMID) {
-		cond = (WORD)((dwlConditionMask >> (3*3)) & 0x07);
+		cond = (WORD)((dwlConditionMask >> (3 * 3)) & 0x07);
 		if (!vercmp(lpVersionInformation->dwPlatformId, osvi.dwPlatformId, cond)) {
 			return FALSE;
 		}
@@ -1130,7 +1130,7 @@ BOOL _myVerifyVersionInfo(
 	if (dwTypeMask & (VER_MAJORVERSION | VER_MINORVERSION)) {
 		check_next = TRUE;
 		if (dwTypeMask & VER_MAJORVERSION) {
-			cond = (WORD)((dwlConditionMask >> (1*3)) & 0x07);
+			cond = (WORD)((dwlConditionMask >> (1 * 3)) & 0x07);
 			if (cond == VER_EQUAL) {
 				if (!vercmp(lpVersionInformation->dwMajorVersion, osvi.dwMajorVersion, cond)) {
 					return FALSE;
@@ -1159,7 +1159,7 @@ BOOL _myVerifyVersionInfo(
 			}
 		}
 		if (check_next && (dwTypeMask & VER_MINORVERSION)) {
-			cond = (WORD)((dwlConditionMask >> (0*3)) & 0x07);
+			cond = (WORD)((dwlConditionMask >> (0 * 3)) & 0x07);
 			if (cond == VER_EQUAL) {
 				if (!vercmp(lpVersionInformation->dwMinorVersion, osvi.dwMinorVersion, cond)) {
 					return FALSE;
@@ -1192,46 +1192,46 @@ ULONGLONG _myVerSetConditionMask(ULONGLONG dwlConditionMask, DWORD dwTypeBitMask
 	BYTE op = dwConditionMask & 0x07;
 
 	switch (dwTypeBitMask) {
-		case VER_MINORVERSION:
-			mask = 0x07 << (0 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (0 * 3);
-			break;
-		case VER_MAJORVERSION:
-			mask = 0x07 << (1 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (1 * 3);
-			break;
-		case VER_BUILDNUMBER:
-			mask = 0x07 << (2 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (2 * 3);
-			break;
-		case VER_PLATFORMID:
-			mask = 0x07 << (3 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (3 * 3);
-			break;
-		case VER_SERVICEPACKMINOR:
-			mask = 0x07 << (4 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (4 * 3);
-			break;
-		case VER_SERVICEPACKMAJOR:
-			mask = 0x07 << (5 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (5 * 3);
-			break;
-		case VER_SUITENAME:
-			mask = 0x07 << (6 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (6 * 3);
-			break;
-		case VER_PRODUCT_TYPE:
-			mask = 0x07 << (7 * 3);
-			result = dwlConditionMask & ~mask;
-			result |= op << (7 * 3);
-			break;
+	case VER_MINORVERSION:
+		mask = 0x07 << (0 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (0 * 3);
+		break;
+	case VER_MAJORVERSION:
+		mask = 0x07 << (1 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (1 * 3);
+		break;
+	case VER_BUILDNUMBER:
+		mask = 0x07 << (2 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (2 * 3);
+		break;
+	case VER_PLATFORMID:
+		mask = 0x07 << (3 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (3 * 3);
+		break;
+	case VER_SERVICEPACKMINOR:
+		mask = 0x07 << (4 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (4 * 3);
+		break;
+	case VER_SERVICEPACKMAJOR:
+		mask = 0x07 << (5 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (5 * 3);
+		break;
+	case VER_SUITENAME:
+		mask = 0x07 << (6 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (6 * 3);
+		break;
+	case VER_PRODUCT_TYPE:
+		mask = 0x07 << (7 * 3);
+		result = dwlConditionMask & ~mask;
+		result |= op << (7 * 3);
+		break;
 	}
 
 	return result;
@@ -1260,7 +1260,7 @@ ULONGLONG myVerSetConditionMask(ULONGLONG dwlConditionMask, DWORD dwTypeBitMask,
 	return pVerSetConditionMask(dwlConditionMask, dwTypeBitMask, dwConditionMask);
 }
 
-// OSÇ™ éwíËÇ≥ÇÍÇΩÉoÅ[ÉWÉáÉìÇ∆ìôÇµÇ¢ Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå ÊåáÂÆö„Åï„Çå„Åü„Éê„Éº„Ç∏„Éß„É≥„Å®Á≠â„Åó„ÅÑ „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 BOOL IsWindowsVer(DWORD dwPlatformId, DWORD dwMajorVersion, DWORD dwMinorVersion)
 {
 	OSVERSIONINFOEX osvi;
@@ -1280,9 +1280,9 @@ BOOL IsWindowsVer(DWORD dwPlatformId, DWORD dwMajorVersion, DWORD dwMinorVersion
 	return (ret);
 }
 
-// OSÇ™ éwíËÇ≥ÇÍÇΩÉoÅ[ÉWÉáÉìà»ç~ Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
-//   dwPlatformId Çå©ÇƒÇ¢Ç»Ç¢ÇÃÇ≈ NT ÉJÅ[ÉlÉãì‡Ç≈ÇµÇ©î‰ärÇ≈Ç´Ç»Ç¢
-//   5.0 à»è„Ç≈î‰ärÇ∑ÇÈÇ±Ç∆
+// OS„Åå ÊåáÂÆö„Åï„Çå„Åü„Éê„Éº„Ç∏„Éß„É≥‰ª•Èôç „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
+//   dwPlatformId „ÇíË¶ã„Å¶„ÅÑ„Å™„ÅÑ„ÅÆ„Åß NT „Ç´„Éº„Éç„É´ÂÜÖ„Åß„Åó„ÅãÊØîËºÉ„Åß„Åç„Å™„ÅÑ
+//   5.0 ‰ª•‰∏ä„ÅßÊØîËºÉ„Åô„Çã„Åì„Å®
 BOOL IsWindowsVerOrLater(DWORD dwMajorVersion, DWORD dwMinorVersion)
 {
 	OSVERSIONINFOEX osvi;
@@ -1300,7 +1300,7 @@ BOOL IsWindowsVerOrLater(DWORD dwMajorVersion, DWORD dwMinorVersion)
 	return (ret);
 }
 
-// OSÇ™ WindowsNT ÉJÅ[ÉlÉãÇ©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå WindowsNT „Ç´„Éº„Éç„É´„Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 //
 // return TRUE:  NT kernel
 //        FALSE: Not NT kernel
@@ -1319,34 +1319,34 @@ BOOL IsWindowsNTKernel()
 	return (ret);
 }
 
-// OSÇ™ Windows95 Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå Windows95 „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 BOOL IsWindows95()
 {
 	return IsWindowsVer(VER_PLATFORM_WIN32_WINDOWS, 4, 0);
 }
 
-// OSÇ™ WindowsMe Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå WindowsMe „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 BOOL IsWindowsMe()
 {
 	return IsWindowsVer(VER_PLATFORM_WIN32_WINDOWS, 4, 90);
 }
 
-// OSÇ™ WindowsNT4.0 Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå WindowsNT4.0 „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 BOOL IsWindowsNT4()
 {
-	// VS2013à»è„ÇæÇ∆ GetVersionEx() Ç™åxçêÇ∆Ç»ÇÈÇΩÇﬂÅAVerifyVersionInfo() ÇégÇ§ÅB
-	// ÇµÇ©ÇµÅAVS2013Ç≈ÉrÉãÉhÇµÇΩÉvÉçÉOÉâÉÄÇÕÅAÇªÇ‡ÇªÇ‡ NT4.0 Ç≈ÇÕìÆçÏÇµÇ»Ç¢ÇΩÇﬂÅA
-	// ñ≥èåèÇ… FALSE Çï‘ÇµÇƒÇ‡ÇÊÇ¢Ç©Ç‡ÇµÇÍÇ»Ç¢ÅB
+	// VS2013‰ª•‰∏ä„Å†„Å® GetVersionEx() „ÅåË≠¶Âëä„Å®„Å™„Çã„Åü„ÇÅ„ÄÅVerifyVersionInfo() „Çí‰Ωø„ÅÜ„ÄÇ
+	// „Åó„Åã„Åó„ÄÅVS2013„Åß„Éì„É´„Éâ„Åó„Åü„Éó„É≠„Ç∞„É©„É†„ÅØ„ÄÅ„Åù„ÇÇ„Åù„ÇÇ NT4.0 „Åß„ÅØÂãï‰Ωú„Åó„Å™„ÅÑ„Åü„ÇÅ„ÄÅ
+	// ÁÑ°Êù°‰ª∂„Å´ FALSE „ÇíËøî„Åó„Å¶„ÇÇ„Çà„ÅÑ„Åã„ÇÇ„Åó„Çå„Å™„ÅÑ„ÄÇ
 	return IsWindowsVer(VER_PLATFORM_WIN32_NT, 4, 0);
 }
 
-// OSÇ™ Windows2000 Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå Windows2000 „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 BOOL IsWindows2000()
 {
 	return IsWindowsVer(VER_PLATFORM_WIN32_NT, 5, 0);
 }
 
-// OSÇ™ Windows2000 à»ç~ Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå Windows2000 ‰ª•Èôç „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 //
 // return TRUE:  2000 or later
 //        FALSE: NT4 or earlier
@@ -1355,7 +1355,7 @@ BOOL IsWindows2000OrLater(void)
 	return IsWindowsVerOrLater(5, 0);
 }
 
-// OSÇ™ WindowsVista à»ç~ Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå WindowsVista ‰ª•Èôç „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 //
 // return TRUE:  Vista or later
 //        FALSE: XP or earlier
@@ -1364,7 +1364,7 @@ BOOL IsWindowsVistaOrLater(void)
 	return IsWindowsVerOrLater(6, 0);
 }
 
-// OSÇ™ Windows7 à»ç~ Ç©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
+// OS„Åå Windows7 ‰ª•Èôç „Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
 //
 // return TRUE:  7 or later
 //        FALSE: Vista or earlier
@@ -1373,22 +1373,22 @@ BOOL IsWindows7OrLater(void)
 	return IsWindowsVerOrLater(6, 1);
 }
 
-// OS Ç™É}ÉãÉ`ÉÇÉjÉ^ API ÇÉTÉ|Å[ÉgÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
-//   98 à»ç~/2000 à»ç~ÇÕ TRUE Çï‘Ç∑
+// OS „Åå„Éû„É´„ÉÅ„É¢„Éã„Çø API „Çí„Çµ„Éù„Éº„Éà„Åó„Å¶„ÅÑ„Çã„Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
+//   98 ‰ª•Èôç/2000 ‰ª•Èôç„ÅØ TRUE „ÇíËøî„Åô
 BOOL HasMultiMonitorSupport()
 {
 	HMODULE mod;
 
 	if (((mod = GetModuleHandle("user32.dll")) != NULL) &&
-	    (GetProcAddress(mod, "MonitorFromPoint") != NULL)) {
+		(GetProcAddress(mod, "MonitorFromPoint") != NULL)) {
 		return TRUE;
 	}
 	return FALSE;
 }
 
-// OS Ç™ GetAdaptersAddresses ÇÉTÉ|Å[ÉgÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
-//   XP à»ç~ÇÕ TRUE Çï‘Ç∑
-//   2000 à»ç~ÇÕ IPv6 Ç…ëŒâûÇµÇƒÇ¢ÇÈÇ™ GetAdaptersAddresses Ç™Ç»Ç¢
+// OS „Åå GetAdaptersAddresses „Çí„Çµ„Éù„Éº„Éà„Åó„Å¶„ÅÑ„Çã„Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
+//   XP ‰ª•Èôç„ÅØ TRUE „ÇíËøî„Åô
+//   2000 ‰ª•Èôç„ÅØ IPv6 „Å´ÂØæÂøú„Åó„Å¶„ÅÑ„Çã„Åå GetAdaptersAddresses „Åå„Å™„ÅÑ
 BOOL HasGetAdaptersAddresses()
 {
 	HMODULE mod;
@@ -1400,8 +1400,8 @@ BOOL HasGetAdaptersAddresses()
 	return FALSE;
 }
 
-// OS Ç™ DnsQuery ÇÉTÉ|Å[ÉgÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©Çîªï Ç∑ÇÈÅB
-//   2000 à»ç~ÇÕ TRUE Çï‘Ç∑
+// OS „Åå DnsQuery „Çí„Çµ„Éù„Éº„Éà„Åó„Å¶„ÅÑ„Çã„Åã„Å©„ÅÜ„Åã„ÇíÂà§Âà•„Åô„Çã„ÄÇ
+//   2000 ‰ª•Èôç„ÅØ TRUE „ÇíËøî„Åô
 BOOL HasDnsQuery()
 {
 	HMODULE mod;
@@ -1413,14 +1413,14 @@ BOOL HasDnsQuery()
 	return FALSE;
 }
 
-// í ímÉAÉCÉRÉìÇ≈ÇÃÉoÉãÅ[ÉìÉ`ÉbÉvÇ…ëŒâûÇµÇƒÇ¢ÇÈÇ©îªï Ç∑ÇÈÅB
-// Me/2000 à»ç~Ç≈ TRUE Çï‘Ç∑
+// ÈÄöÁü•„Ç¢„Ç§„Ç≥„É≥„Åß„ÅÆ„Éê„É´„Éº„É≥„ÉÅ„ÉÉ„Éó„Å´ÂØæÂøú„Åó„Å¶„ÅÑ„Çã„ÅãÂà§Âà•„Åô„Çã„ÄÇ
+// Me/2000 ‰ª•Èôç„Åß TRUE „ÇíËøî„Åô
 BOOL HasBalloonTipSupport()
 {
 	return IsWindows2000OrLater() || IsWindowsMe();
 }
 
-// OPENFILENAMEA.lStructSize Ç…ë„ì¸Ç∑ÇÈíl
+// OPENFILENAMEA.lStructSize „Å´‰ª£ÂÖ•„Åô„ÇãÂÄ§
 DWORD get_OPENFILENAME_SIZE()
 {
 #if (_WIN32_WINNT >= 0x0500)
@@ -1492,9 +1492,9 @@ char *mctimelocal(char *format, BOOL utc_flag)
 {
 	SYSTEMTIME systime;
 	static char strtime[29];
-	char week[][4] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-	char month[][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-	                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+	char week[][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	char month[][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+					   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 	char tmp[5];
 	unsigned int i = strlen(format);
 
@@ -1505,73 +1505,73 @@ char *mctimelocal(char *format, BOOL utc_flag)
 		GetLocalTime(&systime);
 	}
 	memset(strtime, 0, sizeof(strtime));
-	for (i=0; i<strlen(format); i++) {
+	for (i = 0; i < strlen(format); i++) {
 		if (format[i] == '%') {
 			char c = format[i + 1];
 			switch (c) {
-				case 'a':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s", week[systime.wDayOfWeek]);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'b':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s", month[systime.wMonth - 1]);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'd':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wDay);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'e':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%2d", systime.wDay);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'H':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wHour);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'N':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%03d", systime.wMilliseconds);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'm':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wMonth);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'M':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wMinute);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'S':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wSecond);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'w':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%d", systime.wDayOfWeek);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case 'Y':
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%04d", systime.wYear);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					i++;
-					break;
-				case '%':
-					strncat_s(strtime, sizeof(strtime), "%", _TRUNCATE);
-					i++;
-					break;
-				default:
-					_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%c", format[i]);
-					strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
-					break;
+			case 'a':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s", week[systime.wDayOfWeek]);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'b':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s", month[systime.wMonth - 1]);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'd':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wDay);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'e':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%2d", systime.wDay);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'H':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wHour);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'N':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%03d", systime.wMilliseconds);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'm':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wMonth);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'M':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wMinute);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'S':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%02d", systime.wSecond);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'w':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%d", systime.wDayOfWeek);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case 'Y':
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%04d", systime.wYear);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				i++;
+				break;
+			case '%':
+				strncat_s(strtime, sizeof(strtime), "%", _TRUNCATE);
+				i++;
+				break;
+			default:
+				_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%c", format[i]);
+				strncat_s(strtime, sizeof(strtime), tmp, _TRUNCATE);
+				break;
 			}
 		}
 		else {
@@ -1623,7 +1623,7 @@ PCHAR PASCAL GetParam(PCHAR buff, int size, PCHAR param)
 
 	while (*param != '\0' && (quoted || (*param != ';' && *param != ' ' && *param != '\t'))) {
 		if (*param == '"') {
-			if (*(param+1) != '"') {
+			if (*(param + 1) != '"') {
 				quoted = !quoted;
 			}
 			else {
@@ -1638,7 +1638,7 @@ PCHAR PASCAL GetParam(PCHAR buff, int size, PCHAR param)
 		}
 		param++;
 	}
-	if (!quoted && (buff[i-1] == ';')) {
+	if (!quoted && (buff[i - 1] == ';')) {
 		i--;
 	}
 
@@ -1720,13 +1720,13 @@ void split_buffer(char *buffer, int delimiter, char **head, char **body)
 }
 
 /**
- *	ÉEÉBÉìÉhÉEè„ÇÃà íuÇéÊìæÇ∑ÇÈ
+ *	„Ç¶„Ç£„É≥„Éâ„Ç¶‰∏ä„ÅÆ‰ΩçÁΩÆ„ÇíÂèñÂæó„Åô„Çã
  *	@Param[in]		hWnd
- *	@Param[in]		point		à íu(x,y)
- *	@Param[in,out]	InWindow	ÉEÉBÉìÉhÉEè„
- *	@Param[in,out]	InClient	ÉNÉâÉCÉAÉìÉgóÃàÊè„
- *	@Param[in,out]	InTitleBar	É^ÉCÉgÉãÉoÅ[è„
- *	@retval			FALSE		ñ≥å¯Ç»hWnd
+ *	@Param[in]		point		‰ΩçÁΩÆ(x,y)
+ *	@Param[in,out]	InWindow	„Ç¶„Ç£„É≥„Éâ„Ç¶‰∏ä
+ *	@Param[in,out]	InClient	„ÇØ„É©„Ç§„Ç¢„É≥„ÉàÈ†òÂüü‰∏ä
+ *	@Param[in,out]	InTitleBar	„Çø„Ç§„Éà„É´„Éê„Éº‰∏ä
+ *	@retval			FALSE		ÁÑ°Âäπ„Å™hWnd
  */
 BOOL GetPositionOnWindow(
 	HWND hWnd, const POINT *point,

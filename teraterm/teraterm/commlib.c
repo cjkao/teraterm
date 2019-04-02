@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2005-2017 TeraTerm Project
  * All rights reserved.
@@ -26,9 +26,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/* IPv6 modification is Copyright (C) 2000, 2001 Jun-ya KATO <kato@win6.jp> */
+ /* IPv6 modification is Copyright (C) 2000, 2001 Jun-ya KATO <kato@win6.jp> */
 
-/* TERATERM.EXE, Communication routines */
+ /* TERATERM.EXE, Communication routines */
 #include "teraterm.h"
 #include "tttypes.h"
 #include "tt_res.h"
@@ -66,13 +66,13 @@ static void AsyncConnect(PComVar cv)
 	BOOL BBuf;
 	BBuf = TRUE;
 	/* set synchronous mode */
-	PWSAAsyncSelect(cv->s,cv->HWin,0,0);
-	Psetsockopt(cv->s,(int)SOL_SOCKET,SO_OOBINLINE,(char *)&BBuf,sizeof(BBuf));
+	PWSAAsyncSelect(cv->s, cv->HWin, 0, 0);
+	Psetsockopt(cv->s, (int)SOL_SOCKET, SO_OOBINLINE, (char *)&BBuf, sizeof(BBuf));
 	/* set asynchronous mode */
-	PWSAAsyncSelect(cv->s,cv->HWin,WM_USER_COMMOPEN, FD_CONNECT);
+	PWSAAsyncSelect(cv->s, cv->HWin, WM_USER_COMMOPEN, FD_CONNECT);
 
-	// ƒzƒXƒg‚Ö‚ÌÚ‘±’†‚Éˆê’èŠÔ—§‚Â‚ÆA‹­§“I‚Éƒ\ƒPƒbƒg‚ğƒNƒ[ƒY‚µ‚ÄA
-	// Ú‘±ˆ—‚ğƒLƒƒƒ“ƒZƒ‹‚³‚¹‚éB’l‚ª0‚Ìê‡‚Í‰½‚à‚µ‚È‚¢B
+	// ãƒ›ã‚¹ãƒˆã¸ã®æ¥ç¶šä¸­ã«ä¸€å®šæ™‚é–“ç«‹ã¤ã¨ã€å¼·åˆ¶çš„ã«ã‚½ã‚±ãƒƒãƒˆã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã—ã¦ã€
+	// æ¥ç¶šå‡¦ç†ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã›ã‚‹ã€‚å€¤ãŒ0ã®å ´åˆã¯ä½•ã‚‚ã—ãªã„ã€‚
 	// (2007.1.11 yutaka)
 	if (*cv->ConnetingTimeout > 0) {
 		SetTimer(cv->HWin, IdCancelConnectTimer, *cv->ConnetingTimeout * 1000, NULL);
@@ -82,11 +82,12 @@ static void AsyncConnect(PComVar cv)
 	Err = Pconnect(cv->s, cv->res->ai_addr, cv->res->ai_addrlen);
 	if (Err != 0) {
 		Err = PWSAGetLastError();
-		if (Err == WSAEWOULDBLOCK)  {
+		if (Err == WSAEWOULDBLOCK) {
 			/* Do nothing */
-		} else if (Err!=0 ) {
-			PostMessage(cv->HWin, WM_USER_COMMOPEN,0,
-			            MAKELONG(FD_CONNECT,Err));
+		}
+		else if (Err != 0) {
+			PostMessage(cv->HWin, WM_USER_COMMOPEN, 0,
+				MAKELONG(FD_CONNECT, Err));
 		}
 	}
 }
@@ -111,7 +112,7 @@ static HANDLE ReadEnd;
 static OVERLAPPED wol, rol;
 
 // Winsock async operation handle
-static HANDLE HAsync=0;
+static HANDLE HAsync = 0;
 
 BOOL TCPIPClosed = TRUE;
 
@@ -128,7 +129,7 @@ void CommInit(PComVar cv)
 	cv->Open = FALSE;
 	cv->Ready = FALSE;
 
-// log-buffer variables
+	// log-buffer variables
 	cv->HLogBuf = 0;
 	cv->HBinBuf = 0;
 	cv->LogBuf = NULL;
@@ -144,7 +145,7 @@ void CommInit(PComVar cv)
 	cv->BinSkip = 0;
 	cv->FilePause = 0;
 	cv->ProtoFlag = FALSE;
-/* message flag */
+	/* message flag */
 	cv->NoMsg = 0;
 
 	cv->isSSH = 0;
@@ -162,23 +163,23 @@ void CommResetSerial(PTTSet ts, PComVar cv, BOOL ClearBuff)
 	DWORD DErr;
 	COMMTIMEOUTS ctmo;
 
-	if (! cv->Open ||
+	if (!cv->Open ||
 		(cv->PortType != IdSerial)) {
-			return;
+		return;
 	}
 
-	ClearCommError(cv->ComID,&DErr,NULL);
-	SetupComm(cv->ComID,CommInQueSize,CommOutQueSize);
+	ClearCommError(cv->ComID, &DErr, NULL);
+	SetupComm(cv->ComID, CommInQueSize, CommOutQueSize);
 	/* flush input and output buffers */
 	if (ClearBuff) {
 		PurgeComm(cv->ComID, PURGE_TXABORT | PURGE_RXABORT |
-		                     PURGE_TXCLEAR | PURGE_RXCLEAR);
+			PURGE_TXCLEAR | PURGE_RXCLEAR);
 	}
 
-	memset(&ctmo,0,sizeof(ctmo));
+	memset(&ctmo, 0, sizeof(ctmo));
 	ctmo.ReadIntervalTimeout = MAXDWORD;
 	ctmo.WriteTotalTimeoutConstant = 500;
-	SetCommTimeouts(cv->ComID,&ctmo);
+	SetCommTimeouts(cv->ComID, &ctmo);
 	cv->InBuffCount = 0;
 	cv->InPtr = 0;
 	cv->OutBuffCount = 0;
@@ -187,81 +188,81 @@ void CommResetSerial(PTTSet ts, PComVar cv, BOOL ClearBuff)
 	cv->DelayPerChar = ts->DelayPerChar;
 	cv->DelayPerLine = ts->DelayPerLine;
 
-	memset(&dcb,0,sizeof(DCB));
+	memset(&dcb, 0, sizeof(DCB));
 	dcb.DCBlength = sizeof(DCB);
 	dcb.BaudRate = ts->Baud;
 	dcb.fBinary = TRUE;
 	switch (ts->Parity) {
-		case IdParityNone:
-			dcb.Parity = NOPARITY;
-			break;
-		case IdParityOdd:
-			dcb.fParity = TRUE;
-			dcb.Parity = ODDPARITY;
-			break;
-		case IdParityEven:
-			dcb.fParity = TRUE;
-			dcb.Parity = EVENPARITY;
-			break;
-		case IdParityMark:
-			dcb.fParity = TRUE;
-			dcb.Parity = MARKPARITY;
-			break;
-		case IdParitySpace:
-			dcb.fParity = TRUE;
-			dcb.Parity = SPACEPARITY;
-			break;
+	case IdParityNone:
+		dcb.Parity = NOPARITY;
+		break;
+	case IdParityOdd:
+		dcb.fParity = TRUE;
+		dcb.Parity = ODDPARITY;
+		break;
+	case IdParityEven:
+		dcb.fParity = TRUE;
+		dcb.Parity = EVENPARITY;
+		break;
+	case IdParityMark:
+		dcb.fParity = TRUE;
+		dcb.Parity = MARKPARITY;
+		break;
+	case IdParitySpace:
+		dcb.fParity = TRUE;
+		dcb.Parity = SPACEPARITY;
+		break;
 	}
 
 	dcb.fDtrControl = DTR_CONTROL_ENABLE;
 	dcb.fRtsControl = RTS_CONTROL_ENABLE;
 	switch (ts->Flow) {
-		case IdFlowX:
-			dcb.fOutX = TRUE;
-			dcb.fInX = TRUE;
-			dcb.XonLim = CommXonLim;
-			dcb.XoffLim = CommXoffLim;
-			dcb.XonChar = XON;
-			dcb.XoffChar = XOFF;
-			break;
-		case IdFlowHard:
-			dcb.fOutxCtsFlow = TRUE;
-			dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
-			break;
+	case IdFlowX:
+		dcb.fOutX = TRUE;
+		dcb.fInX = TRUE;
+		dcb.XonLim = CommXonLim;
+		dcb.XoffLim = CommXoffLim;
+		dcb.XonChar = XON;
+		dcb.XoffChar = XOFF;
+		break;
+	case IdFlowHard:
+		dcb.fOutxCtsFlow = TRUE;
+		dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
+		break;
 	}
 
 	switch (ts->DataBit) {
-		case IdDataBit7:
-			dcb.ByteSize = 7;
-			break;
-		case IdDataBit8:
-			dcb.ByteSize = 8;
-			break;
+	case IdDataBit7:
+		dcb.ByteSize = 7;
+		break;
+	case IdDataBit8:
+		dcb.ByteSize = 8;
+		break;
 	}
 	switch (ts->StopBit) {
-		case IdStopBit1:
-			dcb.StopBits = ONESTOPBIT;
-			break;
-		case IdStopBit15:
-			dcb.StopBits = ONE5STOPBITS;
-			break;
-		case IdStopBit2:
-			dcb.StopBits = TWOSTOPBITS;
-			break;
+	case IdStopBit1:
+		dcb.StopBits = ONESTOPBIT;
+		break;
+	case IdStopBit15:
+		dcb.StopBits = ONE5STOPBITS;
+		break;
+	case IdStopBit2:
+		dcb.StopBits = TWOSTOPBITS;
+		break;
 	}
 
 	SetCommState(cv->ComID, &dcb);
 
 	/* enable receive request */
-	SetCommMask(cv->ComID,0);
-	SetCommMask(cv->ComID,EV_RXCHAR);
+	SetCommMask(cv->ComID, 0);
+	SetCommMask(cv->ComID, EV_RXCHAR);
 }
 
-// –¼‘O•t‚«ƒpƒCƒv‚ª³‚µ‚¢‘®‚©‚ğƒ`ƒFƒbƒN‚·‚éB
+// åå‰ä»˜ããƒ‘ã‚¤ãƒ—ãŒæ­£ã—ã„æ›¸å¼ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
 // \\ServerName\pipe\PipeName
 //
-// return  0: ³‚µ‚¢
-//        -1: •s³
+// return  0: æ­£ã—ã„
+//        -1: ä¸æ­£
 // (2012.3.10 yutaka)
 int CheckNamedPipeFormat(char *p, int size)
 {
@@ -273,7 +274,7 @@ int CheckNamedPipeFormat(char *p, int size)
 
 	if (p[0] == '\\' && p[1] == '\\') {
 		s = strchr(&p[2], '\\');
-		if (s && _strnicmp(s+1, "pipe\\", 5) == 0) {
+		if (s && _strnicmp(s + 1, "pipe\\", 5) == 0) {
 			ret = 0;
 		}
 	}
@@ -284,8 +285,8 @@ error:
 
 void CommOpen(HWND HW, PTTSet ts, PComVar cv)
 {
-	char ErrMsg[21+256];
-	char P[50+256];
+	char ErrMsg[21 + 256];
+	char P[50 + 256];
 
 	MSG Msg;
 	ADDRINFO hints;
@@ -295,7 +296,7 @@ void CommOpen(HWND HW, PTTSet ts, PComVar cv)
 
 	char uimsg[MAX_UIMSG];
 
-	// ƒzƒXƒg–¼‚ª–¼‘O•t‚«ƒpƒCƒv‚©‚Ç‚¤‚©‚ğ’²‚×‚éB
+	// ãƒ›ã‚¹ãƒˆåãŒåå‰ä»˜ããƒ‘ã‚¤ãƒ—ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹ã€‚
 	if (ts->PortType == IdTCPIP) {
 		if (CheckNamedPipeFormat(ts->HostName, strlen(ts->HostName)) == 0) {
 			ts->PortType = IdNamedPipe;
@@ -355,229 +356,229 @@ void CommOpen(HWND HW, PTTSet ts, PComVar cv)
 	cv->TelLineMode = FALSE;
 	cv->ConnectedTime = 0;
 
-	if ((ts->PortType!=IdSerial) && (strlen(ts->HostName)==0))
+	if ((ts->PortType != IdSerial) && (strlen(ts->HostName) == 0))
 	{
 		PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
 		return;
 	}
 
 	switch (ts->PortType) {
-		case IdTCPIP:
-			cv->TelFlag = (ts->Telnet > 0);
-			if (ts->EnableLineMode) {
-				cv->TelLineMode = TRUE;
+	case IdTCPIP:
+		cv->TelFlag = (ts->Telnet > 0);
+		if (ts->EnableLineMode) {
+			cv->TelLineMode = TRUE;
+		}
+		if (!LoadWinsock()) {
+			if (cv->NoMsg == 0) {
+				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+				get_lang_msg("MSG_WINSOCK_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot use winsock", ts->UILanguageFile);
+				MessageBox(cv->HWin, ts->UIMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
 			}
-			if (! LoadWinsock()) {
-				if (cv->NoMsg==0) {
-					get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-					get_lang_msg("MSG_WINSOCK_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot use winsock", ts->UILanguageFile);
-					MessageBox(cv->HWin,ts->UIMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-				}
-				InvalidHost = TRUE;
-			}
-			else {
-				TTXOpenTCP(); /* TTPLUG */
-				cv->Open = TRUE;
-				/* resolving address */
-				memset(&hints, 0, sizeof(hints));
-				hints.ai_family = ts->ProtocolFamily;
-				hints.ai_socktype = SOCK_STREAM;
-				hints.ai_protocol = IPPROTO_TCP;
-				_snprintf_s(pname, sizeof(pname), _TRUNCATE, "%d", ts->TCPPort);
+			InvalidHost = TRUE;
+		}
+		else {
+			TTXOpenTCP(); /* TTPLUG */
+			cv->Open = TRUE;
+			/* resolving address */
+			memset(&hints, 0, sizeof(hints));
+			hints.ai_family = ts->ProtocolFamily;
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_protocol = IPPROTO_TCP;
+			_snprintf_s(pname, sizeof(pname), _TRUNCATE, "%d", ts->TCPPort);
 
-				HAsync = PWSAAsyncGetAddrInfo(HW, WM_USER_GETHOST,
-				                             ts->HostName, pname, &hints, &cv->res0);
-				if (HAsync == 0)
-					InvalidHost = TRUE;
-				else {
-					cv->ComPort = 1; // set "getting host" flag
-					                 //  (see CVTWindow::OnSysCommand())
-					do {
-						if (GetMessage(&Msg,0,0,0)) {
-							if ((Msg.hwnd==HW) &&
-							    ((Msg.message == WM_SYSCOMMAND) &&
-							     ((Msg.wParam & 0xfff0) == SC_CLOSE) ||
-							     (Msg.message == WM_COMMAND) &&
-							     (LOWORD(Msg.wParam) == ID_FILE_EXIT) ||
-							     (Msg.message == WM_CLOSE))) { /* Exit when the user closes Tera Term */
-								PWSACancelAsyncRequest(HAsync);
-								CloseHandle(HAsync);
-								HAsync = 0;
-								cv->ComPort = 0; // clear "getting host" flag
-								PostMessage(HW,Msg.message,Msg.wParam,Msg.lParam);
-								return;
-							}
-							if (Msg.message != WM_USER_GETHOST) { /* Prosess messages */
-								TranslateMessage(&Msg);
-								DispatchMessage(&Msg);
-							}
-						}
-						else {
+			HAsync = PWSAAsyncGetAddrInfo(HW, WM_USER_GETHOST,
+				ts->HostName, pname, &hints, &cv->res0);
+			if (HAsync == 0)
+				InvalidHost = TRUE;
+			else {
+				cv->ComPort = 1; // set "getting host" flag
+								 //  (see CVTWindow::OnSysCommand())
+				do {
+					if (GetMessage(&Msg, 0, 0, 0)) {
+						if ((Msg.hwnd == HW) &&
+							((Msg.message == WM_SYSCOMMAND) &&
+							((Msg.wParam & 0xfff0) == SC_CLOSE) ||
+								(Msg.message == WM_COMMAND) &&
+								(LOWORD(Msg.wParam) == ID_FILE_EXIT) ||
+								(Msg.message == WM_CLOSE))) { /* Exit when the user closes Tera Term */
+							PWSACancelAsyncRequest(HAsync);
+							CloseHandle(HAsync);
+							HAsync = 0;
+							cv->ComPort = 0; // clear "getting host" flag
+							PostMessage(HW, Msg.message, Msg.wParam, Msg.lParam);
 							return;
 						}
-					} while (Msg.message!=WM_USER_GETHOST);
-					cv->ComPort = 0; // clear "getting host" flag
-					CloseHandle(HAsync);
-					HAsync = 0;
-					InvalidHost = WSAGETASYNCERROR(Msg.lParam) != 0;
-				}
-			} /* if (!LoadWinsock()) */
-
-			if (InvalidHost) {
-				if (cv->NoMsg==0) {
-					get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-					get_lang_msg("MSG_INVALID_HOST_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Invalid host", ts->UILanguageFile);
-					MessageBox(cv->HWin,ts->UIMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-				}
-				goto BreakSC;
+						if (Msg.message != WM_USER_GETHOST) { /* Prosess messages */
+							TranslateMessage(&Msg);
+							DispatchMessage(&Msg);
+						}
+					}
+					else {
+						return;
+					}
+				} while (Msg.message != WM_USER_GETHOST);
+				cv->ComPort = 0; // clear "getting host" flag
+				CloseHandle(HAsync);
+				HAsync = 0;
+				InvalidHost = WSAGETASYNCERROR(Msg.lParam) != 0;
 			}
-			for (cv->res = cv->res0; cv->res; cv->res = cv->res->ai_next) {
-				cv->s =  OpenSocket(cv);
-				if (cv->s == INVALID_SOCKET) {
-					CloseSocket(cv->s);
-					continue;
-				}
-				/* start asynchronous connect */
-				AsyncConnect(cv);
-				break; /* break for-loop immediately */
-			}
-			break;
+		} /* if (!LoadWinsock()) */
 
-		case IdSerial:
-			InitFileIO(IdSerial);  /* TTPLUG */
-			TTXOpenFile(); /* TTPLUG */
-			_snprintf_s(P, sizeof(P), _TRUNCATE, "COM%d", ts->ComPort);
-			strncpy_s(ErrMsg, sizeof(ErrMsg),P, _TRUNCATE);
-			strncpy_s(P, sizeof(P),"\\\\.\\", _TRUNCATE);
-			strncat_s(P, sizeof(P),ErrMsg, _TRUNCATE);
-			cv->ComID = PCreateFile(P, GENERIC_READ | GENERIC_WRITE, 0, NULL,
-			                        OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
-			if (cv->ComID == INVALID_HANDLE_VALUE ) {
-				DWORD err = GetLastError();
-
-				switch (err) {
-				case ERROR_FILE_NOT_FOUND:
-					get_lang_msg("MSG_CANTOPEN_ERROR_NOTFOUND", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Not found.", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, &P[4]);
-					break;
-				case ERROR_ACCESS_DENIED:
-					get_lang_msg("MSG_CANTOPEN_ERROR_DENIED", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Access denied.", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, &P[4]);
-					break;
-				default:
-					get_lang_msg("MSG_CANTOPEN_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. (0x%08x)", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, &P[4], err);
-					break;
-				}
-
-				if (cv->NoMsg==0) {
-					get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-					MessageBox(cv->HWin,ErrMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-				}
-				InvalidHost = TRUE;
-			}
-			else {
-				cv->Open = TRUE;
-				cv->ComPort = ts->ComPort;
-				CommResetSerial(ts, cv, ts->ClearComBuffOnOpen);
-				if (!ts->ClearComBuffOnOpen) {
-					cv->RRQ = TRUE;
-				}
-
-				/* notify to VT window that Comm Port is open */
-				PostMessage(cv->HWin, WM_USER_COMMOPEN, 0, 0);
-				InvalidHost = FALSE;
-
-				SetCOMFlag(ts->ComPort);
-			}
-			break; /* end of "case IdSerial:" */
-
-		case IdFile:
-			InitFileIO(IdFile);  /* TTPLUG */
-			TTXOpenFile(); /* TTPLUG */
-			cv->ComID = PCreateFile(ts->HostName, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
-			InvalidHost = (cv->ComID == INVALID_HANDLE_VALUE);
-			if (InvalidHost) {
-				if (cv->NoMsg==0) {
-					get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-					get_lang_msg("MSG_CANTOPEN_FILE_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open file", ts->UILanguageFile);
-					MessageBox(cv->HWin,ts->UIMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-				}
-			}
-			else {
-				cv->Open = TRUE;
-				PostMessage(cv->HWin, WM_USER_COMMOPEN, 0, 0);
-			}
-			break;
-
-		case IdNamedPipe:
-			InitFileIO(IdNamedPipe);  /* TTPLUG */
-			TTXOpenFile(); /* TTPLUG */
-
-			memset(P, 0, sizeof(P));
-			strncpy_s(P, sizeof(P), ts->HostName, _TRUNCATE);
-
-			// –¼‘O•t‚«ƒpƒCƒv‚ª³‚µ‚¢‘®‚©‚ğƒ`ƒFƒbƒN‚·‚éB
-			if (CheckNamedPipeFormat(P, strlen(P)) < 0) {
-				InvalidHost = TRUE;
-
-				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE,
-					"Invalid pipe name (%d)\n\n"
-					"A valid pipe name has the form\n"
-					"\"\\\\<ServerName>\\pipe\\<PipeName>\"",
-					GetLastError());
+		if (InvalidHost) {
+			if (cv->NoMsg == 0) {
 				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-				MessageBox(cv->HWin,ErrMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
+				get_lang_msg("MSG_INVALID_HOST_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Invalid host", ts->UILanguageFile);
+				MessageBox(cv->HWin, ts->UIMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+			}
+			goto BreakSC;
+		}
+		for (cv->res = cv->res0; cv->res; cv->res = cv->res->ai_next) {
+			cv->s = OpenSocket(cv);
+			if (cv->s == INVALID_SOCKET) {
+				CloseSocket(cv->s);
+				continue;
+			}
+			/* start asynchronous connect */
+			AsyncConnect(cv);
+			break; /* break for-loop immediately */
+		}
+		break;
+
+	case IdSerial:
+		InitFileIO(IdSerial);  /* TTPLUG */
+		TTXOpenFile(); /* TTPLUG */
+		_snprintf_s(P, sizeof(P), _TRUNCATE, "COM%d", ts->ComPort);
+		strncpy_s(ErrMsg, sizeof(ErrMsg), P, _TRUNCATE);
+		strncpy_s(P, sizeof(P), "\\\\.\\", _TRUNCATE);
+		strncat_s(P, sizeof(P), ErrMsg, _TRUNCATE);
+		cv->ComID = PCreateFile(P, GENERIC_READ | GENERIC_WRITE, 0, NULL,
+			OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+		if (cv->ComID == INVALID_HANDLE_VALUE) {
+			DWORD err = GetLastError();
+
+			switch (err) {
+			case ERROR_FILE_NOT_FOUND:
+				get_lang_msg("MSG_CANTOPEN_ERROR_NOTFOUND", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Not found.", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, &P[4]);
+				break;
+			case ERROR_ACCESS_DENIED:
+				get_lang_msg("MSG_CANTOPEN_ERROR_DENIED", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Access denied.", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, &P[4]);
+				break;
+			default:
+				get_lang_msg("MSG_CANTOPEN_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. (0x%08x)", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, &P[4], err);
 				break;
 			}
 
-			cv->ComID = PCreateFile(P, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
-			                        0,  // ƒuƒƒbƒLƒ“ƒOƒ‚[ƒh‚É‚·‚é(FILE_FLAG_OVERLAPPED ‚Íw’è‚µ‚È‚¢)
-			                        NULL);
-			if (cv->ComID == INVALID_HANDLE_VALUE ) {
-				DWORD err = GetLastError();
-
-				switch (err) {
-				case ERROR_FILE_NOT_FOUND:
-					get_lang_msg("MSG_CANTOPEN_ERROR_NOTFOUND", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Not found.", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P);
-					break;
-				case ERROR_ACCESS_DENIED:
-					get_lang_msg("MSG_CANTOPEN_ERROR_DENIED", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Access denied.", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P);
-					break;
-				case ERROR_PIPE_BUSY:
-					get_lang_msg("MSG_CANTOPEN_ERROR_PIPEBUSY", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Pipe is busy.", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P);
-					break;
-				default:
-					get_lang_msg("MSG_CANTOPEN_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. (0x%08x)", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P, err);
-					break;
-				}
-
-				if (cv->NoMsg==0) {
-					get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-					MessageBox(cv->HWin,ErrMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-				}
-				InvalidHost = TRUE;
+			if (cv->NoMsg == 0) {
+				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+				MessageBox(cv->HWin, ErrMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
 			}
-			else {
-				cv->Open = TRUE;
-				PostMessage(cv->HWin, WM_USER_COMMOPEN, 0, 0);
-				InvalidHost = FALSE;
+			InvalidHost = TRUE;
+		}
+		else {
+			cv->Open = TRUE;
+			cv->ComPort = ts->ComPort;
+			CommResetSerial(ts, cv, ts->ClearComBuffOnOpen);
+			if (!ts->ClearComBuffOnOpen) {
+				cv->RRQ = TRUE;
 			}
-			break; /* end of "case IdNamedPipe:" */
+
+			/* notify to VT window that Comm Port is open */
+			PostMessage(cv->HWin, WM_USER_COMMOPEN, 0, 0);
+			InvalidHost = FALSE;
+
+			SetCOMFlag(ts->ComPort);
+		}
+		break; /* end of "case IdSerial:" */
+
+	case IdFile:
+		InitFileIO(IdFile);  /* TTPLUG */
+		TTXOpenFile(); /* TTPLUG */
+		cv->ComID = PCreateFile(ts->HostName, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+		InvalidHost = (cv->ComID == INVALID_HANDLE_VALUE);
+		if (InvalidHost) {
+			if (cv->NoMsg == 0) {
+				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+				get_lang_msg("MSG_CANTOPEN_FILE_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open file", ts->UILanguageFile);
+				MessageBox(cv->HWin, ts->UIMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+			}
+		}
+		else {
+			cv->Open = TRUE;
+			PostMessage(cv->HWin, WM_USER_COMMOPEN, 0, 0);
+		}
+		break;
+
+	case IdNamedPipe:
+		InitFileIO(IdNamedPipe);  /* TTPLUG */
+		TTXOpenFile(); /* TTPLUG */
+
+		memset(P, 0, sizeof(P));
+		strncpy_s(P, sizeof(P), ts->HostName, _TRUNCATE);
+
+		// åå‰ä»˜ããƒ‘ã‚¤ãƒ—ãŒæ­£ã—ã„æ›¸å¼ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹ã€‚
+		if (CheckNamedPipeFormat(P, strlen(P)) < 0) {
+			InvalidHost = TRUE;
+
+			_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE,
+				"Invalid pipe name (%d)\n\n"
+				"A valid pipe name has the form\n"
+				"\"\\\\<ServerName>\\pipe\\<PipeName>\"",
+				GetLastError());
+			get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+			MessageBox(cv->HWin, ErrMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+			break;
+		}
+
+		cv->ComID = PCreateFile(P, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
+			0,  // ãƒ–ãƒ­ãƒƒã‚­ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«ã™ã‚‹(FILE_FLAG_OVERLAPPED ã¯æŒ‡å®šã—ãªã„)
+			NULL);
+		if (cv->ComID == INVALID_HANDLE_VALUE) {
+			DWORD err = GetLastError();
+
+			switch (err) {
+			case ERROR_FILE_NOT_FOUND:
+				get_lang_msg("MSG_CANTOPEN_ERROR_NOTFOUND", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Not found.", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P);
+				break;
+			case ERROR_ACCESS_DENIED:
+				get_lang_msg("MSG_CANTOPEN_ERROR_DENIED", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Access denied.", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P);
+				break;
+			case ERROR_PIPE_BUSY:
+				get_lang_msg("MSG_CANTOPEN_ERROR_PIPEBUSY", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. Pipe is busy.", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P);
+				break;
+			default:
+				get_lang_msg("MSG_CANTOPEN_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot open %s. (0x%08x)", ts->UILanguageFile);
+				_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, ts->UIMsg, P, err);
+				break;
+			}
+
+			if (cv->NoMsg == 0) {
+				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+				MessageBox(cv->HWin, ErrMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+			}
+			InvalidHost = TRUE;
+		}
+		else {
+			cv->Open = TRUE;
+			PostMessage(cv->HWin, WM_USER_COMMOPEN, 0, 0);
+			InvalidHost = FALSE;
+		}
+		break; /* end of "case IdNamedPipe:" */
 
 	} /* end of "switch" */
 
 BreakSC:
 	if (InvalidHost) {
 		PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
-		if ( (ts->PortType==IdTCPIP) && cv->Open ) {
-			if ( cv->s!=INVALID_SOCKET ) {
+		if ((ts->PortType == IdTCPIP) && cv->Open) {
+			if (cv->s != INVALID_SOCKET) {
 				Pclosesocket(cv->s);
-				cv->s = INVALID_SOCKET;  /* ƒ\ƒPƒbƒg–³Œø‚Ìˆó‚ğ•t‚¯‚éB(2010.8.6 yutaka) */
+				cv->s = INVALID_SOCKET;  /* ã‚½ã‚±ãƒƒãƒˆç„¡åŠ¹ã®å°ã‚’ä»˜ã‘ã‚‹ã€‚(2010.8.6 yutaka) */
 			}
 			FreeWinsock();
 		}
@@ -585,7 +586,7 @@ BreakSC:
 	}
 }
 
-// –¼‘O•t‚«ƒpƒCƒv—pƒXƒŒƒbƒh
+// åå‰ä»˜ããƒ‘ã‚¤ãƒ—ç”¨ã‚¹ãƒ¬ãƒƒãƒ‰
 void NamedPipeThread(void *arg)
 {
 	PComVar cv = (PComVar)arg;
@@ -596,30 +597,30 @@ void NamedPipeThread(void *arg)
 	DWORD BytesRead, TotalBytesAvail, BytesLeftThisMessage;
 
 	_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READENDNAME, cv->ComPort);
-	REnd = OpenEvent(EVENT_ALL_ACCESS,FALSE, Temp);
+	REnd = OpenEvent(EVENT_ALL_ACCESS, FALSE, Temp);
 	while (TRUE) {
 		BytesRead = 0;
-		// –¼‘O•t‚«ƒpƒCƒv‚ÍƒCƒxƒ“ƒg‚ğ‘Ò‚Â‚±‚Æ‚ª‚Å‚«‚È‚¢d—l‚È‚Ì‚ÅAƒLƒ…[‚Ì’†g‚ğ
-		// ”`‚«Œ©‚·‚é‚±‚Æ‚ÅAReadFile() ‚·‚é‚©‚Ç‚¤‚©”»’f‚·‚éB
+		// åå‰ä»˜ããƒ‘ã‚¤ãƒ—ã¯ã‚¤ãƒ™ãƒ³ãƒˆã‚’å¾…ã¤ã“ã¨ãŒã§ããªã„ä»•æ§˜ãªã®ã§ã€ã‚­ãƒ¥ãƒ¼ã®ä¸­èº«ã‚’
+		// è¦—ãè¦‹ã™ã‚‹ã“ã¨ã§ã€ReadFile() ã™ã‚‹ã‹ã©ã†ã‹åˆ¤æ–­ã™ã‚‹ã€‚
 		if (PeekNamedPipe(cv->ComID, Buffer, sizeof(Buffer), &BytesRead, &TotalBytesAvail, &BytesLeftThisMessage)) {
-			if (! cv->Ready) {
+			if (!cv->Ready) {
 				_endthread();
 			}
-			if (BytesRead == 0) {  // ‹ó‚¾‚Á‚½‚çA‰½‚à‚µ‚È‚¢B
+			if (BytesRead == 0) {  // ç©ºã ã£ãŸã‚‰ã€ä½•ã‚‚ã—ãªã„ã€‚
 				Sleep(1);
 				continue;
 			}
-			if (! cv->RRQ) {
+			if (!cv->RRQ) {
 				PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_READ);
 			}
-			// ReadFile() ‚ªI‚í‚é‚Ü‚Å‘Ò‚ÂB
-			WaitForSingleObject(REnd,INFINITE);
+			// ReadFile() ãŒçµ‚ã‚ã‚‹ã¾ã§å¾…ã¤ã€‚
+			WaitForSingleObject(REnd, INFINITE);
 		}
 		else {
 			DErr = GetLastError();
 			// [VMware] this returns 109 (broken pipe) if a named pipe is removed.
 			// [Virtual Box] this returns 233 (pipe not connected) if a named pipe is removed.
-			if (! cv->Ready || ERROR_BROKEN_PIPE == DErr || ERROR_PIPE_NOT_CONNECTED == DErr) {
+			if (!cv->Ready || ERROR_BROKEN_PIPE == DErr || ERROR_PIPE_NOT_CONNECTED == DErr) {
 				PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
 				_endthread();
 			}
@@ -636,23 +637,23 @@ void CommThread(void *arg)
 	char Temp[20];
 
 	_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READENDNAME, cv->ComPort);
-	REnd = OpenEvent(EVENT_ALL_ACCESS,FALSE, Temp);
+	REnd = OpenEvent(EVENT_ALL_ACCESS, FALSE, Temp);
 	while (TRUE) {
-		if (WaitCommEvent(cv->ComID,&Evt,NULL)) {
-			if (! cv->Ready) {
+		if (WaitCommEvent(cv->ComID, &Evt, NULL)) {
+			if (!cv->Ready) {
 				_endthread();
 			}
-			if (! cv->RRQ) {
+			if (!cv->RRQ) {
 				PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_READ);
 			}
-			WaitForSingleObject(REnd,INFINITE);
+			WaitForSingleObject(REnd, INFINITE);
 		}
 		else {
 			DErr = GetLastError();  // this returns 995 (operation aborted) if a USB com port is removed
-			if (! cv->Ready || ERROR_OPERATION_ABORTED == DErr) {
+			if (!cv->Ready || ERROR_OPERATION_ABORTED == DErr) {
 				_endthread();
 			}
-			ClearCommError(cv->ComID,&DErr,NULL);
+			ClearCommError(cv->ComID, &DErr, NULL);
 		}
 	}
 }
@@ -663,113 +664,114 @@ void CommStart(PComVar cv, LONG lParam, PTTSet ts)
 	char Temp[20];
 	char uimsg[MAX_UIMSG];
 
-	if (! cv->Open ) {
+	if (!cv->Open) {
 		return;
 	}
-	if ( cv->Ready ) {
+	if (cv->Ready) {
 		return;
 	}
 
-	// ƒLƒƒƒ“ƒZƒ‹ƒ^ƒCƒ}‚ª‚ ‚ê‚Îæ‚èÁ‚·B‚½‚¾‚µA‚±‚Ì“_‚Å WM_TIMER ‚ª‘—‚ç‚ê‚Ä‚¢‚é‰Â”\«‚Í‚ ‚éB
+	// ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã‚¿ã‚¤ãƒãŒã‚ã‚Œã°å–ã‚Šæ¶ˆã™ã€‚ãŸã ã—ã€ã“ã®æ™‚ç‚¹ã§ WM_TIMER ãŒé€ã‚‰ã‚Œã¦ã„ã‚‹å¯èƒ½æ€§ã¯ã‚ã‚‹ã€‚
 	if (*cv->ConnetingTimeout > 0) {
 		KillTimer(cv->HWin, IdCancelConnectTimer);
 	}
 
 	switch (cv->PortType) {
-		case IdTCPIP:
-			ErrMsg[0] = 0;
-			switch (HIWORD(lParam)) {
-				case WSAECONNREFUSED:
-					get_lang_msg("MSG_COMM_REFUSE_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Connection refused", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
-					break;
-				case WSAENETUNREACH:
-					get_lang_msg("MSG_COMM_REACH_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Network cannot be reached", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
-					break;
-				case WSAETIMEDOUT:
-					get_lang_msg("MSG_COMM_CONNECT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Connection timed out", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
-					break;
-				default:
-					get_lang_msg("MSG_COMM_TIMEOUT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot connect the host", ts->UILanguageFile);
-					_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
-			}
-			if (HIWORD(lParam)>0) {
-				/* connect() failed */
-				if (cv->res->ai_next != NULL) {
-					/* try to connect with other protocol */
-					CloseSocket(cv->s);
-					for (cv->res = cv->res->ai_next; cv->res; cv->res = cv->res->ai_next) {
-						cv->s = OpenSocket(cv);
-						if (cv->s == INVALID_SOCKET) {
-							CloseSocket(cv->s);
-							continue;
-						}
-						AsyncConnect(cv);
-						cv->Ready = FALSE;
-						cv->RetryWithOtherProtocol = TRUE; /* retry with other procotol */
-						return;
+	case IdTCPIP:
+		ErrMsg[0] = 0;
+		switch (HIWORD(lParam)) {
+		case WSAECONNREFUSED:
+			get_lang_msg("MSG_COMM_REFUSE_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Connection refused", ts->UILanguageFile);
+			_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
+			break;
+		case WSAENETUNREACH:
+			get_lang_msg("MSG_COMM_REACH_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Network cannot be reached", ts->UILanguageFile);
+			_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
+			break;
+		case WSAETIMEDOUT:
+			get_lang_msg("MSG_COMM_CONNECT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Connection timed out", ts->UILanguageFile);
+			_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
+			break;
+		default:
+			get_lang_msg("MSG_COMM_TIMEOUT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Cannot connect the host", ts->UILanguageFile);
+			_snprintf_s(ErrMsg, sizeof(ErrMsg), _TRUNCATE, "%s", ts->UIMsg);
+		}
+		if (HIWORD(lParam) > 0) {
+			/* connect() failed */
+			if (cv->res->ai_next != NULL) {
+				/* try to connect with other protocol */
+				CloseSocket(cv->s);
+				for (cv->res = cv->res->ai_next; cv->res; cv->res = cv->res->ai_next) {
+					cv->s = OpenSocket(cv);
+					if (cv->s == INVALID_SOCKET) {
+						CloseSocket(cv->s);
+						continue;
 					}
-				} else {
-					/* trying with all protocol family are failed */
-					if (cv->NoMsg==0)
-					{
-						get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-						MessageBox(cv->HWin,ErrMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-					}
-					PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
-					cv->RetryWithOtherProtocol = FALSE;
+					AsyncConnect(cv);
+					cv->Ready = FALSE;
+					cv->RetryWithOtherProtocol = TRUE; /* retry with other procotol */
 					return;
 				}
 			}
-
-			/* here is connection established */
-			cv->RetryWithOtherProtocol = FALSE;
-			PWSAAsyncSelect(cv->s,cv->HWin,WM_USER_COMMNOTIFY, FD_READ | FD_OOB | FD_CLOSE);
-			TCPIPClosed = FALSE;
-			break;
-
-		case IdSerial:
-			_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READENDNAME, cv->ComPort);
-			ReadEnd = CreateEvent(NULL,FALSE,FALSE,Temp);
-			_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", WRITENAME, cv->ComPort);
-			memset(&wol,0,sizeof(OVERLAPPED));
-			wol.hEvent = CreateEvent(NULL,TRUE,TRUE,Temp);
-			_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READNAME, cv->ComPort);
-			memset(&rol,0,sizeof(OVERLAPPED));
-			rol.hEvent = CreateEvent(NULL,TRUE,FALSE,Temp);
-
-			/* create the receiver thread */
-			if (_beginthread(CommThread,0,cv) == -1) {
-				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-				get_lang_msg("MSG_TT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Can't create thread", ts->UILanguageFile);
-				MessageBox(cv->HWin,ts->UIMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
+			else {
+				/* trying with all protocol family are failed */
+				if (cv->NoMsg == 0)
+				{
+					get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+					MessageBox(cv->HWin, ErrMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+				}
+				PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
+				cv->RetryWithOtherProtocol = FALSE;
+				return;
 			}
-			break;
+		}
 
-		case IdFile:
-			cv->RRQ = TRUE;
-			break;
+		/* here is connection established */
+		cv->RetryWithOtherProtocol = FALSE;
+		PWSAAsyncSelect(cv->s, cv->HWin, WM_USER_COMMNOTIFY, FD_READ | FD_OOB | FD_CLOSE);
+		TCPIPClosed = FALSE;
+		break;
 
-		case IdNamedPipe:
-			cv->ComPort = 0;
-			_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READENDNAME, cv->ComPort);
-			ReadEnd = CreateEvent(NULL,FALSE,FALSE,Temp);
-			_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", WRITENAME, cv->ComPort);
-			memset(&wol,0,sizeof(OVERLAPPED));
-			wol.hEvent = CreateEvent(NULL,TRUE,TRUE,Temp);
-			_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READNAME, cv->ComPort);
-			memset(&rol,0,sizeof(OVERLAPPED));
-			rol.hEvent = CreateEvent(NULL,TRUE,FALSE,Temp);
+	case IdSerial:
+		_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READENDNAME, cv->ComPort);
+		ReadEnd = CreateEvent(NULL, FALSE, FALSE, Temp);
+		_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", WRITENAME, cv->ComPort);
+		memset(&wol, 0, sizeof(OVERLAPPED));
+		wol.hEvent = CreateEvent(NULL, TRUE, TRUE, Temp);
+		_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READNAME, cv->ComPort);
+		memset(&rol, 0, sizeof(OVERLAPPED));
+		rol.hEvent = CreateEvent(NULL, TRUE, FALSE, Temp);
 
-			/* create the receiver thread */
-			if (_beginthread(NamedPipeThread,0,cv) == -1) {
-				get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
-				get_lang_msg("MSG_TT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Can't create thread", ts->UILanguageFile);
-				MessageBox(cv->HWin,ts->UIMsg,uimsg,MB_TASKMODAL | MB_ICONEXCLAMATION);
-			}
-			break;
+		/* create the receiver thread */
+		if (_beginthread(CommThread, 0, cv) == -1) {
+			get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+			get_lang_msg("MSG_TT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Can't create thread", ts->UILanguageFile);
+			MessageBox(cv->HWin, ts->UIMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+		}
+		break;
+
+	case IdFile:
+		cv->RRQ = TRUE;
+		break;
+
+	case IdNamedPipe:
+		cv->ComPort = 0;
+		_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READENDNAME, cv->ComPort);
+		ReadEnd = CreateEvent(NULL, FALSE, FALSE, Temp);
+		_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", WRITENAME, cv->ComPort);
+		memset(&wol, 0, sizeof(OVERLAPPED));
+		wol.hEvent = CreateEvent(NULL, TRUE, TRUE, Temp);
+		_snprintf_s(Temp, sizeof(Temp), _TRUNCATE, "%s%d", READNAME, cv->ComPort);
+		memset(&rol, 0, sizeof(OVERLAPPED));
+		rol.hEvent = CreateEvent(NULL, TRUE, FALSE, Temp);
+
+		/* create the receiver thread */
+		if (_beginthread(NamedPipeThread, 0, cv) == -1) {
+			get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts->UILanguageFile);
+			get_lang_msg("MSG_TT_ERROR", ts->UIMsg, sizeof(ts->UIMsg), "Can't create thread", ts->UILanguageFile);
+			MessageBox(cv->HWin, ts->UIMsg, uimsg, MB_TASKMODAL | MB_ICONEXCLAMATION);
+		}
+		break;
 	}
 	cv->Ready = TRUE;
 	cv->ConnectedTime = GetTickCount();
@@ -777,19 +779,19 @@ void CommStart(PComVar cv, LONG lParam, PTTSet ts)
 
 BOOL CommCanClose(PComVar cv)
 { // check if data remains in buffer
-	if (! cv->Open) {
+	if (!cv->Open) {
 		return TRUE;
 	}
-	if (cv->InBuffCount>0) {
+	if (cv->InBuffCount > 0) {
 		return FALSE;
 	}
-	if ((cv->HLogBuf!=NULL) &&
-	    ((cv->LCount>0) ||
-	     (cv->DCount>0))) {
+	if ((cv->HLogBuf != NULL) &&
+		((cv->LCount > 0) ||
+		(cv->DCount > 0))) {
 		return FALSE;
 	}
-	if ((cv->HBinBuf!=NULL) &&
-	    (cv->BCount>0)) {
+	if ((cv->HBinBuf != NULL) &&
+		(cv->BCount > 0)) {
 		return FALSE;
 	}
 	return TRUE;
@@ -797,7 +799,7 @@ BOOL CommCanClose(PComVar cv)
 
 void CommClose(PComVar cv)
 {
-	if ( ! cv->Open ) {
+	if (!cv->Open) {
 		return;
 	}
 	cv->Open = FALSE;
@@ -815,49 +817,49 @@ void CommClose(PComVar cv)
 
 	/* close port & release resources */
 	switch (cv->PortType) {
-		case IdTCPIP:
-			if (HAsync!=0) {
-				PWSACancelAsyncRequest(HAsync);
-			}
-			HAsync = 0;
-			Pfreeaddrinfo(cv->res0);
-			if ( cv->s!=INVALID_SOCKET ) {
-				Pclosesocket(cv->s);
-			}
-			cv->s = INVALID_SOCKET;
-			TTXCloseTCP(); /* TTPLUG */
-			FreeWinsock();
-			break;
-		case IdSerial:
-			if ( cv->ComID != INVALID_HANDLE_VALUE ) {
-				CloseHandle(ReadEnd);
-				CloseHandle(wol.hEvent);
-				CloseHandle(rol.hEvent);
-				PurgeComm(cv->ComID, PURGE_TXABORT | PURGE_RXABORT |
-				                     PURGE_TXCLEAR | PURGE_RXCLEAR);
-				EscapeCommFunction(cv->ComID,CLRDTR);
-				SetCommMask(cv->ComID,0);
-				PCloseFile(cv->ComID);
-				ClearCOMFlag(cv->ComPort);
-			}
-			TTXCloseFile(); /* TTPLUG */
-			break;
-		case IdFile:
-			if (cv->ComID != INVALID_HANDLE_VALUE) {
-				PCloseFile(cv->ComID);
-			}
-			TTXCloseFile(); /* TTPLUG */
-			break;
+	case IdTCPIP:
+		if (HAsync != 0) {
+			PWSACancelAsyncRequest(HAsync);
+		}
+		HAsync = 0;
+		Pfreeaddrinfo(cv->res0);
+		if (cv->s != INVALID_SOCKET) {
+			Pclosesocket(cv->s);
+		}
+		cv->s = INVALID_SOCKET;
+		TTXCloseTCP(); /* TTPLUG */
+		FreeWinsock();
+		break;
+	case IdSerial:
+		if (cv->ComID != INVALID_HANDLE_VALUE) {
+			CloseHandle(ReadEnd);
+			CloseHandle(wol.hEvent);
+			CloseHandle(rol.hEvent);
+			PurgeComm(cv->ComID, PURGE_TXABORT | PURGE_RXABORT |
+				PURGE_TXCLEAR | PURGE_RXCLEAR);
+			EscapeCommFunction(cv->ComID, CLRDTR);
+			SetCommMask(cv->ComID, 0);
+			PCloseFile(cv->ComID);
+			ClearCOMFlag(cv->ComPort);
+		}
+		TTXCloseFile(); /* TTPLUG */
+		break;
+	case IdFile:
+		if (cv->ComID != INVALID_HANDLE_VALUE) {
+			PCloseFile(cv->ComID);
+		}
+		TTXCloseFile(); /* TTPLUG */
+		break;
 
-		case IdNamedPipe:
-			if ( cv->ComID != INVALID_HANDLE_VALUE ) {
-				CloseHandle(ReadEnd);
-				CloseHandle(wol.hEvent);
-				CloseHandle(rol.hEvent);
-				PCloseFile(cv->ComID);
-			}
-			TTXCloseFile(); /* TTPLUG */
-			break;
+	case IdNamedPipe:
+		if (cv->ComID != INVALID_HANDLE_VALUE) {
+			CloseHandle(ReadEnd);
+			CloseHandle(wol.hEvent);
+			CloseHandle(rol.hEvent);
+			PCloseFile(cv->ComID);
+		}
+		TTXCloseFile(); /* TTPLUG */
+		break;
 	}
 	cv->ComID = INVALID_HANDLE_VALUE;
 	cv->PortType = 0;
@@ -867,18 +869,18 @@ void CommClose(PComVar cv)
 
 void CommProcRRQ(PComVar cv)
 {
-	if ( ! cv->Ready ) {
+	if (!cv->Ready) {
 		return;
 	}
 	/* disable receive request */
 	switch (cv->PortType) {
-		case IdTCPIP:
-			if (! TCPIPClosed) {
-				PWSAAsyncSelect(cv->s,cv->HWin,WM_USER_COMMNOTIFY, FD_OOB | FD_CLOSE);
-			}
-			break;
-		case IdSerial:
-			break;
+	case IdTCPIP:
+		if (!TCPIPClosed) {
+			PWSAAsyncSelect(cv->s, cv->HWin, WM_USER_COMMNOTIFY, FD_OOB | FD_CLOSE);
+		}
+		break;
+	case IdSerial:
+		break;
 	}
 	cv->RRQ = TRUE;
 	CommReceive(cv);
@@ -889,121 +891,121 @@ void CommReceive(PComVar cv)
 	DWORD C;
 	DWORD DErr;
 
-	if (! cv->Ready || ! cv->RRQ ||
-	    (cv->InBuffCount>=InBuffSize)) {
+	if (!cv->Ready || !cv->RRQ ||
+		(cv->InBuffCount >= InBuffSize)) {
 		return;
 	}
 
 	/* Compact buffer */
-	if ((cv->InBuffCount>0) && (cv->InPtr>0)) {
-		memmove(cv->InBuff,&(cv->InBuff[cv->InPtr]),cv->InBuffCount);
+	if ((cv->InBuffCount > 0) && (cv->InPtr > 0)) {
+		memmove(cv->InBuff, &(cv->InBuff[cv->InPtr]), cv->InBuffCount);
 		cv->InPtr = 0;
 	}
 
-	if (cv->InBuffCount<InBuffSize) {
+	if (cv->InBuffCount < InBuffSize) {
 		switch (cv->PortType) {
-			case IdTCPIP:
-				C = Precv(cv->s, &(cv->InBuff[cv->InBuffCount]),
-				          InBuffSize-cv->InBuffCount, 0);
-				if (C == SOCKET_ERROR) {
-					C = 0;
-					PWSAGetLastError();
-				}
-				cv->InBuffCount = cv->InBuffCount + C;
-				break;
-			case IdSerial:
-				do {
-					ClearCommError(cv->ComID,&DErr,NULL);
-					if (! PReadFile(cv->ComID,&(cv->InBuff[cv->InBuffCount]),
-					                InBuffSize-cv->InBuffCount,&C,&rol)) {
-						if (GetLastError() == ERROR_IO_PENDING) {
-							if (WaitForSingleObject(rol.hEvent, 1000) != WAIT_OBJECT_0) {
-								C = 0;
-							}
-							else {
-								GetOverlappedResult(cv->ComID,&rol,&C,FALSE);
-							}
-						}
-						else {
+		case IdTCPIP:
+			C = Precv(cv->s, &(cv->InBuff[cv->InBuffCount]),
+				InBuffSize - cv->InBuffCount, 0);
+			if (C == SOCKET_ERROR) {
+				C = 0;
+				PWSAGetLastError();
+			}
+			cv->InBuffCount = cv->InBuffCount + C;
+			break;
+		case IdSerial:
+			do {
+				ClearCommError(cv->ComID, &DErr, NULL);
+				if (!PReadFile(cv->ComID, &(cv->InBuff[cv->InBuffCount]),
+					InBuffSize - cv->InBuffCount, &C, &rol)) {
+					if (GetLastError() == ERROR_IO_PENDING) {
+						if (WaitForSingleObject(rol.hEvent, 1000) != WAIT_OBJECT_0) {
 							C = 0;
 						}
+						else {
+							GetOverlappedResult(cv->ComID, &rol, &C, FALSE);
+						}
 					}
+					else {
+						C = 0;
+					}
+				}
+				cv->InBuffCount = cv->InBuffCount + C;
+			} while ((C != 0) && (cv->InBuffCount < InBuffSize));
+			ClearCommError(cv->ComID, &DErr, NULL);
+			break;
+		case IdFile:
+			if (PReadFile(cv->ComID, &(cv->InBuff[cv->InBuffCount]),
+				InBuffSize - cv->InBuffCount, &C, NULL)) {
+				if (C == 0) {
+					DErr = ERROR_HANDLE_EOF;
+				}
+				else {
 					cv->InBuffCount = cv->InBuffCount + C;
-				} while ((C!=0) && (cv->InBuffCount<InBuffSize));
-				ClearCommError(cv->ComID,&DErr,NULL);
-				break;
-			case IdFile:
-				if (PReadFile(cv->ComID,&(cv->InBuff[cv->InBuffCount]),
-				              InBuffSize-cv->InBuffCount,&C,NULL)) {
-					if (C == 0) {
-						DErr = ERROR_HANDLE_EOF;
-					}
-					else {
-						cv->InBuffCount = cv->InBuffCount + C;
-					}
+				}
+			}
+			else {
+				DErr = GetLastError();
+			}
+			break;
+
+		case IdNamedPipe:
+			// ã‚­ãƒ¥ãƒ¼ã®ä¸­ã«æœ€ä½1ãƒã‚¤ãƒˆä»¥ä¸Šã®ãƒ‡ãƒ¼ã‚¿ãŒå…¥ã£ã¦ã„ã‚‹ã“ã¨ã‚’ç¢ºèªã§ãã¦ã„ã‚‹ãŸã‚ã€
+			// ReadFile() ã¯ãƒ–ãƒ­ãƒƒã‚¯ã™ã‚‹ã“ã¨ã¯ãªã„ãŸã‚ã€ä¸€æ‹¬ã—ã¦èª­ã‚€ã€‚
+			if (PReadFile(cv->ComID, &(cv->InBuff[cv->InBuffCount]),
+				InBuffSize - cv->InBuffCount, &C, NULL)) {
+				if (C == 0) {
+					DErr = ERROR_HANDLE_EOF;
 				}
 				else {
-					DErr = GetLastError();
+					cv->InBuffCount = cv->InBuffCount + C;
 				}
-				break;
+			}
+			else {
+				DErr = GetLastError();
+			}
 
-			case IdNamedPipe:
-				// ƒLƒ…[‚Ì’†‚ÉÅ’á1ƒoƒCƒgˆÈã‚Ìƒf[ƒ^‚ª“ü‚Á‚Ä‚¢‚é‚±‚Æ‚ğŠm”F‚Å‚«‚Ä‚¢‚é‚½‚ßA
-				// ReadFile() ‚ÍƒuƒƒbƒN‚·‚é‚±‚Æ‚Í‚È‚¢‚½‚ßAˆêŠ‡‚µ‚Ä“Ç‚ŞB
-				if (PReadFile(cv->ComID,&(cv->InBuff[cv->InBuffCount]),
-				              InBuffSize-cv->InBuffCount,&C,NULL)) {
-					if (C == 0) {
-						DErr = ERROR_HANDLE_EOF;
-					}
-					else {
-						cv->InBuffCount = cv->InBuffCount + C;
-					}
-				}
-				else {
-					DErr = GetLastError();
-				}
-
-				// 1ƒoƒCƒgˆÈã“Ç‚ß‚½‚çAƒCƒxƒ“ƒg‚ğ‹N‚±‚µAƒXƒŒƒbƒh‚ğÄŠJ‚³‚¹‚éB
-				if (cv->InBuffCount > 0) {
-					cv->RRQ = FALSE;
-					SetEvent(ReadEnd);
-				}
-				break;
+			// 1ãƒã‚¤ãƒˆä»¥ä¸Šèª­ã‚ãŸã‚‰ã€ã‚¤ãƒ™ãƒ³ãƒˆã‚’èµ·ã“ã—ã€ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’å†é–‹ã•ã›ã‚‹ã€‚
+			if (cv->InBuffCount > 0) {
+				cv->RRQ = FALSE;
+				SetEvent(ReadEnd);
+			}
+			break;
 		}
 	}
 
-	if (cv->InBuffCount==0) {
+	if (cv->InBuffCount == 0) {
 		switch (cv->PortType) {
-			case IdTCPIP:
-				if (! TCPIPClosed) {
-					PWSAAsyncSelect(cv->s,cv->HWin, WM_USER_COMMNOTIFY,
-					                FD_READ | FD_OOB | FD_CLOSE);
-				}
-				break;
-			case IdSerial:
+		case IdTCPIP:
+			if (!TCPIPClosed) {
+				PWSAAsyncSelect(cv->s, cv->HWin, WM_USER_COMMNOTIFY,
+					FD_READ | FD_OOB | FD_CLOSE);
+			}
+			break;
+		case IdSerial:
+			cv->RRQ = FALSE;
+			SetEvent(ReadEnd);
+			return;
+		case IdFile:
+			if (DErr != ERROR_IO_PENDING) {
+				PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
 				cv->RRQ = FALSE;
-				SetEvent(ReadEnd);
-				return;
-			case IdFile:
-				if (DErr != ERROR_IO_PENDING) {
-					PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
-					cv->RRQ = FALSE;
-				}
-				else {
-					cv->RRQ = TRUE;
-				}
-				return;
-			case IdNamedPipe:
-				// TODO: ‚½‚Ô‚ñA‚±‚±‚É—ˆ‚é‚±‚Æ‚Í‚È‚¢B
-				if (DErr != ERROR_IO_PENDING) {
-					PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
-					cv->RRQ = FALSE;
-				}
-				else {
-					cv->RRQ = TRUE;
-				}
-				SetEvent(ReadEnd);
-				return;
+			}
+			else {
+				cv->RRQ = TRUE;
+			}
+			return;
+		case IdNamedPipe:
+			// TODO: ãŸã¶ã‚“ã€ã“ã“ã«æ¥ã‚‹ã“ã¨ã¯ãªã„ã€‚
+			if (DErr != ERROR_IO_PENDING) {
+				PostMessage(cv->HWin, WM_USER_COMMNOTIFY, 0, FD_CLOSE);
+				cv->RRQ = FALSE;
+			}
+			else {
+				cv->RRQ = TRUE;
+			}
+			SetEvent(ReadEnd);
+			return;
 		}
 		cv->RRQ = FALSE;
 	}
@@ -1017,39 +1019,39 @@ void CommSend(PComVar cv)
 	int C, D, Max;
 	DWORD DErr;
 
-	if ((! cv->Open) || (! cv->Ready)) {
+	if ((!cv->Open) || (!cv->Ready)) {
 		cv->OutBuffCount = 0;
 		return;
 	}
 
-	if ((cv->OutBuffCount == 0) || (! cv->CanSend)) {
+	if ((cv->OutBuffCount == 0) || (!cv->CanSend)) {
 		return;
 	}
 
 	/* Max num of bytes to be written */
 	switch (cv->PortType) {
-		case IdTCPIP:
-			if (TCPIPClosed) {
-				cv->OutBuffCount = 0;
-			}
-			Max = cv->OutBuffCount;
-			break;
-		case IdSerial:
-			ClearCommError(cv->ComID,&DErr,&Stat);
-			Max = OutBuffSize - Stat.cbOutQue;
-			break;
-		case IdFile:
-			Max = cv->OutBuffCount;
-			break;
-		case IdNamedPipe:
-			Max = cv->OutBuffCount;
-			break;
+	case IdTCPIP:
+		if (TCPIPClosed) {
+			cv->OutBuffCount = 0;
+		}
+		Max = cv->OutBuffCount;
+		break;
+	case IdSerial:
+		ClearCommError(cv->ComID, &DErr, &Stat);
+		Max = OutBuffSize - Stat.cbOutQue;
+		break;
+	case IdFile:
+		Max = cv->OutBuffCount;
+		break;
+	case IdNamedPipe:
+		Max = cv->OutBuffCount;
+		break;
 	}
 
-	if ( Max<=0 ) {
+	if (Max <= 0) {
 		return;
 	}
-	if ( Max > cv->OutBuffCount ) {
+	if (Max > cv->OutBuffCount) {
 		Max = cv->OutBuffCount;
 	}
 
@@ -1060,28 +1062,28 @@ void CommSend(PComVar cv)
 	C = Max;
 	delay = 0;
 
-	if ( cv->DelayFlag && (cv->PortType==IdSerial) ) {
-		if ( cv->DelayPerLine > 0 ) {
-			if ( cv->CRSend==IdCR ) {
+	if (cv->DelayFlag && (cv->PortType == IdSerial)) {
+		if (cv->DelayPerLine > 0) {
+			if (cv->CRSend == IdCR) {
 				LineEnd = 0x0d;
 			}
 			else { // CRLF or LF
 				LineEnd = 0x0a;
 			}
 			C = 1;
-			if ( cv->DelayPerChar==0 ) {
-				while ((C<Max) && (cv->OutBuff[cv->OutPtr+C-1]!=LineEnd)) {
+			if (cv->DelayPerChar == 0) {
+				while ((C < Max) && (cv->OutBuff[cv->OutPtr + C - 1] != LineEnd)) {
 					C++;
 				}
 			}
-			if ( cv->OutBuff[cv->OutPtr+C-1]==LineEnd ) {
+			if (cv->OutBuff[cv->OutPtr + C - 1] == LineEnd) {
 				delay = cv->DelayPerLine;
 			}
 			else {
 				delay = cv->DelayPerChar;
 			}
 		}
-		else if ( cv->DelayPerChar > 0 ) {
+		else if (cv->DelayPerChar > 0) {
 			C = 1;
 			delay = cv->DelayPerChar;
 		}
@@ -1089,59 +1091,59 @@ void CommSend(PComVar cv)
 
 	/* Write to comm driver/Winsock */
 	switch (cv->PortType) {
-		case IdTCPIP:
-			D = Psend(cv->s, &(cv->OutBuff[cv->OutPtr]), C, 0);
-			if ( D==SOCKET_ERROR ) { /* if error occurs */
-				PWSAGetLastError(); /* Clear error */
-				D = 0;
-			}
-			break;
+	case IdTCPIP:
+		D = Psend(cv->s, &(cv->OutBuff[cv->OutPtr]), C, 0);
+		if (D == SOCKET_ERROR) { /* if error occurs */
+			PWSAGetLastError(); /* Clear error */
+			D = 0;
+		}
+		break;
 
-		case IdSerial:
-			if (! PWriteFile(cv->ComID,&(cv->OutBuff[cv->OutPtr]),C,(LPDWORD)&D,&wol)) {
-				if (GetLastError() == ERROR_IO_PENDING) {
-					if (WaitForSingleObject(wol.hEvent,1000) != WAIT_OBJECT_0) {
-						D = C; /* Time out, ignore data */
-					}
-					else {
-						GetOverlappedResult(cv->ComID,&wol,(LPDWORD)&D,FALSE);
-					}
+	case IdSerial:
+		if (!PWriteFile(cv->ComID, &(cv->OutBuff[cv->OutPtr]), C, (LPDWORD)&D, &wol)) {
+			if (GetLastError() == ERROR_IO_PENDING) {
+				if (WaitForSingleObject(wol.hEvent, 1000) != WAIT_OBJECT_0) {
+					D = C; /* Time out, ignore data */
 				}
-				else { /* I/O error */
-					D = C; /* ignore error */
+				else {
+					GetOverlappedResult(cv->ComID, &wol, (LPDWORD)&D, FALSE);
 				}
 			}
-			ClearCommError(cv->ComID,&DErr,&Stat);
-			break;
+			else { /* I/O error */
+				D = C; /* ignore error */
+			}
+		}
+		ClearCommError(cv->ComID, &DErr, &Stat);
+		break;
 
-		case IdFile:
-			if (! PWriteFile(cv->ComID, &(cv->OutBuff[cv->OutPtr]), C, (LPDWORD)&D, NULL)) {
-				if (! GetLastError() == ERROR_IO_PENDING) {
-					D = C; /* ignore data */
-				}
+	case IdFile:
+		if (!PWriteFile(cv->ComID, &(cv->OutBuff[cv->OutPtr]), C, (LPDWORD)&D, NULL)) {
+			if (!GetLastError() == ERROR_IO_PENDING) {
+				D = C; /* ignore data */
 			}
-			break;
+		}
+		break;
 
-		case IdNamedPipe:
-			if (! PWriteFile(cv->ComID, &(cv->OutBuff[cv->OutPtr]), C, (LPDWORD)&D, NULL)) {
-				// ERROR_IO_PENDING ˆÈŠO‚ÌƒGƒ‰[‚¾‚Á‚½‚çAƒpƒCƒv‚ªƒNƒ[ƒY‚³‚ê‚Ä‚¢‚é‚©‚à‚µ‚ê‚È‚¢‚ªA
-				// ‘—M‚Å‚«‚½‚±‚Æ‚É‚·‚éB
-				if (! (GetLastError() == ERROR_IO_PENDING)) {
-					D = C; /* ignore data */
-				}
+	case IdNamedPipe:
+		if (!PWriteFile(cv->ComID, &(cv->OutBuff[cv->OutPtr]), C, (LPDWORD)&D, NULL)) {
+			// ERROR_IO_PENDING ä»¥å¤–ã®ã‚¨ãƒ©ãƒ¼ã ã£ãŸã‚‰ã€ãƒ‘ã‚¤ãƒ—ãŒã‚¯ãƒ­ãƒ¼ã‚ºã•ã‚Œã¦ã„ã‚‹ã‹ã‚‚ã—ã‚Œãªã„ãŒã€
+			// é€ä¿¡ã§ããŸã“ã¨ã«ã™ã‚‹ã€‚
+			if (!(GetLastError() == ERROR_IO_PENDING)) {
+				D = C; /* ignore data */
 			}
-			break;
+		}
+		break;
 	}
 
 	cv->OutBuffCount = cv->OutBuffCount - D;
-	if ( cv->OutBuffCount==0 ) {
+	if (cv->OutBuffCount == 0) {
 		cv->OutPtr = 0;
 	}
 	else {
 		cv->OutPtr = cv->OutPtr + D;
 	}
 
-	if ( (C==D) && (delay>0) ) {
+	if ((C == D) && (delay > 0)) {
 		cv->CanSend = FALSE;
 		SetTimer(cv->HWin, IdDelayTimer, delay, NULL);
 	}
@@ -1152,23 +1154,23 @@ void CommSendBreak(PComVar cv, int msec)
 {
 	MSG DummyMsg;
 
-	if ( ! cv->Ready ) {
+	if (!cv->Ready) {
 		return;
 	}
 
 	switch (cv->PortType) {
-		case IdSerial:
-			/* Set com port into a break state */
-			SetCommBreak(cv->ComID);
+	case IdSerial:
+		/* Set com port into a break state */
+		SetCommBreak(cv->ComID);
 
-			/* pause for 1 sec */
-			if (SetTimer(cv->HWin, IdBreakTimer, msec, NULL) != 0) {
-				GetMessage(&DummyMsg,cv->HWin,WM_TIMER,WM_TIMER);
-			}
+		/* pause for 1 sec */
+		if (SetTimer(cv->HWin, IdBreakTimer, msec, NULL) != 0) {
+			GetMessage(&DummyMsg, cv->HWin, WM_TIMER, WM_TIMER);
+		}
 
-			/* Set com port into the nonbreak state */
-			ClearCommBreak(cv->ComID);
-			break;
+		/* Set com port into the nonbreak state */
+		ClearCommBreak(cv->ComID);
+		break;
 	}
 }
 
@@ -1177,29 +1179,29 @@ void CommLock(PTTSet ts, PComVar cv, BOOL Lock)
 	BYTE b;
 	DWORD Func;
 
-	if (! cv->Ready) {
+	if (!cv->Ready) {
 		return;
 	}
-	if ((cv->PortType==IdTCPIP) ||
-	    (cv->PortType==IdSerial) &&
-	    (ts->Flow!=IdFlowHard)) {
+	if ((cv->PortType == IdTCPIP) ||
+		(cv->PortType == IdSerial) &&
+		(ts->Flow != IdFlowHard)) {
 		if (Lock) {
 			b = XOFF;
 		}
 		else {
 			b = XON;
 		}
-		CommBinaryOut(cv,&b,1);
+		CommBinaryOut(cv, &b, 1);
 	}
-	else if ((cv->PortType==IdSerial) &&
-	         (ts->Flow==IdFlowHard)) {
+	else if ((cv->PortType == IdSerial) &&
+		(ts->Flow == IdFlowHard)) {
 		if (Lock) {
 			Func = CLRRTS;
 		}
 		else {
 			Func = SETRTS;
 		}
-		EscapeCommFunction(cv->ComID,Func);
+		EscapeCommFunction(cv->ComID, Func);
 	}
 }
 
@@ -1210,49 +1212,49 @@ BOOL PrnOpen(PCHAR DevName)
 	DWORD DErr;
 	COMMTIMEOUTS ctmo;
 
-	strncpy_s(Temp, sizeof(Temp),DevName, _TRUNCATE);
+	strncpy_s(Temp, sizeof(Temp), DevName, _TRUNCATE);
 	c = Temp;
 	while (*c != '\0' && *c != ':') {
 		c++;
 	}
 	*c = '\0';
-	LPTFlag = (Temp[0]=='L') ||
-	          (Temp[0]=='l');
+	LPTFlag = (Temp[0] == 'L') ||
+		(Temp[0] == 'l');
 
 	if (IsWindowsNTKernel()) {
-		// ƒlƒbƒgƒ[ƒN‹¤—L‚Éƒ}ƒbƒv‚³‚ê‚½ƒfƒoƒCƒX‚ª‘Šè‚Ìê‡A‚±‚¤‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢‚ç‚µ‚¢ (2011.01.25 maya)
+		// ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å…±æœ‰ã«ãƒãƒƒãƒ—ã•ã‚ŒãŸãƒ‡ãƒã‚¤ã‚¹ãŒç›¸æ‰‹ã®å ´åˆã€ã“ã†ã—ãªã„ã¨ã„ã‘ãªã„ã‚‰ã—ã„ (2011.01.25 maya)
 		// http://logmett.com/forum/viewtopic.php?f=2&t=1383
 		// http://msdn.microsoft.com/en-us/library/aa363858(v=vs.85).aspx#5
-		PrnID = CreateFile(Temp,GENERIC_WRITE | FILE_READ_ATTRIBUTES,
-		                   FILE_SHARE_READ,NULL,CREATE_ALWAYS,
-		                   0,NULL);
+		PrnID = CreateFile(Temp, GENERIC_WRITE | FILE_READ_ATTRIBUTES,
+			FILE_SHARE_READ, NULL, CREATE_ALWAYS,
+			0, NULL);
 	}
 	else {
-		// 9x ‚Å‚Íã‹L‚ÌƒR[ƒh‚Å‚¤‚Ü‚­‚¢‚©‚È‚¢‚Ì‚Å]—ˆ’Ê‚è‚Ìˆ—
-		PrnID = CreateFile(Temp,GENERIC_WRITE,
-		                   0,NULL,OPEN_EXISTING,
-		                   0,NULL);
+		// 9x ã§ã¯ä¸Šè¨˜ã®ã‚³ãƒ¼ãƒ‰ã§ã†ã¾ãã„ã‹ãªã„ã®ã§å¾“æ¥é€šã‚Šã®å‡¦ç†
+		PrnID = CreateFile(Temp, GENERIC_WRITE,
+			0, NULL, OPEN_EXISTING,
+			0, NULL);
 	}
 
 	if (PrnID == INVALID_HANDLE_VALUE) {
 		return FALSE;
 	}
 
-	if (GetCommState(PrnID,&dcb)) {
-		BuildCommDCB(DevName,&dcb);
-		SetCommState(PrnID,&dcb);
+	if (GetCommState(PrnID, &dcb)) {
+		BuildCommDCB(DevName, &dcb);
+		SetCommState(PrnID, &dcb);
 	}
-	ClearCommError(PrnID,&DErr,NULL);
-	if (! LPTFlag) {
-		SetupComm(PrnID,0,CommOutQueSize);
+	ClearCommError(PrnID, &DErr, NULL);
+	if (!LPTFlag) {
+		SetupComm(PrnID, 0, CommOutQueSize);
 	}
 	/* flush output buffer */
 	PurgeComm(PrnID, PURGE_TXABORT | PURGE_TXCLEAR);
-	memset(&ctmo,0,sizeof(ctmo));
+	memset(&ctmo, 0, sizeof(ctmo));
 	ctmo.WriteTotalTimeoutConstant = 1000;
-	SetCommTimeouts(PrnID,&ctmo);
-	if (! LPTFlag) {
-		EscapeCommFunction(PrnID,SETDTR);
+	SetCommTimeouts(PrnID, &ctmo);
+	if (!LPTFlag) {
+		EscapeCommFunction(PrnID, SETDTR);
 	}
 	return TRUE;
 }
@@ -1263,22 +1265,22 @@ int PrnWrite(PCHAR b, int c)
 	DWORD DErr;
 	COMSTAT Stat;
 
-	if (PrnID == INVALID_HANDLE_VALUE ) {
+	if (PrnID == INVALID_HANDLE_VALUE) {
 		return c;
 	}
 
-	ClearCommError(PrnID,&DErr,&Stat);
-	if (! LPTFlag &&
+	ClearCommError(PrnID, &DErr, &Stat);
+	if (!LPTFlag &&
 		(OutBuffSize - (int)Stat.cbOutQue < c)) {
 		c = OutBuffSize - Stat.cbOutQue;
 	}
-	if (c<=0) {
+	if (c <= 0) {
 		return 0;
 	}
-	if (! WriteFile(PrnID,b,c,(LPDWORD)&d,NULL)) {
+	if (!WriteFile(PrnID, b, c, (LPDWORD)&d, NULL)) {
 		d = 0;
 	}
-	ClearCommError(PrnID,&DErr,NULL);
+	ClearCommError(PrnID, &DErr, NULL);
 	return d;
 }
 
@@ -1292,7 +1294,7 @@ void PrnClose()
 {
 	if (PrnID != INVALID_HANDLE_VALUE) {
 		if (!LPTFlag) {
-			EscapeCommFunction(PrnID,CLRDTR);
+			EscapeCommFunction(PrnID, CLRDTR);
 		}
 		CloseHandle(PrnID);
 	}

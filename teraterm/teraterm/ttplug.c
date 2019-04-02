@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) Robert O'Callahan
  * (C) 2004-2017 TeraTerm Project
@@ -31,7 +31,7 @@
 #include "tttypes.h"
 #include "ttlib.h"
 
-// #include <windows.h>
+ // #include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -53,233 +53,234 @@ static int NumExtensions = 0;
 static TTXExports * * Extensions;
 
 typedef struct _ExtensionList {
-  TTXExports * exports;
-  struct _ExtensionList * next;
+	TTXExports * exports;
+	struct _ExtensionList * next;
 } ExtensionList;
 
 static int compareOrder(const void * e1, const void * e2) {
-  TTXExports * * exports1 = (TTXExports * *)e1;
-  TTXExports * * exports2 = (TTXExports * *)e2;
+	TTXExports * * exports1 = (TTXExports * *)e1;
+	TTXExports * * exports2 = (TTXExports * *)e2;
 
-  return (*exports1)->loadOrder - (*exports2)->loadOrder;
+	return (*exports1)->loadOrder - (*exports2)->loadOrder;
 }
 
 static void loadExtension(ExtensionList * * extensions, char const * fileName) {
-  char buf[1024];
-  DWORD err;
-  char uimsg[MAX_UIMSG];
+	char buf[1024];
+	DWORD err;
+	char uimsg[MAX_UIMSG];
 
-  if (NumExtensions>=MAXNUMEXTENSIONS) return;
-  LibHandle[NumExtensions] = LoadLibrary(fileName);
-  if (LibHandle[NumExtensions] != NULL) {
-    TTXBindProc bind = (TTXBindProc)GetProcAddress(LibHandle[NumExtensions], "_TTXBind@8");
-    if (bind==NULL)
-      bind = (TTXBindProc)GetProcAddress(LibHandle[NumExtensions], "TTXBind");
-    if (bind != NULL) {
-      ExtensionList * newExtension =
-        (ExtensionList *)malloc(sizeof(ExtensionList));
+	if (NumExtensions >= MAXNUMEXTENSIONS) return;
+	LibHandle[NumExtensions] = LoadLibrary(fileName);
+	if (LibHandle[NumExtensions] != NULL) {
+		TTXBindProc bind = (TTXBindProc)GetProcAddress(LibHandle[NumExtensions], "_TTXBind@8");
+		if (bind == NULL)
+			bind = (TTXBindProc)GetProcAddress(LibHandle[NumExtensions], "TTXBind");
+		if (bind != NULL) {
+			ExtensionList * newExtension =
+				(ExtensionList *)malloc(sizeof(ExtensionList));
 
-      newExtension->exports = (TTXExports *)malloc(sizeof(TTXExports));
-      memset(newExtension->exports, 0, sizeof(TTXExports));
-      newExtension->exports->size = sizeof(TTXExports);
-      if (bind(TTVERSION,(TTXExports *)newExtension->exports)) {
-        newExtension->next = *extensions;
-        *extensions = newExtension;
-        NumExtensions++;
-        return;
-      } else {
-	free(newExtension->exports);
-	free(newExtension);
-      }
-    }
-    FreeLibrary(LibHandle[NumExtensions]);
-  }
+			newExtension->exports = (TTXExports *)malloc(sizeof(TTXExports));
+			memset(newExtension->exports, 0, sizeof(TTXExports));
+			newExtension->exports->size = sizeof(TTXExports);
+			if (bind(TTVERSION, (TTXExports *)newExtension->exports)) {
+				newExtension->next = *extensions;
+				*extensions = newExtension;
+				NumExtensions++;
+				return;
+			}
+			else {
+				free(newExtension->exports);
+				free(newExtension);
+			}
+		}
+		FreeLibrary(LibHandle[NumExtensions]);
+	}
 
-  err = GetLastError();
-  // Œ¾Œêƒtƒ@ƒCƒ‹‚É‚æ‚éƒƒbƒZ[ƒW‚Ì‘Û‰»‚ðs‚Á‚Ä‚¢‚é‚ªA‚±‚ÌŽž“_‚Å‚ÍÝ’è‚ª
-  // ‚Ü‚¾“Ç‚Ýž‚Ü‚ê‚Ä‚¢‚È‚¢ˆ×AƒƒbƒZ[ƒW‚ª‰pŒê‚Ì‚Ü‚Ü‚Æ‚È‚éB—vŒŸ“¢B
-  get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts.UILanguageFile);
-  get_lang_msg("MSG_LOAD_EXT_ERROR", ts.UIMsg, sizeof(ts.UIMsg), "Cannot load extension %s (%d)", ts.UILanguageFile);
-  _snprintf_s(buf, sizeof(buf), _TRUNCATE, ts.UIMsg, fileName, err);
-  MessageBox(NULL, buf, uimsg, MB_OK | MB_ICONEXCLAMATION);
+	err = GetLastError();
+	// è¨€èªžãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å›½éš›åŒ–ã‚’è¡Œã£ã¦ã„ã‚‹ãŒã€ã“ã®æ™‚ç‚¹ã§ã¯è¨­å®šãŒ
+	// ã¾ã èª­ã¿è¾¼ã¾ã‚Œã¦ã„ãªã„ç‚ºã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒè‹±èªžã®ã¾ã¾ã¨ãªã‚‹ã€‚è¦æ¤œè¨Žã€‚
+	get_lang_msg("MSG_TT_ERROR", uimsg, sizeof(uimsg), "Tera Term: Error", ts.UILanguageFile);
+	get_lang_msg("MSG_LOAD_EXT_ERROR", ts.UIMsg, sizeof(ts.UIMsg), "Cannot load extension %s (%d)", ts.UILanguageFile);
+	_snprintf_s(buf, sizeof(buf), _TRUNCATE, ts.UIMsg, fileName, err);
+	MessageBox(NULL, buf, uimsg, MB_OK | MB_ICONEXCLAMATION);
 }
 
 void PASCAL TTXInit(PTTSet ts, PComVar cv) {
-  ExtensionList * extensionList = NULL;
-  int i;
+	ExtensionList * extensionList = NULL;
+	int i;
 
-  // ŠÂ‹«•Ï”‚ÌÝ’è—L–³‚ÉŠÖ‚í‚ç‚¸ATTX‚ð—LŒø‚É‚·‚éB
-  //if (getenv("TERATERM_EXTENSIONS") != NULL) {
-  if (1) {
-    char buf[1024];
-    struct _finddata_t searchData;
-    long searchHandle;
+	// ç’°å¢ƒå¤‰æ•°ã®è¨­å®šæœ‰ç„¡ã«é–¢ã‚ã‚‰ãšã€TTXã‚’æœ‰åŠ¹ã«ã™ã‚‹ã€‚
+	//if (getenv("TERATERM_EXTENSIONS") != NULL) {
+	if (1) {
+		char buf[1024];
+		struct _finddata_t searchData;
+		long searchHandle;
 
-    _snprintf_s(buf, sizeof(buf), _TRUNCATE, "%s\\TTX*.DLL", ts->HomeDir);
+		_snprintf_s(buf, sizeof(buf), _TRUNCATE, "%s\\TTX*.DLL", ts->HomeDir);
 
-    searchHandle = _findfirst(buf, &searchData);
-    if (searchHandle != -1L) {
-      do {
-	_snprintf_s(buf, sizeof(buf), _TRUNCATE, "%s\\%s", ts->HomeDir, searchData.name);
-	loadExtension(&extensionList, buf);
-      } while (_findnext(searchHandle, &searchData)==0);
-      _findclose(searchHandle);
-    }
+		searchHandle = _findfirst(buf, &searchData);
+		if (searchHandle != -1L) {
+			do {
+				_snprintf_s(buf, sizeof(buf), _TRUNCATE, "%s\\%s", ts->HomeDir, searchData.name);
+				loadExtension(&extensionList, buf);
+			} while (_findnext(searchHandle, &searchData) == 0);
+			_findclose(searchHandle);
+		}
 
-    if (NumExtensions==0) return;
+		if (NumExtensions == 0) return;
 
-    Extensions = (TTXExports * *)malloc(sizeof(TTXExports *)*NumExtensions);
-    for (i = 0; i < NumExtensions; i++) {
-      ExtensionList * old;
+		Extensions = (TTXExports * *)malloc(sizeof(TTXExports *)*NumExtensions);
+		for (i = 0; i < NumExtensions; i++) {
+			ExtensionList * old;
 
-      Extensions[i] = extensionList->exports;
-      old = extensionList;
-      extensionList = extensionList->next;
-      free(old);
-    }
+			Extensions[i] = extensionList->exports;
+			old = extensionList;
+			extensionList = extensionList->next;
+			free(old);
+		}
 
-    qsort(Extensions, NumExtensions, sizeof(Extensions[0]), compareOrder);
+		qsort(Extensions, NumExtensions, sizeof(Extensions[0]), compareOrder);
 
-    for (i = 0; i < NumExtensions; i++) {
-      if (Extensions[i]->TTXInit != NULL) {
-        Extensions[i]->TTXInit(ts, cv);
-      }
-    }
-  }
+		for (i = 0; i < NumExtensions; i++) {
+			if (Extensions[i]->TTXInit != NULL) {
+				Extensions[i]->TTXInit(ts, cv);
+			}
+		}
+	}
 }
 
 void PASCAL TTXInternalOpenTCP(TTXSockHooks * hooks) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXOpenTCP != NULL) {
-      Extensions[i]->TTXOpenTCP(hooks);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXOpenTCP != NULL) {
+			Extensions[i]->TTXOpenTCP(hooks);
+		}
+	}
 }
 
 void PASCAL TTXInternalCloseTCP(TTXSockHooks * hooks) {
-  int i;
+	int i;
 
-  for (i = NumExtensions - 1; i >= 0; i--) {
-    if (Extensions[i]->TTXCloseTCP != NULL) {
-      Extensions[i]->TTXCloseTCP(hooks);
-    }
-  }
+	for (i = NumExtensions - 1; i >= 0; i--) {
+		if (Extensions[i]->TTXCloseTCP != NULL) {
+			Extensions[i]->TTXCloseTCP(hooks);
+		}
+	}
 }
 
 void PASCAL TTXInternalOpenFile(TTXFileHooks * hooks) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXOpenFile != NULL) {
-      Extensions[i]->TTXOpenFile(hooks);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXOpenFile != NULL) {
+			Extensions[i]->TTXOpenFile(hooks);
+		}
+	}
 }
 
 void PASCAL TTXInternalCloseFile(TTXFileHooks * hooks) {
-  int i;
+	int i;
 
-  for (i = NumExtensions - 1; i >= 0; i--) {
-    if (Extensions[i]->TTXCloseFile != NULL) {
-      Extensions[i]->TTXCloseFile(hooks);
-    }
-  }
+	for (i = NumExtensions - 1; i >= 0; i--) {
+		if (Extensions[i]->TTXCloseFile != NULL) {
+			Extensions[i]->TTXCloseFile(hooks);
+		}
+	}
 }
 
 void PASCAL TTXInternalGetUIHooks(TTXUIHooks * hooks) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXGetUIHooks != NULL) {
-      Extensions[i]->TTXGetUIHooks(hooks);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXGetUIHooks != NULL) {
+			Extensions[i]->TTXGetUIHooks(hooks);
+		}
+	}
 }
 
 void PASCAL TTXInternalGetSetupHooks(TTXSetupHooks * hooks) {
-  int i;
+	int i;
 
-  for (i = NumExtensions - 1; i >= 0; i--) {
-    if (Extensions[i]->TTXGetSetupHooks != NULL) {
-      Extensions[i]->TTXGetSetupHooks(hooks);
-    }
-  }
+	for (i = NumExtensions - 1; i >= 0; i--) {
+		if (Extensions[i]->TTXGetSetupHooks != NULL) {
+			Extensions[i]->TTXGetSetupHooks(hooks);
+		}
+	}
 }
 
 void PASCAL TTXSetWinSize(int rows, int cols) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXSetWinSize != NULL) {
-      Extensions[i]->TTXSetWinSize(rows, cols);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXSetWinSize != NULL) {
+			Extensions[i]->TTXSetWinSize(rows, cols);
+		}
+	}
 }
 
 void PASCAL TTXModifyMenu(HMENU menu) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXModifyMenu != NULL) {
-      Extensions[i]->TTXModifyMenu(menu);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXModifyMenu != NULL) {
+			Extensions[i]->TTXModifyMenu(menu);
+		}
+	}
 }
 
 void PASCAL TTXModifyPopupMenu(HMENU menu) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXModifyPopupMenu != NULL) {
-      Extensions[i]->TTXModifyPopupMenu(menu);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXModifyPopupMenu != NULL) {
+			Extensions[i]->TTXModifyPopupMenu(menu);
+		}
+	}
 }
 
 BOOL PASCAL TTXProcessCommand(HWND hWin, WORD cmd) {
-  int i;
+	int i;
 
-  for (i = NumExtensions - 1; i >= 0; i--) {
-    if (Extensions[i]->TTXProcessCommand != NULL) {
-      if (Extensions[i]->TTXProcessCommand(hWin,cmd)) {
-        return TRUE;
-      }
-    }
-  }
+	for (i = NumExtensions - 1; i >= 0; i--) {
+		if (Extensions[i]->TTXProcessCommand != NULL) {
+			if (Extensions[i]->TTXProcessCommand(hWin, cmd)) {
+				return TRUE;
+			}
+		}
+	}
 
-  return FALSE;
+	return FALSE;
 }
 
 void PASCAL TTXEnd(void) {
-  int i;
+	int i;
 
-  if (NumExtensions==0) return;
+	if (NumExtensions == 0) return;
 
-  for (i = NumExtensions - 1; i >= 0; i--) {
-    if (Extensions[i]->TTXEnd != NULL) {
-      Extensions[i]->TTXEnd();
-    }
-  }
+	for (i = NumExtensions - 1; i >= 0; i--) {
+		if (Extensions[i]->TTXEnd != NULL) {
+			Extensions[i]->TTXEnd();
+		}
+	}
 
-  for (i=0; i<NumExtensions; i++)
-    FreeLibrary(LibHandle[i]);
+	for (i = 0; i < NumExtensions; i++)
+		FreeLibrary(LibHandle[i]);
 
-  for (i = 0; i < NumExtensions; i++) {
-	  free(Extensions[i]);
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		free(Extensions[i]);
+	}
 
-  free(Extensions);
-  NumExtensions = 0;
+	free(Extensions);
+	NumExtensions = 0;
 }
 
 void PASCAL TTXSetCommandLine(PCHAR cmd, int cmdlen, PGetHNRec rec) {
-  int i;
+	int i;
 
-  for (i = 0; i < NumExtensions; i++) {
-    if (Extensions[i]->TTXSetCommandLine != NULL) {
-      Extensions[i]->TTXSetCommandLine(cmd, cmdlen, rec);
-    }
-  }
+	for (i = 0; i < NumExtensions; i++) {
+		if (Extensions[i]->TTXSetCommandLine != NULL) {
+			Extensions[i]->TTXSetCommandLine(cmd, cmdlen, rec);
+		}
+	}
 }

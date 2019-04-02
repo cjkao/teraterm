@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2004-2019 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* TERATERM.EXE, VT terminal emulation */
+ /* TERATERM.EXE, VT terminal emulation */
 #include "teraterm.h"
 #include "tttypes.h"
 #include <stdio.h>
@@ -69,7 +69,7 @@ void ParseFirst(BYTE b);
 #define MAPSIZE(x) (sizeof(x)/sizeof((x)[0]))
 #define Accept8BitCtrl ((VTlevel >= 2) && (ts.TermFlag & TF_ACCEPT8BITCTRL))
 
-  /* Parsing modes */
+/* Parsing modes */
 #define ModeFirst 0
 #define ModeESC   1
 #define ModeDCS   2
@@ -113,8 +113,8 @@ static BOOL BracketedPaste;
 
 char BracketStart[] = "\033[200~";
 char BracketEnd[] = "\033[201~";
-int BracketStartLen = (sizeof(BracketStart)-1);
-int BracketEndLen = (sizeof(BracketEnd)-1);
+int BracketStartLen = (sizeof(BracketStart) - 1);
+int BracketEndLen = (sizeof(BracketEnd) - 1);
 
 static int VTlevel;
 
@@ -143,11 +143,11 @@ static BOOL EUCkanaIn, EUCsupIn;
 static int  EUCcount;
 static BOOL Special;
 
-static int Param[NParamMax+1];
-static int SubParam[NParamMax+1][NSParamMax+1];
-static int NParam, NSParam[NParamMax+1];
+static int Param[NParamMax + 1];
+static int SubParam[NParamMax + 1][NSParamMax + 1];
+static int NParam, NSParam[NParamMax + 1];
 static BOOL FirstPrm;
-static BYTE IntChar[IntCharMax+1];
+static BYTE IntChar[IntCharMax + 1];
 static int ICount;
 static BYTE Prv;
 static int ParseMode;
@@ -177,17 +177,17 @@ static WORD Kanji;
 static BOOL Fallbacked;
 
 // variables for status line mode
-static int StatusX=0;
-static BOOL StatusWrap=FALSE;
-static BOOL StatusCursor=TRUE;
+static int StatusX = 0;
+static BOOL StatusWrap = FALSE;
+static BOOL StatusCursor = TRUE;
 static int MainX, MainY; //cursor registers
 static int MainTop, MainBottom; // scroll region registers
 static BOOL MainWrap;
-static BOOL MainCursor=TRUE;
+static BOOL MainCursor = TRUE;
 
 /* status for printer escape sequences */
 static BOOL PrintEX = TRUE; // printing extent
-			    // (TRUE: screen, FALSE: scroll region)
+				// (TRUE: screen, FALSE: scroll region)
 static BOOL AutoPrintMode = FALSE;
 static BOOL PrinterMode = FALSE;
 static BOOL DirectPrn = FALSE;
@@ -225,13 +225,13 @@ void ResetSBuffer(PStatusBuff sbuff)
 	sbuff->CursorX = 0;
 	sbuff->CursorY = 0;
 	sbuff->Attr = DefCharAttr;
-	if (ts.Language==IdJapanese) {
+	if (ts.Language == IdJapanese) {
 		sbuff->Gn[0] = IdASCII;
 		sbuff->Gn[1] = IdKatakana;
 		sbuff->Gn[2] = IdKatakana;
 		sbuff->Gn[3] = IdKanji;
 		sbuff->Glr[0] = 0;
-		if ((ts.KanjiCode==IdJIS) && (ts.JIS7Katakana==0))
+		if ((ts.KanjiCode == IdJIS) && (ts.JIS7Katakana == 0))
 			sbuff->Glr[1] = 2;	// 8-bit katakana
 		else
 			sbuff->Glr[1] = 3;
@@ -351,13 +351,13 @@ void ResetTerminal() /*reset variables but don't update screen */
 void ResetCharSet()
 {
 	char *result;
-	if (ts.Language==IdJapanese) {
+	if (ts.Language == IdJapanese) {
 		Gn[0] = IdASCII;
 		Gn[1] = IdKatakana;
 		Gn[2] = IdKatakana;
 		Gn[3] = IdKanji;
 		Glr[0] = 0;
-		if ((ts.KanjiCode==IdJIS) && (ts.JIS7Katakana==0))
+		if ((ts.KanjiCode == IdJIS) && (ts.JIS7Katakana == 0))
 			Glr[1] = 2;	// 8-bit katakana
 		else
 			Glr[1] = 3;
@@ -391,16 +391,16 @@ void ResetCharSet()
 	cv.KanjiIn = ts.KanjiIn;
 	cv.KanjiOut = ts.KanjiOut;
 
-	// ÉçÉPÅ[ÉãÇÃê›íË
-	// wctomb ÇÃÇΩÇﬂ
+	// „É≠„Ç±„Éº„É´„ÅÆË®≠ÂÆö
+	// wctomb „ÅÆ„Åü„ÇÅ
 	result = setlocale(LC_ALL, ts.Locale);
-    if (result == NULL) {
-		// Ç®Ç©ÇµÇ»Localeï∂éöóÒÇ™ÉZÉbÉgÇ≥ÇÍÇƒÇ¢ÇÈ?
-		// defaultÇÉZÉbÉgÇµÇƒÇ®Ç≠
+	if (result == NULL) {
+		// „Åä„Åã„Åó„Å™LocaleÊñáÂ≠óÂàó„Åå„Çª„ÉÉ„Éà„Åï„Çå„Å¶„ÅÑ„Çã?
+		// default„Çí„Çª„ÉÉ„Éà„Åó„Å¶„Åä„Åè
 		strcpy(ts.Locale, DEFAULT_LOCALE);
 		result = setlocale(LC_ALL, ts.Locale);
 	}
-	ts.CodePage = atoi(strrchr(result, '.')+1);
+	ts.CodePage = atoi(strrchr(result, '.') + 1);
 }
 
 void ResetKeypadMode(BOOL DisabledModeOnly)
@@ -434,8 +434,8 @@ void MoveToStatusLine()
 	MainCursor = IsCaretEnabled();
 
 	DispEnableCaret(StatusCursor);
-	MoveCursor(StatusX, NumOfLines-1); // move to status line
-	CursorTop = NumOfLines-1;
+	MoveCursor(StatusX, NumOfLines - 1); // move to status line
+	CursorTop = NumOfLines - 1;
 	CursorBottom = CursorTop;
 	Wrap = StatusWrap;
 }
@@ -457,7 +457,7 @@ void ChangeTerminalSize(int Nx, int Ny)
 	MainX = 0;
 	MainY = 0;
 	MainTop = 0;
-	MainBottom = NumOfLines-StatusLine-1;
+	MainBottom = NumOfLines - StatusLine - 1;
 }
 
 void SendCSIstr(char *str, int len) {
@@ -474,9 +474,9 @@ void SendCSIstr(char *str, int len) {
 	}
 
 	if (Send8BitMode)
-		CommBinaryOut(&cv,"\233", 1);
+		CommBinaryOut(&cv, "\233", 1);
 	else
-		CommBinaryOut(&cv,"\033[", 2);
+		CommBinaryOut(&cv, "\033[", 2);
 
 	CommBinaryOut(&cv, str, l);
 }
@@ -495,19 +495,19 @@ void SendOSCstr(char *str, int len, char TermChar) {
 	}
 
 	if (TermChar == BEL) {
-		CommBinaryOut(&cv,"\033]", 2);
+		CommBinaryOut(&cv, "\033]", 2);
 		CommBinaryOut(&cv, str, l);
-		CommBinaryOut(&cv,"\007", 1);
+		CommBinaryOut(&cv, "\007", 1);
 	}
 	else if (Send8BitMode) {
-		CommBinaryOut(&cv,"\235", 1);
+		CommBinaryOut(&cv, "\235", 1);
 		CommBinaryOut(&cv, str, l);
-		CommBinaryOut(&cv,"\234", 1);
+		CommBinaryOut(&cv, "\234", 1);
 	}
 	else {
-		CommBinaryOut(&cv,"\033]", 2);
+		CommBinaryOut(&cv, "\033]", 2);
 		CommBinaryOut(&cv, str, l);
-		CommBinaryOut(&cv,"\033\\", 2);
+		CommBinaryOut(&cv, "\033\\", 2);
 	}
 
 }
@@ -526,14 +526,14 @@ void SendDCSstr(char *str, int len) {
 	}
 
 	if (Send8BitMode) {
-		CommBinaryOut(&cv,"\220", 1);
+		CommBinaryOut(&cv, "\220", 1);
 		CommBinaryOut(&cv, str, l);
-		CommBinaryOut(&cv,"\234", 1);
+		CommBinaryOut(&cv, "\234", 1);
 	}
 	else {
-		CommBinaryOut(&cv,"\033P", 2);
+		CommBinaryOut(&cv, "\033P", 2);
 		CommBinaryOut(&cv, str, l);
-		CommBinaryOut(&cv,"\033\\", 2);
+		CommBinaryOut(&cv, "\033\\", 2);
 	}
 
 }
@@ -542,20 +542,20 @@ void BackSpace()
 {
 	if (CursorX == CursorLeftM || CursorX == 0) {
 		if (CursorY > 0 && (ts.TermFlag & TF_BACKWRAP)) {
-			MoveCursor(CursorRightM, CursorY-1);
-			if (cv.HLogBuf!=0 && !ts.LogTypePlainText) Log1Byte(BS);
+			MoveCursor(CursorRightM, CursorY - 1);
+			if (cv.HLogBuf != 0 && !ts.LogTypePlainText) Log1Byte(BS);
 		}
 	}
 	else if (CursorX > 0) {
-		MoveCursor(CursorX-1, CursorY);
-		if (cv.HLogBuf!=0 && !ts.LogTypePlainText) Log1Byte(BS);
+		MoveCursor(CursorX - 1, CursorY);
+		if (cv.HLogBuf != 0 && !ts.LogTypePlainText) Log1Byte(BS);
 	}
 }
 
 void CarriageReturn(BOOL logFlag)
 {
 	if (!ts.EnableContinuedLineCopy || logFlag)
-		if (cv.HLogBuf!=0) Log1Byte(CR);
+		if (cv.HLogBuf != 0) Log1Byte(CR);
 
 	if (RelativeOrgMode || CursorX > CursorLeftM)
 		MoveCursor(CursorLeftM, CursorY);
@@ -569,17 +569,17 @@ void LineFeed(BYTE b, BOOL logFlag)
 {
 	/* for auto print mode */
 	if ((AutoPrintMode) &&
-		(b>=LF) && (b<=FF))
+		(b >= LF) && (b <= FF))
 		BuffDumpCurrentLine(b);
 
 	if (!ts.EnableContinuedLineCopy || logFlag)
-		if (cv.HLogBuf!=0) Log1Byte(LF);
+		if (cv.HLogBuf != 0) Log1Byte(LF);
 
 	if (CursorY < CursorBottom)
-		MoveCursor(CursorX,CursorY+1);
+		MoveCursor(CursorX, CursorY + 1);
 	else if (CursorY == CursorBottom) BuffScrollNLines(1);
-	else if (CursorY < NumOfLines-StatusLine-1)
-		MoveCursor(CursorX,CursorY+1);
+	else if (CursorY < NumOfLines - StatusLine - 1)
+		MoveCursor(CursorX, CursorY + 1);
 
 	ClearLineContinued();
 
@@ -592,14 +592,14 @@ void Tab()
 {
 	if (Wrap && !ts.VTCompatTab) {
 		CarriageReturn(FALSE);
-		LineFeed(LF,FALSE);
+		LineFeed(LF, FALSE);
 		if (ts.EnableContinuedLineCopy) {
 			SetLineContinued();
 		}
 		Wrap = FALSE;
 	}
 	CursorForwardTab(1, AutoWrapMode);
-	if (cv.HLogBuf!=0) Log1Byte(HT);
+	if (cv.HLogBuf != 0) Log1Byte(HT);
 }
 
 void PutChar(BYTE b)
@@ -610,25 +610,27 @@ void PutChar(BYTE b)
 	CharAttrTmp = CharAttr;
 
 	if (PrinterMode) { // printer mode
-		WriteToPrnFile(b,TRUE);
+		WriteToPrnFile(b, TRUE);
 		return;
 	}
 
 	if (Wrap) {
 		CarriageReturn(FALSE);
-		LineFeed(LF,FALSE);
+		LineFeed(LF, FALSE);
 		CharAttrTmp.Attr |= ts.EnableContinuedLineCopy ? AttrLineContinued : 0;
 	}
 
-	if (cv.HLogBuf !=0) {
+	if (cv.HLogBuf != 0) {
 		// (2005.2.20 yutaka)
 		if (ts.LogTypePlainText) {
 			if (__isascii(b) && !isprint(b)) {
-				// ASCIIï∂éöÇ≈ÅAîÒï\é¶Ç»ï∂éöÇÕÉçÉOçÃéÊÇµÇ»Ç¢ÅB
-			} else {
+				// ASCIIÊñáÂ≠ó„Åß„ÄÅÈùûË°®Á§∫„Å™ÊñáÂ≠ó„ÅØ„É≠„Ç∞Êé°Âèñ„Åó„Å™„ÅÑ„ÄÇ
+			}
+			else {
 				Log1Byte(b);
 			}
-		} else {
+		}
+		else {
 			Log1Byte(b);
 		}
 	}
@@ -636,17 +638,17 @@ void PutChar(BYTE b)
 	Wrap = FALSE;
 
 	SpecialNew = FALSE;
-	if ((b>0x5F) && (b<0x80)) {
+	if ((b > 0x5F) && (b < 0x80)) {
 		if (SSflag)
-			SpecialNew = (Gn[GLtmp]==IdSpecial);
+			SpecialNew = (Gn[GLtmp] == IdSpecial);
 		else
-			SpecialNew = (Gn[Glr[0]]==IdSpecial);
+			SpecialNew = (Gn[Glr[0]] == IdSpecial);
 	}
-	else if (b>0xDF) {
+	else if (b > 0xDF) {
 		if (SSflag)
-			SpecialNew = (Gn[GLtmp]==IdSpecial);
+			SpecialNew = (Gn[GLtmp] == IdSpecial);
 		else
-			SpecialNew = (Gn[Glr[1]]==IdSpecial);
+			SpecialNew = (Gn[Glr[1]] == IdSpecial);
 	}
 
 	if (SpecialNew != Special) {
@@ -663,7 +665,7 @@ void PutChar(BYTE b)
 
 	BuffPutChar(b, CharAttrTmp, InsertMode);
 
-	if (CursorX == CursorRightM || CursorX >= NumOfColumns-1) {
+	if (CursorX == CursorRightM || CursorX >= NumOfColumns - 1) {
 		UpdateStr();
 		Wrap = AutoWrapMode;
 	}
@@ -689,14 +691,14 @@ void PutDecSp(BYTE b)
 		CharAttrTmp.Attr |= ts.EnableContinuedLineCopy ? AttrLineContinued : 0;
 	}
 
-	if (cv.HLogBuf!=0) Log1Byte(b);
-/*
-	if (ts.LogTypePlainText && __isascii(b) && !isprint(b)) {
-		// ASCIIï∂éöÇ≈ÅAîÒï\é¶Ç»ï∂éöÇÕÉçÉOçÃéÊÇµÇ»Ç¢ÅB
-	} else {
-		if (cv.HLogBuf!=0) Log1Byte(b);
-	}
- */
+	if (cv.HLogBuf != 0) Log1Byte(b);
+	/*
+		if (ts.LogTypePlainText && __isascii(b) && !isprint(b)) {
+			// ASCIIÊñáÂ≠ó„Åß„ÄÅÈùûË°®Á§∫„Å™ÊñáÂ≠ó„ÅØ„É≠„Ç∞Êé°Âèñ„Åó„Å™„ÅÑ„ÄÇ
+		} else {
+			if (cv.HLogBuf!=0) Log1Byte(b);
+		}
+	 */
 
 	Wrap = FALSE;
 
@@ -708,7 +710,7 @@ void PutDecSp(BYTE b)
 	CharAttrTmp.Attr |= AttrSpecial;
 	BuffPutChar(b, CharAttrTmp, InsertMode);
 
-	if (CursorX == CursorRightM || CursorX >= NumOfColumns-1) {
+	if (CursorX == CursorRightM || CursorX >= NumOfColumns - 1) {
 		UpdateStr();
 		Wrap = AutoWrapMode;
 	}
@@ -726,8 +728,8 @@ void PutKanji(BYTE b)
 	Kanji = Kanji + b;
 
 	if (PrinterMode && DirectPrn) {
-		WriteToPrnFile(HIBYTE(Kanji),FALSE);
-		WriteToPrnFile(LOBYTE(Kanji),TRUE);
+		WriteToPrnFile(HIBYTE(Kanji), FALSE);
+		WriteToPrnFile(LOBYTE(Kanji), TRUE);
 		return;
 	}
 
@@ -735,8 +737,8 @@ void PutKanji(BYTE b)
 		Kanji = JIS2SJIS((WORD)(Kanji & 0x7f7f));
 
 	if (PrinterMode) { // printer mode
-		WriteToPrnFile(HIBYTE(Kanji),FALSE);
-		WriteToPrnFile(LOBYTE(Kanji),TRUE);
+		WriteToPrnFile(HIBYTE(Kanji), FALSE);
+		WriteToPrnFile(LOBYTE(Kanji), TRUE);
 		return;
 	}
 
@@ -747,7 +749,7 @@ void PutKanji(BYTE b)
 
 	if (Wrap) {
 		CarriageReturn(FALSE);
-		LineFeed(LF,FALSE);
+		LineFeed(LF, FALSE);
 		if (ts.EnableContinuedLineCopy)
 			CharAttrTmp.Attr |= AttrLineContinued;
 	}
@@ -759,7 +761,7 @@ void PutKanji(BYTE b)
 					BuffPutChar(0x20, CharAttr, FALSE);
 			}
 			CarriageReturn(FALSE);
-			LineFeed(LF,FALSE);
+			LineFeed(LF, FALSE);
 		}
 		else {
 			return;
@@ -768,7 +770,7 @@ void PutKanji(BYTE b)
 
 	Wrap = FALSE;
 
-	if (cv.HLogBuf!=0) {
+	if (cv.HLogBuf != 0) {
 		Log1Byte(HIBYTE(Kanji));
 		Log1Byte(LOBYTE(Kanji));
 	}
@@ -797,7 +799,7 @@ void PutDebugChar(BYTE b)
 	BOOL svInsertMode, svAutoWrapMode;
 	BYTE svCharAttr;
 
-	if (DebugFlag!=DEBUG_FLAG_NOUT) {
+	if (DebugFlag != DEBUG_FLAG_NOUT) {
 		svInsertMode = InsertMode;
 		svAutoWrapMode = AutoWrapMode;
 		InsertMode = FALSE;
@@ -809,14 +811,14 @@ void PutDebugChar(BYTE b)
 			CharAttr.Attr = AttrDefault;
 		}
 
-		if (DebugFlag==DEBUG_FLAG_HEXD) {
-			_snprintf(buff, 3, "%02X", (unsigned int) b);
+		if (DebugFlag == DEBUG_FLAG_HEXD) {
+			_snprintf(buff, 3, "%02X", (unsigned int)b);
 
-			for (i=0; i<2; i++)
+			for (i = 0; i < 2; i++)
 				PutChar(buff[i]);
 			PutChar(' ');
 		}
-		else if (DebugFlag==DEBUG_FLAG_NORM) {
+		else if (DebugFlag == DEBUG_FLAG_NORM) {
 
 			if ((b & 0x80) == 0x80) {
 				UpdateStr();
@@ -824,11 +826,11 @@ void PutDebugChar(BYTE b)
 				b = b & 0x7f;
 			}
 
-			if (b<=US) {
+			if (b <= US) {
 				PutChar('^');
-				PutChar((char)(b+0x40));
+				PutChar((char)(b + 0x40));
 			}
-			else if (b==DEL) {
+			else if (b == DEL) {
 				PutChar('<');
 				PutChar('D');
 				PutChar('E');
@@ -854,11 +856,11 @@ void PrnParseControl(BYTE b) // printer mode
 	case NUL:
 		return;
 	case SO:
-		if ((ts.ISO2022Flag & ISO2022_SO) && ! DirectPrn) {
-			if ((ts.Language==IdJapanese) &&
-			    (ts.KanjiCode==IdJIS) &&
-			    (ts.JIS7Katakana==1) &&
-			    ((ts.TermFlag & TF_FIXEDJIS)!=0))
+		if ((ts.ISO2022Flag & ISO2022_SO) && !DirectPrn) {
+			if ((ts.Language == IdJapanese) &&
+				(ts.KanjiCode == IdJIS) &&
+				(ts.JIS7Katakana == 1) &&
+				((ts.TermFlag & TF_FIXEDJIS) != 0))
 			{
 				Gn[1] = IdKatakana;
 			}
@@ -867,7 +869,7 @@ void PrnParseControl(BYTE b) // printer mode
 		}
 		break;
 	case SI:
-		if ((ts.ISO2022Flag & ISO2022_SI) && ! DirectPrn) {
+		if ((ts.ISO2022Flag & ISO2022_SI) && !DirectPrn) {
 			Glr[0] = 0; /* LS0 */
 			return;
 		}
@@ -882,7 +884,7 @@ void PrnParseControl(BYTE b) // printer mode
 		WriteToPrnFile(0, TRUE); // flush prn buff
 		return;
 	case CSI:
-		if (! Accept8BitCtrl) {
+		if (!Accept8BitCtrl) {
 			PutChar(b); /* Disp C1 char in VT100 mode */
 			return;
 		}
@@ -904,15 +906,15 @@ void ParseControl(BYTE b)
 		return;
 	}
 
-	if (b>=0x80) { /* C1 char */
-		if (ts.Language==IdEnglish) { /* English mode */
+	if (b >= 0x80) { /* C1 char */
+		if (ts.Language == IdEnglish) { /* English mode */
 			if (!Accept8BitCtrl) {
 				PutChar(b); /* Disp C1 char in VT100 mode */
 				return;
 			}
 		}
 		else { /* Japanese mode */
-			if ((ts.TermFlag & TF_ACCEPT8BITCTRL)==0) {
+			if ((ts.TermFlag & TF_ACCEPT8BITCTRL) == 0) {
 				return; /* ignore C1 char */
 			}
 			/* C1 chars are interpreted as C0 chars in VT100 mode */
@@ -922,7 +924,7 @@ void ParseControl(BYTE b)
 		}
 	}
 	switch (b) {
-	/* C0 group */
+		/* C0 group */
 	case ENQ:
 		CommBinaryOut(&cv, &(ts.Answerback[0]), ts.AnswerbackLen);
 		break;
@@ -938,8 +940,8 @@ void ParseControl(BYTE b)
 		break;
 	case LF:
 		if (ts.CRReceive == IdLF) {
-			// éÛêMéûÇÃâ¸çsÉRÅ[ÉhÇ™ LF ÇÃèÍçáÇÕÅAÉTÅ[ÉoÇ©ÇÁ LF ÇÃÇ›Ç™ëóÇÁÇÍÇƒÇ≠ÇÈÇ∆âºíËÇµÅA
-			// CR+LFÇ∆ÇµÇƒàµÇ§ÇÊÇ§Ç…Ç∑ÇÈÅB
+			// Âèó‰ø°ÊôÇ„ÅÆÊîπË°å„Ç≥„Éº„Éâ„Åå LF „ÅÆÂ†¥Âêà„ÅØ„ÄÅ„Çµ„Éº„Éê„Åã„Çâ LF „ÅÆ„Åø„ÅåÈÄÅ„Çâ„Çå„Å¶„Åè„Çã„Å®‰ªÆÂÆö„Åó„ÄÅ
+			// CR+LF„Å®„Åó„Å¶Êâ±„ÅÜ„Çà„ÅÜ„Å´„Åô„Çã„ÄÇ
 			// cf. http://www.neocom.ca/forum/viewtopic.php?t=216
 			// (2007.1.21 yutaka)
 			CarriageReturn(TRUE);
@@ -949,7 +951,7 @@ void ParseControl(BYTE b)
 		else if (ts.CRReceive == IdAUTO) {
 			// 9th Apr 2012: AUTO CR/LF mode (tentner)
 			// a CR or LF will generated a CR+LF, if the next character is the opposite, it will be ignored
-			if(PrevCharacter != CR || !PrevCRorLFGeneratedCRLF) {
+			if (PrevCharacter != CR || !PrevCRorLFGeneratedCRLF) {
 				CarriageReturn(TRUE);
 				LineFeed(b, TRUE);
 				PrevCRorLFGeneratedCRLF = TRUE;
@@ -965,7 +967,7 @@ void ParseControl(BYTE b)
 		break;
 
 	case FF:
-		if ((ts.AutoWinSwitch>0) && JustAfterESC) {
+		if ((ts.AutoWinSwitch > 0) && JustAfterESC) {
 			CommInsert1Byte(&cv, b);
 			CommInsert1Byte(&cv, ESC);
 			ChangeEmu = IdTEK;	/* Enter TEK Mode */
@@ -977,7 +979,7 @@ void ParseControl(BYTE b)
 		if (ts.CRReceive == IdAUTO) {
 			// 9th Apr 2012: AUTO CR/LF mode (tentner)
 			// a CR or LF will generated a CR+LF, if the next character is the opposite, it will be ignored
-			if(PrevCharacter != LF || !PrevCRorLFGeneratedCRLF) {
+			if (PrevCharacter != LF || !PrevCRorLFGeneratedCRLF) {
 				CarriageReturn(TRUE);
 				LineFeed(b, TRUE);
 				PrevCRorLFGeneratedCRLF = TRUE;
@@ -988,17 +990,17 @@ void ParseControl(BYTE b)
 		}
 		else {
 			CarriageReturn(TRUE);
-			if (ts.CRReceive==IdCRLF) {
+			if (ts.CRReceive == IdCRLF) {
 				CommInsert1Byte(&cv, LF);
 			}
 		}
 		break;
 	case SO: /* LS1 */
 		if (ts.ISO2022Flag & ISO2022_SO) {
-			if ((ts.Language==IdJapanese) &&
-			    (ts.KanjiCode==IdJIS) &&
-			    (ts.JIS7Katakana==1) &&
-			    ((ts.TermFlag & TF_FIXEDJIS)!=0))
+			if ((ts.Language == IdJapanese) &&
+				(ts.KanjiCode == IdJIS) &&
+				(ts.JIS7Katakana == 1) &&
+				((ts.TermFlag & TF_FIXEDJIS) != 0))
 			{
 				Gn[1] = IdKatakana;
 			}
@@ -1012,11 +1014,11 @@ void ParseControl(BYTE b)
 		}
 		break;
 	case DLE:
-		if ((ts.FTFlag & FT_BPAUTO)!=0)
+		if ((ts.FTFlag & FT_BPAUTO) != 0)
 			ParseMode = ModeDLE; /* Auto B-Plus activation */
 		break;
 	case CAN:
-		if ((ts.FTFlag & FT_ZAUTO)!=0)
+		if ((ts.FTFlag & FT_ZAUTO) != 0)
 			ParseMode = ModeCAN; /* Auto ZMODEM activation */
 //		else if (ts.AutoWinSwitch>0)
 //			ChangeEmu = IdTEK;	/* Enter TEK Mode */
@@ -1035,13 +1037,13 @@ void ParseControl(BYTE b)
 	case GS:
 	case RS:
 	case US:
-		if (ts.AutoWinSwitch>0) {
+		if (ts.AutoWinSwitch > 0) {
 			CommInsert1Byte(&cv, b);
 			ChangeEmu = IdTEK;	/* Enter TEK Mode */
 		}
 		break;
 
-	/* C1 char */
+		/* C1 char */
 	case IND:
 		LineFeed(0, TRUE);
 		break;
@@ -1112,7 +1114,7 @@ void SaveCursor()
 
 	Buff->Glr[0] = Glr[0];
 	Buff->Glr[1] = Glr[1];
-	for (i=0 ; i<=3; i++)
+	for (i = 0; i <= 3; i++)
 		Buff->Gn[i] = Gn[i];
 
 	Buff->AutoWrapMode = AutoWrapMode;
@@ -1133,10 +1135,10 @@ void RestoreCursor()
 	else
 		Buff = &SBuff1; // for main screen
 
-	if (Buff->CursorX > NumOfColumns-1)
-		Buff->CursorX = NumOfColumns-1;
-	if (Buff->CursorY > NumOfLines-1-StatusLine)
-		Buff->CursorY = NumOfLines-1-StatusLine;
+	if (Buff->CursorX > NumOfColumns - 1)
+		Buff->CursorX = NumOfColumns - 1;
+	if (Buff->CursorY > NumOfLines - 1 - StatusLine)
+		Buff->CursorY = NumOfLines - 1 - StatusLine;
 	MoveCursor(Buff->CursorX, Buff->CursorY);
 
 	CharAttr = Buff->Attr;
@@ -1144,7 +1146,7 @@ void RestoreCursor()
 
 	Glr[0] = Buff->Glr[0];
 	Glr[1] = Buff->Glr[1];
-	for (i=0 ; i<=3; i++)
+	for (i = 0; i <= 3; i++)
 		Gn[i] = Buff->Gn[i];
 
 	AutoWrapMode = Buff->AutoWrapMode;
@@ -1155,52 +1157,52 @@ void AnswerTerminalType()
 {
 	char Tmp[50];
 
-	if (ts.TerminalID<IdVT320 || !Send8BitMode)
-		strncpy_s(Tmp, sizeof(Tmp),"\033[?", _TRUNCATE);
+	if (ts.TerminalID < IdVT320 || !Send8BitMode)
+		strncpy_s(Tmp, sizeof(Tmp), "\033[?", _TRUNCATE);
 	else
-		strncpy_s(Tmp, sizeof(Tmp),"\233?", _TRUNCATE);
+		strncpy_s(Tmp, sizeof(Tmp), "\233?", _TRUNCATE);
 
 	switch (ts.TerminalID) {
 	case IdVT100:
-		strncat_s(Tmp,sizeof(Tmp),"1;2",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "1;2", _TRUNCATE);
 		break;
 	case IdVT100J:
-		strncat_s(Tmp,sizeof(Tmp),"5;2",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "5;2", _TRUNCATE);
 		break;
 	case IdVT101:
-		strncat_s(Tmp,sizeof(Tmp),"1;0",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "1;0", _TRUNCATE);
 		break;
 	case IdVT102:
-		strncat_s(Tmp,sizeof(Tmp),"6",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "6", _TRUNCATE);
 		break;
 	case IdVT102J:
-		strncat_s(Tmp,sizeof(Tmp),"15",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "15", _TRUNCATE);
 		break;
 	case IdVT220J:
-		strncat_s(Tmp,sizeof(Tmp),"62;1;2;5;6;7;8",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "62;1;2;5;6;7;8", _TRUNCATE);
 		break;
 	case IdVT282:
-		strncat_s(Tmp,sizeof(Tmp),"62;1;2;4;5;6;7;8;10;11",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "62;1;2;4;5;6;7;8;10;11", _TRUNCATE);
 		break;
 	case IdVT320:
-		strncat_s(Tmp,sizeof(Tmp),"63;1;2;6;7;8",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "63;1;2;6;7;8", _TRUNCATE);
 		break;
 	case IdVT382:
-		strncat_s(Tmp,sizeof(Tmp),"63;1;2;4;5;6;7;8;10;15",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "63;1;2;4;5;6;7;8;10;15", _TRUNCATE);
 		break;
 	case IdVT420:
-		strncat_s(Tmp,sizeof(Tmp),"64;1;2;7;8;9;15;18;21",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "64;1;2;7;8;9;15;18;21", _TRUNCATE);
 		break;
 	case IdVT520:
-		strncat_s(Tmp,sizeof(Tmp),"65;1;2;7;8;9;12;18;19;21;23;24;42;44;45;46",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "65;1;2;7;8;9;12;18;19;21;23;24;42;44;45;46", _TRUNCATE);
 		break;
 	case IdVT525:
-		strncat_s(Tmp,sizeof(Tmp),"65;1;2;7;9;12;18;19;21;22;23;24;42;44;45;46",_TRUNCATE);
+		strncat_s(Tmp, sizeof(Tmp), "65;1;2;7;9;12;18;19;21;22;23;24;42;44;45;46", _TRUNCATE);
 		break;
 	}
-	strncat_s(Tmp,sizeof(Tmp),"c",_TRUNCATE);
+	strncat_s(Tmp, sizeof(Tmp), "c", _TRUNCATE);
 
-	CommBinaryOut(&cv,Tmp,strlen(Tmp)); /* Report terminal ID */
+	CommBinaryOut(&cv, Tmp, strlen(Tmp)); /* Report terminal ID */
 }
 
 void ESCSpace(BYTE b)
@@ -1224,7 +1226,7 @@ void ESCSharp(BYTE b)
 		BuffUpdateScroll();
 		BuffFillWithE();
 		CursorTop = 0;
-		CursorBottom = NumOfLines-1-StatusLine;
+		CursorBottom = NumOfLines - 1 - StatusLine;
 		CursorLeftM = 0;
 		CursorRightM = NumOfColumns - 1;
 		MoveCursor(0, 0);
@@ -1238,50 +1240,50 @@ void ESCDBCSSelect(BYTE b)
 {
 	int Dist;
 
-	if (ts.Language!=IdJapanese) return;
+	if (ts.Language != IdJapanese) return;
 
 	switch (ICount) {
-		case 1:
-			if ((b=='@') || (b=='B'))
-			{
-				Gn[0] = IdKanji; /* Kanji -> G0 */
-				if ((ts.TermFlag & TF_AUTOINVOKE)!=0)
-					Glr[0] = 0; /* G0->GL */
-			}
-			break;
-		case 2:
-			/* Second intermediate char must be
-				 '(' or ')' or '*' or '+'. */
-			Dist = (IntChar[2]-'(') & 3; /* G0 - G3 */
-			if ((b=='1') || (b=='3') ||
-					(b=='@') || (b=='B'))
-			{
-				Gn[Dist] = IdKanji; /* Kanji -> G0-3 */
-				if (((ts.TermFlag & TF_AUTOINVOKE)!=0) &&
-						(Dist==0))
-					Glr[0] = 0; /* G0->GL */
-			}
-			break;
+	case 1:
+		if ((b == '@') || (b == 'B'))
+		{
+			Gn[0] = IdKanji; /* Kanji -> G0 */
+			if ((ts.TermFlag & TF_AUTOINVOKE) != 0)
+				Glr[0] = 0; /* G0->GL */
+		}
+		break;
+	case 2:
+		/* Second intermediate char must be
+			 '(' or ')' or '*' or '+'. */
+		Dist = (IntChar[2] - '(') & 3; /* G0 - G3 */
+		if ((b == '1') || (b == '3') ||
+			(b == '@') || (b == 'B'))
+		{
+			Gn[Dist] = IdKanji; /* Kanji -> G0-3 */
+			if (((ts.TermFlag & TF_AUTOINVOKE) != 0) &&
+				(Dist == 0))
+				Glr[0] = 0; /* G0->GL */
+		}
+		break;
 	}
 }
 
 void ESCSelectCode(BYTE b)
 {
 	switch (b) {
-		case '0':
-			if (ts.AutoWinSwitch>0)
-				ChangeEmu = IdTEK; /* enter TEK mode */
-			break;
+	case '0':
+		if (ts.AutoWinSwitch > 0)
+			ChangeEmu = IdTEK; /* enter TEK mode */
+		break;
 	}
 }
 
-	/* select single byte code set */
+/* select single byte code set */
 void ESCSBCSSelect(BYTE b)
 {
 	int Dist;
 
 	/* Intermediate char must be '(' or ')' or '*' or '+'. */
-	Dist = (IntChar[1]-'(') & 3; /* G0 - G3 */
+	Dist = (IntChar[1] - '(') & 3; /* G0 - G3 */
 
 	switch (b) {
 	case '0': Gn[Dist] = IdSpecial; break;
@@ -1291,13 +1293,13 @@ void ESCSBCSSelect(BYTE b)
 	case 'B': Gn[Dist] = IdASCII; break;
 	case 'H': Gn[Dist] = IdASCII; break;
 	case 'I':
-		if (ts.Language==IdJapanese)
+		if (ts.Language == IdJapanese)
 			Gn[Dist] = IdKatakana;
 		break;
 	case 'J': Gn[Dist] = IdASCII; break;
 	}
 
-	if (((ts.TermFlag & TF_AUTOINVOKE)!=0) && (Dist==0))
+	if (((ts.TermFlag & TF_AUTOINVOKE) != 0) && (Dist == 0))
 		Glr[0] = 0;  /* G0->GL */
 }
 
@@ -1307,23 +1309,23 @@ void PrnParseEscape(BYTE b) // printer mode
 
 	ParseMode = ModeFirst;
 	switch (ICount) {
-	/* no intermediate char */
+		/* no intermediate char */
 	case 0:
 		switch (b) {
 		case '[': /* CSI */
 			ClearParams();
 			FirstPrm = TRUE;
-			WriteToPrnFile(ESC,FALSE);
-			WriteToPrnFile('[',FALSE);
+			WriteToPrnFile(ESC, FALSE);
+			WriteToPrnFile('[', FALSE);
 			ParseMode = ModeCSI;
 			return;
 		} /* end of case Icount=0 */
 		break;
-	/* one intermediate char */
+		/* one intermediate char */
 	case 1:
 		switch (IntChar[1]) {
 		case '$':
-			if (! DirectPrn) {
+			if (!DirectPrn) {
 				ESCDBCSSelect(b);
 				return;
 			}
@@ -1332,19 +1334,19 @@ void PrnParseEscape(BYTE b) // printer mode
 		case ')':
 		case '*':
 		case '+':
-			if (! DirectPrn) {
+			if (!DirectPrn) {
 				ESCSBCSSelect(b);
 				return;
 			}
 			break;
 		}
 		break;
-	/* two intermediate char */
+		/* two intermediate char */
 	case 2:
-		if ((! DirectPrn) &&
-		    (IntChar[1]=='$') &&
-		    ('('<=IntChar[2]) &&
-		    (IntChar[2]<='+'))
+		if ((!DirectPrn) &&
+			(IntChar[1] == '$') &&
+			('(' <= IntChar[2]) &&
+			(IntChar[2] <= '+'))
 		{
 			ESCDBCSSelect(b);
 			return;
@@ -1352,10 +1354,10 @@ void PrnParseEscape(BYTE b) // printer mode
 		break;
 	}
 	// send the uninterpreted sequence to printer
-	WriteToPrnFile(ESC,FALSE);
-	for (i=1; i<=ICount; i++)
-		WriteToPrnFile(IntChar[i],FALSE);
-	WriteToPrnFile(b,TRUE);
+	WriteToPrnFile(ESC, FALSE);
+	for (i = 1; i <= ICount; i++)
+		WriteToPrnFile(IntChar[i], FALSE);
+	WriteToPrnFile(b, TRUE);
 }
 
 void ParseEscape(BYTE b) /* b is the final char */
@@ -1370,32 +1372,32 @@ void ParseEscape(BYTE b) /* b is the final char */
 		switch (b) {
 		case '6': // DECBI
 			if (CursorY >= CursorTop && CursorY <= CursorBottom &&
-			    CursorX >= CursorLeftM && CursorX <= CursorRightM) {
+				CursorX >= CursorLeftM && CursorX <= CursorRightM) {
 				if (CursorX == CursorLeftM)
 					BuffScrollRight(1);
 				else
-					MoveCursor(CursorX-1, CursorY);
+					MoveCursor(CursorX - 1, CursorY);
 			}
-		break;
+			break;
 		case '7': SaveCursor(); break;
 		case '8': RestoreCursor(); break;
 		case '9': // DECFI
 			if (CursorY >= CursorTop && CursorY <= CursorBottom &&
-			    CursorX >= CursorLeftM && CursorX <= CursorRightM) {
+				CursorX >= CursorLeftM && CursorX <= CursorRightM) {
 				if (CursorX == CursorRightM)
 					BuffScrollLeft(1);
 				else
-					MoveCursor(CursorX+1, CursorY);
+					MoveCursor(CursorX + 1, CursorY);
 			}
 			break;
 		case '=': AppliKeyMode = TRUE; break;
 		case '>': AppliKeyMode = FALSE; break;
 		case 'D': /* IND */
-			LineFeed(0,TRUE);
+			LineFeed(0, TRUE);
 			break;
 		case 'E': /* NEL */
-			MoveCursor(0,CursorY);
-			LineFeed(0,TRUE);
+			MoveCursor(0, CursorY);
+			LineFeed(0, TRUE);
 			break;
 		case 'H': /* HTS */
 			if (ts.TabStopFlag & TABF_HTS7)
@@ -1445,7 +1447,7 @@ void ParseEscape(BYTE b) /* b is the final char */
 			ResetTerminal();
 			ClearUserKey();
 			ClearBuffer();
-			if (ts.PortType==IdSerial) // reset serial port
+			if (ts.PortType == IdSerial) // reset serial port
 				CommResetSerial(&ts, &cv, TRUE);
 			break;
 		case 'g': /* Visual Bell (screen original?) */
@@ -1496,9 +1498,9 @@ void ParseEscape(BYTE b) /* b is the final char */
 		break;
 
 	case 2: /* two intermediate char */
-		if ((IntChar[1]=='$') && ('('<=IntChar[2]) && (IntChar[2]<='+'))
+		if ((IntChar[1] == '$') && ('(' <= IntChar[2]) && (IntChar[2] <= '+'))
 			ESCDBCSSelect(b);
-		else if ((IntChar[1]=='%') && (IntChar[2]=='!'))
+		else if ((IntChar[1] == '%') && (IntChar[2] == '!'))
 			ESCSelectCode(b);
 		break;
 	}
@@ -1507,20 +1509,20 @@ void ParseEscape(BYTE b) /* b is the final char */
 
 void EscapeSequence(BYTE b)
 {
-	if (b<=US)
+	if (b <= US)
 		ParseControl(b);
-	else if ((b>=0x20) && (b<=0x2F)) {
-		// TODO: ICount Ç™ IntCharMax Ç…íBÇµÇΩéûÅAç≈å„ÇÃ IntChar ÇíuÇ´ä∑Ç¶ÇÈÇÃÇÕë√ìñ?
-		if (ICount<IntCharMax)
+	else if ((b >= 0x20) && (b <= 0x2F)) {
+		// TODO: ICount „Åå IntCharMax „Å´ÈÅî„Åó„ÅüÊôÇ„ÄÅÊúÄÂæå„ÅÆ IntChar „ÇíÁΩÆ„ÅçÊèõ„Åà„Çã„ÅÆ„ÅØÂ¶•ÂΩì?
+		if (ICount < IntCharMax)
 			ICount++;
 		IntChar[ICount] = b;
 	}
-	else if ((b>=0x30) && (b<=0x7E))
+	else if ((b >= 0x30) && (b <= 0x7E))
 		ParseEscape(b);
-	else if ((b>=0x80) && (b<=0x9F))
+	else if ((b >= 0x80) && (b <= 0x9F))
 		ParseControl(b);
-	else if (b>=0xA0) {
-		ParseMode=ModeFirst;
+	else if (b >= 0xA0) {
+		ParseMode = ModeFirst;
 		ParseFirst(b);
 	}
 
@@ -1589,7 +1591,7 @@ void CSCursorDown(BOOL AffectMargin)	// CUD / VPR
 	if (AffectMargin && CursorY <= CursorBottom)
 		bottomMargin = CursorBottom;
 	else
-		bottomMargin = NumOfLines-StatusLine-1;
+		bottomMargin = NumOfLines - StatusLine - 1;
 
 	CheckParamVal(Param[1], bottomMargin);
 
@@ -1610,29 +1612,30 @@ void CSScreenErase()
 {
 	BuffUpdateScroll();
 	switch (Param[1]) {
-	  case 0:
-		// <ESC>[H(Cursor in left upper corner)Ç…ÇÊÇËÉJÅ[É\ÉãÇ™ç∂è„ã˜ÇéwÇµÇƒÇ¢ÇÈèÍçáÅA
-		// <ESC>[JÇÕ<ESC>[2JÇ∆ìØÇ∂Ç±Ç∆Ç»ÇÃÇ≈ÅAèàóùÇï™ÇØÅAåªçsÉoÉbÉtÉ@ÇÉXÉNÉçÅ[ÉãÉAÉEÉg
-		// Ç≥ÇπÇÈÇÊÇ§Ç…Ç∑ÇÈÅB(2005.5.29 yutaka)
-		// ÉRÉìÉtÉBÉOÉåÅ[ÉVÉáÉìÇ≈êÿÇËë÷Ç¶ÇÁÇÍÇÈÇÊÇ§Ç…ÇµÇΩÅB(2008.5.3 yutaka)
+	case 0:
+		// <ESC>[H(Cursor in left upper corner)„Å´„Çà„Çä„Ç´„Éº„ÇΩ„É´„ÅåÂ∑¶‰∏äÈöÖ„ÇíÊåá„Åó„Å¶„ÅÑ„ÇãÂ†¥Âêà„ÄÅ
+		// <ESC>[J„ÅØ<ESC>[2J„Å®Âêå„Åò„Åì„Å®„Å™„ÅÆ„Åß„ÄÅÂá¶ÁêÜ„ÇíÂàÜ„Åë„ÄÅÁèæË°å„Éê„ÉÉ„Éï„Ç°„Çí„Çπ„ÇØ„É≠„Éº„É´„Ç¢„Ç¶„Éà
+		// „Åï„Åõ„Çã„Çà„ÅÜ„Å´„Åô„Çã„ÄÇ(2005.5.29 yutaka)
+		// „Ç≥„É≥„Éï„Ç£„Ç∞„É¨„Éº„Ç∑„Éß„É≥„ÅßÂàá„ÇäÊõø„Åà„Çâ„Çå„Çã„Çà„ÅÜ„Å´„Åó„Åü„ÄÇ(2008.5.3 yutaka)
 		if (ts.ScrollWindowClearScreen &&
 			(CursorX == 0 && CursorY == 0)) {
 			// Erase screen (scroll out)
 			BuffClearScreen();
 			UpdateWindow(HVTWin);
 
-		} else {
+		}
+		else {
 			// Erase characters from cursor to the end of screen
 			BuffEraseCurToEnd();
 		}
 		break;
 
-	  case 1:
+	case 1:
 		// Erase characters from home to cursor
 		BuffEraseHomeToCur();
 		break;
 
-	  case 2:
+	case 2:
 		// Erase screen (scroll out)
 		BuffClearScreen();
 		UpdateWindow(HVTWin);
@@ -1652,17 +1655,17 @@ void CSQSelScreenErase()
 {
 	BuffUpdateScroll();
 	switch (Param[1]) {
-	  case 0:
+	case 0:
 		// Erase characters from cursor to end
 		BuffSelectedEraseCurToEnd();
 		break;
 
-	  case 1:
+	case 1:
 		// Erase characters from home to cursor
 		BuffSelectedEraseHomeToCur();
 		break;
 
-	  case 2:
+	case 2:
 		// Erase entire screen
 		BuffSelectedEraseScreen();
 		break;
@@ -1684,28 +1687,28 @@ void CSInsertLine()
 
 	YEnd = CursorBottom;
 	if (CursorY > YEnd)
-		YEnd = NumOfLines-1-StatusLine;
+		YEnd = NumOfLines - 1 - StatusLine;
 
-	if (Count > YEnd+1 - CursorY)
-		Count = YEnd+1 - CursorY;
+	if (Count > YEnd + 1 - CursorY)
+		Count = YEnd + 1 - CursorY;
 
-	BuffInsertLines(Count,YEnd);
+	BuffInsertLines(Count, YEnd);
 }
 
 void CSLineErase()
 {
 	BuffUpdateScroll();
 	switch (Param[1]) {
-	  case 0: /* erase char from cursor to end of line */
-		BuffEraseCharsInLine(CursorX,NumOfColumns-CursorX);
+	case 0: /* erase char from cursor to end of line */
+		BuffEraseCharsInLine(CursorX, NumOfColumns - CursorX);
 		break;
 
-	  case 1: /* erase char from start of line to cursor */
-		BuffEraseCharsInLine(0,CursorX+1);
+	case 1: /* erase char from start of line to cursor */
+		BuffEraseCharsInLine(0, CursorX + 1);
 		break;
 
-	  case 2: /* erase entire line */
-		BuffEraseCharsInLine(0,NumOfColumns);
+	case 2: /* erase entire line */
+		BuffEraseCharsInLine(0, NumOfColumns);
 		break;
 	}
 }
@@ -1714,16 +1717,16 @@ void CSQSelLineErase()
 {
 	BuffUpdateScroll();
 	switch (Param[1]) {
-	  case 0: /* erase char from cursor to end of line */
-		BuffSelectedEraseCharsInLine(CursorX,NumOfColumns-CursorX);
+	case 0: /* erase char from cursor to end of line */
+		BuffSelectedEraseCharsInLine(CursorX, NumOfColumns - CursorX);
 		break;
 
-	  case 1: /* erase char from start of line to cursor */
-		BuffSelectedEraseCharsInLine(0,CursorX+1);
+	case 1: /* erase char from start of line to cursor */
+		BuffSelectedEraseCharsInLine(0, CursorX + 1);
 		break;
 
-	  case 2: /* erase entire line */
-		BuffSelectedEraseCharsInLine(0,NumOfColumns);
+	case 2: /* erase entire line */
+		BuffSelectedEraseCharsInLine(0, NumOfColumns);
 		break;
 	}
 }
@@ -1742,17 +1745,17 @@ void CSDeleteNLines()
 
 	YEnd = CursorBottom;
 	if (CursorY > YEnd)
-		YEnd = NumOfLines-1-StatusLine;
+		YEnd = NumOfLines - 1 - StatusLine;
 
-	if (Count > YEnd+1-CursorY)
-		Count = YEnd+1-CursorY;
+	if (Count > YEnd + 1 - CursorY)
+		Count = YEnd + 1 - CursorY;
 
-	BuffDeleteLines(Count,YEnd);
+	BuffDeleteLines(Count, YEnd);
 }
 
 void CSDeleteCharacter()	// DCH
 {
-// Delete characters in current line from cursor
+	// Delete characters in current line from cursor
 	CheckParamVal(Param[1], NumOfColumns);
 
 	BuffUpdateScroll();
@@ -1769,7 +1772,7 @@ void CSEraseCharacter()		// ECH
 
 void CSScrollUp()
 {
-	// TODO: ÉXÉNÉçÅ[ÉãÇÃç≈ëÂílÇí[ññçsêîÇ…êßå¿Ç∑Ç◊Ç´Ç©óvåüì¢
+	// TODO: „Çπ„ÇØ„É≠„Éº„É´„ÅÆÊúÄÂ§ßÂÄ§„ÇíÁ´ØÊú´Ë°åÊï∞„Å´Âà∂Èôê„Åô„Åπ„Åç„ÅãË¶ÅÊ§úË®é
 	CheckParamVal(Param[1], INT_MAX);
 
 	BuffUpdateScroll();
@@ -1803,7 +1806,7 @@ void CSMoveToColumnN()		// CHA / HPA
 	Param[1]--;
 
 	if (RelativeOrgMode) {
-		if (CursorLeftM + Param[1] > CursorRightM )
+		if (CursorLeftM + Param[1] > CursorRightM)
 			MoveCursor(CursorRightM, CursorY);
 		else
 			MoveCursor(CursorLeftM + Param[1], CursorY);
@@ -1823,7 +1826,7 @@ void CSCursorRight(BOOL AffectMargin)	// CUF / HPR
 		rightMargin = CursorRightM;
 	}
 	else {
-		rightMargin = NumOfColumns-1;
+		rightMargin = NumOfColumns - 1;
 	}
 
 	NewX = CursorX + Param[1];
@@ -1846,7 +1849,7 @@ void CSCursorLeft(BOOL AffectMargin)	// CUB / HPB
 		leftMargin = 0;
 	}
 
-	NewX = CursorX  - Param[1];
+	NewX = CursorX - Param[1];
 	if (NewX < leftMargin) {
 		NewX = leftMargin;
 	}
@@ -1856,19 +1859,19 @@ void CSCursorLeft(BOOL AffectMargin)	// CUB / HPB
 
 void CSMoveToLineN()		// VPA
 {
-	CheckParamVal(Param[1], NumOfLines-StatusLine);
+	CheckParamVal(Param[1], NumOfLines - StatusLine);
 
 	if (RelativeOrgMode) {
-		if (CursorTop+Param[1]-1 > CursorBottom)
-			MoveCursor(CursorX,CursorBottom);
+		if (CursorTop + Param[1] - 1 > CursorBottom)
+			MoveCursor(CursorX, CursorBottom);
 		else
-			MoveCursor(CursorX,CursorTop+Param[1]-1);
+			MoveCursor(CursorX, CursorTop + Param[1] - 1);
 	}
 	else {
-		if (Param[1] > NumOfLines-StatusLine)
-			MoveCursor(CursorX,NumOfLines-1-StatusLine);
+		if (Param[1] > NumOfLines - StatusLine)
+			MoveCursor(CursorX, NumOfLines - 1 - StatusLine);
 		else
-			MoveCursor(CursorX,Param[1]-1);
+			MoveCursor(CursorX, Param[1] - 1);
 	}
 	Fallbacked = FALSE;
 }
@@ -1878,7 +1881,7 @@ void CSMoveToXY()		// CUP / HVP
 	int NewX, NewY;
 
 	RequiredParams(2);
-	CheckParamVal(Param[1], NumOfLines-StatusLine);
+	CheckParamVal(Param[1], NumOfLines - StatusLine);
 	CheckParamVal(Param[2], NumOfColumns);
 
 	NewY = Param[1] - 1;
@@ -1896,8 +1899,8 @@ void CSMoveToXY()		// CUP / HVP
 			NewY = CursorBottom;
 	}
 	else {
-		if (NewY > NumOfLines-1-StatusLine)
-			NewY = NumOfLines-1-StatusLine;
+		if (NewY > NumOfLines - 1 - StatusLine)
+			NewY = NumOfLines - 1 - StatusLine;
 	}
 
 	MoveCursor(NewX, NewY);
@@ -1912,27 +1915,27 @@ void CSDeleteTabStop()
 void CS_h_Mode()		// SM
 {
 	switch (Param[1]) {
-	  case 2:	// KAM
+	case 2:	// KAM
 		KeybEnabled = FALSE; break;
-	  case 4:	// IRM
+	case 4:	// IRM
 		InsertMode = TRUE; break;
-	  case 12:	// SRM
+	case 12:	// SRM
 		ts.LocalEcho = 0;
-		if (cv.Ready && cv.TelFlag && (ts.TelEcho>0))
+		if (cv.Ready && cv.TelFlag && (ts.TelEcho > 0))
 			TelChangeEcho();
 		break;
-	  case 20:	// LF/NL
+	case 20:	// LF/NL
 		LFMode = TRUE;
 		ts.CRSend = IdCRLF;
 		cv.CRSend = IdCRLF;
 		break;
-	  case 33:	// WYSTCURM
+	case 33:	// WYSTCURM
 		if (ts.WindowFlag & WF_CURSORCHANGE) {
 			ts.NonblinkingCursor = TRUE;
 			ChangeCaret();
 		}
 		break;
-	  case 34:	// WYULCURM
+	case 34:	// WYULCURM
 		if (ts.WindowFlag & WF_CURSORCHANGE) {
 			ts.CursorShape = IdHCur;
 			ChangeCaret();
@@ -1944,22 +1947,22 @@ void CS_h_Mode()		// SM
 void CS_i_Mode()		// MC
 {
 	switch (Param[1]) {
-	  /* print screen */
-	  //  PrintEX -- TRUE: print screen
-	  //             FALSE: scroll region
-	  case 0:
+		/* print screen */
+		//  PrintEX -- TRUE: print screen
+		//             FALSE: scroll region
+	case 0:
 		if (ts.TermFlag&TF_PRINTERCTRL) {
-			BuffPrint(! PrintEX);
+			BuffPrint(!PrintEX);
 		}
 		break;
-	  /* printer controller mode off */
-	  case 4: break; /* See PrnParseCS() */
-	  /* printer controller mode on */
-	  case 5:
+		/* printer controller mode off */
+	case 4: break; /* See PrnParseCS() */
+	/* printer controller mode on */
+	case 5:
 		if (ts.TermFlag&TF_PRINTERCTRL) {
-			if (! AutoPrintMode)
+			if (!AutoPrintMode)
 				OpenPrnFile();
-			DirectPrn = (ts.PrnDev[0]!=0);
+			DirectPrn = (ts.PrnDev[0] != 0);
 			PrinterMode = TRUE;
 		}
 		break;
@@ -1969,27 +1972,27 @@ void CS_i_Mode()		// MC
 void CS_l_Mode()		// RM
 {
 	switch (Param[1]) {
-	  case 2:	// KAM
+	case 2:	// KAM
 		KeybEnabled = TRUE; break;
-	  case 4:	// IRM
+	case 4:	// IRM
 		InsertMode = FALSE; break;
-	  case 12:	// SRM
+	case 12:	// SRM
 		ts.LocalEcho = 1;
-		if (cv.Ready && cv.TelFlag && (ts.TelEcho>0))
+		if (cv.Ready && cv.TelFlag && (ts.TelEcho > 0))
 			TelChangeEcho();
 		break;
-	  case 20:	// LF/NL
+	case 20:	// LF/NL
 		LFMode = FALSE;
 		ts.CRSend = IdCR;
 		cv.CRSend = IdCR;
 		break;
-	  case 33:	// WYSTCURM
+	case 33:	// WYSTCURM
 		if (ts.WindowFlag & WF_CURSORCHANGE) {
 			ts.NonblinkingCursor = FALSE;
 			ChangeCaret();
 		}
 		break;
-	  case 34:	// WYULCURM
+	case 34:	// WYULCURM
 		if (ts.WindowFlag & WF_CURSORCHANGE) {
 			ts.CursorShape = IdBlkCur;
 			ChangeCaret();
@@ -2004,11 +2007,11 @@ void CS_n_Mode()		// DSR
 	int X, Y, len;
 
 	switch (Param[1]) {
-	  case 5:
+	case 5:
 		/* Device Status Report -> Ready */
 		SendCSIstr("0n", 0);
 		break;
-	  case 6:
+	case 6:
 		/* Cursor Position Report */
 		if (isCursorOnStatusLine) {
 			X = CursorX + 1;
@@ -2020,7 +2023,7 @@ void CS_n_Mode()		// DSR
 		}
 		else {
 			X = CursorX + 1;
-			Y = CursorY+1;
+			Y = CursorY + 1;
 		}
 		len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "%u;%uR", CLocale, Y, X);
 		SendCSIstr(Report, len);
@@ -2037,10 +2040,10 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 		mask = &dummy;
 	}
 
-	for (i=start ; i<=NParam ; i++) {
+	for (i = start; i <= NParam; i++) {
 		P = Param[i];
 		switch (P) {
-		  case   0:	/* Clear all */
+		case   0:	/* Clear all */
 			attr->Attr = DefCharAttr.Attr;
 			attr->Attr2 = DefCharAttr.Attr2 | (attr->Attr2&Attr2Protect);
 			attr->Fore = DefCharAttr.Fore;
@@ -2049,60 +2052,60 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 			mask->Attr2 = Attr2ColorMask;
 			break;
 
-		  case   1:	/* Bold */
+		case   1:	/* Bold */
 			attr->Attr |= AttrBold;
 			mask->Attr |= AttrBold;
 			break;
 
-		  case   4:	/* Under line */
+		case   4:	/* Under line */
 			attr->Attr |= AttrUnder;
 			mask->Attr |= AttrUnder;
 			break;
 
-		  case   5:	/* Blink */
+		case   5:	/* Blink */
 			attr->Attr |= AttrBlink;
 			mask->Attr |= AttrBlink;
 			break;
 
-		  case   7:	/* Reverse */
+		case   7:	/* Reverse */
 			attr->Attr |= AttrReverse;
 			mask->Attr |= AttrReverse;
 			break;
 
-		  case  22:	/* Bold off */
-			attr->Attr &= ~ AttrBold;
+		case  22:	/* Bold off */
+			attr->Attr &= ~AttrBold;
 			mask->Attr |= AttrBold;
 			break;
 
-		  case  24:	/* Under line off */
-			attr->Attr &= ~ AttrUnder;
+		case  24:	/* Under line off */
+			attr->Attr &= ~AttrUnder;
 			mask->Attr |= AttrUnder;
 			break;
 
-		  case  25:	/* Blink off */
-			attr->Attr &= ~ AttrBlink;
+		case  25:	/* Blink off */
+			attr->Attr &= ~AttrBlink;
 			mask->Attr |= AttrBlink;
 			break;
 
-		  case  27:	/* Reverse off */
-			attr->Attr &= ~ AttrReverse;
+		case  27:	/* Reverse off */
+			attr->Attr &= ~AttrReverse;
 			mask->Attr |= AttrReverse;
 			break;
 
-		  case  30:
-		  case  31:
-		  case  32:
-		  case  33:
-		  case  34:
-		  case  35:
-		  case  36:
-		  case  37:	/* text color */
+		case  30:
+		case  31:
+		case  32:
+		case  33:
+		case  34:
+		case  35:
+		case  36:
+		case  37:	/* text color */
 			attr->Attr2 |= Attr2Fore;
 			mask->Attr2 |= Attr2Fore;
 			attr->Fore = P - 30;
 			break;
 
-		  case  38:	/* text color (256color mode) */
+		case  38:	/* text color (256color mode) */
 			if (ts.ColorFlag & CF_XTERM256) {
 				/*
 				 * Change foreground color. accept following formats.
@@ -2122,13 +2125,13 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 					j++;
 				}
 				else if (i < NParam) {
-					P = Param[i+1];
+					P = Param[i + 1];
 					if (P == 2 || P == 5) {
 						i++;
 					}
 				}
 				switch (P) {
-				  case 2:
+				case 2:
 					r = g = b = 0;
 					if (NSParam[i] > 0) {
 						if (j < NSParam[i]) {
@@ -2142,7 +2145,7 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 							color = DispFindClosestColor(r, g, b);
 						}
 					}
-					else if (i < NParam && NSParam[i+1] > 0) {
+					else if (i < NParam && NSParam[i + 1] > 0) {
 						r = Param[++i];
 						g = SubParam[i][1];
 						if (NSParam[i] > 1) {
@@ -2150,14 +2153,14 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 						}
 						color = DispFindClosestColor(r, g, b);
 					}
-					else if (i+2 < NParam) {
+					else if (i + 2 < NParam) {
 						r = Param[++i];
 						g = Param[++i];
 						b = Param[++i];
 						color = DispFindClosestColor(r, g, b);
 					}
 					break;
-				  case 5:
+				case 5:
 					if (NSParam[i] > 0) {
 						if (j < NSParam[i]) {
 							color = SubParam[i][++j];
@@ -2176,26 +2179,26 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 			}
 			break;
 
-		  case  39:	/* Reset text color */
-			attr->Attr2 &= ~ Attr2Fore;
+		case  39:	/* Reset text color */
+			attr->Attr2 &= ~Attr2Fore;
 			mask->Attr2 |= Attr2Fore;
 			attr->Fore = AttrDefaultFG;
 			break;
 
-		  case  40:
-		  case  41:
-		  case  42:
-		  case  43:
-		  case  44:
-		  case  45:
-		  case  46:
-		  case  47:	/* Back color */
+		case  40:
+		case  41:
+		case  42:
+		case  43:
+		case  44:
+		case  45:
+		case  46:
+		case  47:	/* Back color */
 			attr->Attr2 |= Attr2Back;
 			mask->Attr2 |= Attr2Back;
 			attr->Back = P - 40;
 			break;
 
-		  case  48:	/* Back color (256color mode) */
+		case  48:	/* Back color (256color mode) */
 			if (ts.ColorFlag & CF_XTERM256) {
 				color = -1;
 				j = 0;
@@ -2204,13 +2207,13 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 					j++;
 				}
 				else if (i < NParam) {
-					P = Param[i+1];
+					P = Param[i + 1];
 					if (P == 2 || P == 5) {
 						i++;
 					}
 				}
 				switch (P) {
-				  case 2:
+				case 2:
 					r = g = b = 0;
 					if (NSParam[i] > 0) {
 						if (j < NSParam[i]) {
@@ -2224,7 +2227,7 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 							color = DispFindClosestColor(r, g, b);
 						}
 					}
-					else if (i < NParam && NSParam[i+1] > 0) {
+					else if (i < NParam && NSParam[i + 1] > 0) {
 						r = Param[++i];
 						g = SubParam[i][1];
 						if (NSParam[i] > 1) {
@@ -2232,14 +2235,14 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 						}
 						color = DispFindClosestColor(r, g, b);
 					}
-					else if (i+2 < NParam) {
+					else if (i + 2 < NParam) {
 						r = Param[++i];
 						g = Param[++i];
 						b = Param[++i];
 						color = DispFindClosestColor(r, g, b);
 					}
 					break;
-				  case 5:
+				case 5:
 					if (NSParam[i] > 0) {
 						if (j < NSParam[i]) {
 							color = SubParam[i][++j];
@@ -2258,20 +2261,20 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 			}
 			break;
 
-		  case  49:	/* Reset back color */
-			attr->Attr2 &= ~ Attr2Back;
+		case  49:	/* Reset back color */
+			attr->Attr2 &= ~Attr2Back;
 			mask->Attr2 |= Attr2Back;
 			attr->Back = AttrDefaultBG;
 			break;
 
-		  case 90:
-		  case 91:
-		  case 92:
-		  case 93:
-		  case 94:
-		  case 95:
-		  case 96:
-		  case 97:	/* aixterm style text color */
+		case 90:
+		case 91:
+		case 92:
+		case 93:
+		case 94:
+		case 95:
+		case 96:
+		case 97:	/* aixterm style text color */
 			if (ts.ColorFlag & CF_AIXTERM16) {
 				attr->Attr2 |= Attr2Fore;
 				mask->Attr2 |= Attr2Fore;
@@ -2279,10 +2282,10 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 			}
 			break;
 
-		  case 100:
-			if (! (ts.ColorFlag & CF_AIXTERM16)) {
+		case 100:
+			if (!(ts.ColorFlag & CF_AIXTERM16)) {
 				/* Reset text and back color */
-				attr->Attr2 &= ~ (Attr2Fore | Attr2Back);
+				attr->Attr2 &= ~(Attr2Fore | Attr2Back);
 				mask->Attr2 |= Attr2ColorMask;
 				attr->Fore = AttrDefaultFG;
 				attr->Back = AttrDefaultBG;
@@ -2290,13 +2293,13 @@ void ParseSGRParams(PCharAttr attr, PCharAttr mask, int start)
 			}
 			/* fall through to aixterm style back color */
 
-		  case 101:
-		  case 102:
-		  case 103:
-		  case 104:
-		  case 105:
-		  case 106:
-		  case 107:	/* aixterm style back color */
+		case 101:
+		case 102:
+		case 103:
+		case 104:
+		case 105:
+		case 106:
+		case 107:	/* aixterm style back color */
 			if (ts.ColorFlag & CF_AIXTERM16) {
 				attr->Attr2 |= Attr2Back;
 				mask->Attr2 |= Attr2Back;
@@ -2317,13 +2320,13 @@ void CSSetAttr()		// SGR
 void CSSetScrollRegion()	// DECSTBM
 {
 	if (isCursorOnStatusLine) {
-		MoveCursor(0,CursorY);
+		MoveCursor(0, CursorY);
 		return;
 	}
 
 	RequiredParams(2);
-	CheckParamVal(Param[1], NumOfLines-StatusLine);
-	CheckParamValMax(Param[2], NumOfLines-StatusLine);
+	CheckParamVal(Param[1], NumOfLines - StatusLine);
+	CheckParamValMax(Param[2], NumOfLines - StatusLine);
 
 	if (Param[1] >= Param[2])
 		return;
@@ -2332,7 +2335,7 @@ void CSSetScrollRegion()	// DECSTBM
 	CursorBottom = Param[2] - 1;
 
 	if (RelativeOrgMode)
-		// TODO: ç∂É}Å[ÉWÉìÇñ≥éãÇµÇƒÇÈÅBóvé¿ã@ämîFÅB
+		// TODO: Â∑¶„Éû„Éº„Ç∏„É≥„ÇíÁÑ°Ë¶ñ„Åó„Å¶„Çã„ÄÇË¶ÅÂÆüÊ©üÁ¢∫Ë™ç„ÄÇ
 		MoveCursor(0, CursorTop);
 	else
 		MoveCursor(0, 0);
@@ -2340,11 +2343,11 @@ void CSSetScrollRegion()	// DECSTBM
 
 void CSSetLRScrollRegion()	// DECSLRM
 {
-//	TODO: ÉXÉeÅ[É^ÉXÉâÉCÉìè„Ç≈ÇÃãììÆämîFÅB
-//	if (isCursorOnStatusLine) {
-//		MoveCursor(0,CursorY);
-//		return;
-//	}
+	//	TODO: „Çπ„ÉÜ„Éº„Çø„Çπ„É©„Ç§„É≥‰∏ä„Åß„ÅÆÊåôÂãïÁ¢∫Ë™ç„ÄÇ
+	//	if (isCursorOnStatusLine) {
+	//		MoveCursor(0,CursorY);
+	//		return;
+	//	}
 
 	RequiredParams(2);
 	CheckParamVal(Param[1], NumOfColumns);
@@ -2365,50 +2368,50 @@ void CSSetLRScrollRegion()	// DECSLRM
 void CSSunSequence() /* Sun terminal private sequences */
 {
 	int x, y, len;
-	char Report[TitleBuffSize*2+10];
+	char Report[TitleBuffSize * 2 + 10];
 	PTStack t;
 
 	switch (Param[1]) {
-	  case 1: // De-iconify window
+	case 1: // De-iconify window
 		if (ts.WindowFlag & WF_WINDOWCHANGE)
 			DispShowWindow(WINDOW_RESTORE);
 		break;
 
-	  case 2: // Iconify window
+	case 2: // Iconify window
 		if (ts.WindowFlag & WF_WINDOWCHANGE)
 			DispShowWindow(WINDOW_MINIMIZE);
 		break;
 
-	  case 3: // set window position
+	case 3: // set window position
 		if (ts.WindowFlag & WF_WINDOWCHANGE) {
 			RequiredParams(3);
 			DispMoveWindow(Param[2], Param[3]);
 		}
 		break;
 
-	  case 4: // set window size
+	case 4: // set window size
 		if (ts.WindowFlag & WF_WINDOWCHANGE) {
 			RequiredParams(3);
 			DispResizeWin(Param[3], Param[2]);
 		}
 		break;
 
-	  case 5: // Raise window
+	case 5: // Raise window
 		if (ts.WindowFlag & WF_WINDOWCHANGE)
 			DispShowWindow(WINDOW_RAISE);
 		break;
 
-	  case 6: // Lower window
+	case 6: // Lower window
 		if (ts.WindowFlag & WF_WINDOWCHANGE)
 			DispShowWindow(WINDOW_LOWER);
 		break;
 
-	  case 7: // Refresh window
+	case 7: // Refresh window
 		if (ts.WindowFlag & WF_WINDOWCHANGE)
 			DispShowWindow(WINDOW_REFRESH);
 		break;
 
-	  case 8: /* set terminal size */
+	case 8: /* set terminal size */
 		if (ts.WindowFlag & WF_WINDOWCHANGE) {
 			RequiredParams(3);
 			if (Param[2] <= 1) Param[2] = 24;
@@ -2417,7 +2420,7 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 9: // Maximize/Restore window
+	case 9: // Maximize/Restore window
 		if (ts.WindowFlag & WF_WINDOWCHANGE) {
 			RequiredParams(2);
 			if (Param[2] == 0) {
@@ -2429,46 +2432,46 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 10: // Full-screen
-		/*
-		 * ñ{óàÇ»ÇÁÇŒ PuTTY ÇÃÇÊÇ§Ç»ÉtÉãÉXÉNÉäÅ[ÉìÉÇÅ[ÉhÇé¿ëïÇ∑ÇÈÇ◊Ç´ÇæÇ™ÅA
-		 * Ç∆ÇËÇ†Ç¶Ç∏ÇÕéËî≤Ç´Ç≈ç≈ëÂâªÇóòópÇ∑ÇÈ
-		 */
+	case 10: // Full-screen
+	  /*
+	   * Êú¨Êù•„Å™„Çâ„Å∞ PuTTY „ÅÆ„Çà„ÅÜ„Å™„Éï„É´„Çπ„ÇØ„É™„Éº„É≥„É¢„Éº„Éâ„ÇíÂÆüË£Ö„Åô„Çã„Åπ„Åç„Å†„Åå„ÄÅ
+	   * „Å®„Çä„ÅÇ„Åà„Åö„ÅØÊâãÊäú„Åç„ÅßÊúÄÂ§ßÂåñ„ÇíÂà©Áî®„Åô„Çã
+	   */
 		if (ts.WindowFlag & WF_WINDOWCHANGE) {
 			RequiredParams(2);
 			switch (Param[2]) {
-			  case 0:
-			    DispShowWindow(WINDOW_RESTORE);
-			    break;
-			  case 1:
-			    DispShowWindow(WINDOW_MAXIMIZE);
-			    break;
-			  case 2:
-			    DispShowWindow(WINDOW_TOGGLE_MAXIMIZE);
-			    break;
+			case 0:
+				DispShowWindow(WINDOW_RESTORE);
+				break;
+			case 1:
+				DispShowWindow(WINDOW_MAXIMIZE);
+				break;
+			case 2:
+				DispShowWindow(WINDOW_TOGGLE_MAXIMIZE);
+				break;
 			}
 		}
 		break;
 
-	  case 11: // Report window state
+	case 11: // Report window state
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
-			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "%dt", CLocale, DispWindowIconified()?2:1);
+			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "%dt", CLocale, DispWindowIconified() ? 2 : 1);
 			SendCSIstr(Report, len);
 		}
 		break;
 
-	  case 13: // Report window position
+	case 13: // Report window position
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
 			RequiredParams(2);
 			switch (Param[2]) {
-			  case 0:
-			  case 1:
+			case 0:
+			case 1:
 				DispGetWindowPos(&x, &y, FALSE);
 				break;
-			  case 2:
+			case 2:
 				DispGetWindowPos(&x, &y, TRUE);
 				break;
-			  default:
+			default:
 				return;
 			}
 			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "3;%u;%ut", CLocale, (unsigned int)x, (unsigned int)y);
@@ -2476,18 +2479,18 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 14: /* get window size */
+	case 14: /* get window size */
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
 			RequiredParams(2);
 			switch (Param[2]) {
-			  case 0:
-			  case 1:
+			case 0:
+			case 1:
 				DispGetWindowSize(&x, &y, TRUE);
 				break;
-			  case 2:
+			case 2:
 				DispGetWindowSize(&x, &y, FALSE);
 				break;
-			  default:
+			default:
 				return;
 			}
 
@@ -2496,7 +2499,7 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 15: // Report display size (pixel)
+	case 15: // Report display size (pixel)
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
 			DispGetRootWinSize(&x, &y, TRUE);
 			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "5;%d;%dt", CLocale, y, x);
@@ -2504,22 +2507,22 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 16: // Report character cell size (pixel)
+	case 16: // Report character cell size (pixel)
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
 			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "6;%d;%dt", CLocale, FontHeight, FontWidth);
 			SendCSIstr(Report, len);
 		}
 		break;
 
-	  case 18: /* get terminal size */
+	case 18: /* get terminal size */
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
 			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "8;%u;%ut", CLocale,
-			                    NumOfLines-StatusLine, NumOfColumns);
+				NumOfLines - StatusLine, NumOfColumns);
 			SendCSIstr(Report, len);
 		}
 		break;
 
-	  case 19: // Report display size (character)
+	case 19: // Report display size (character)
 		if (ts.WindowFlag & WF_WINDOWREPORT) {
 			DispGetRootWinSize(&x, &y, FALSE);
 			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "9;%d;%dt", CLocale, y, x);
@@ -2527,27 +2530,27 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 20: // Report icon label
+	case 20: // Report icon label
 		switch (ts.WindowFlag & WF_TITLEREPORT) {
-		  case IdTitleReportIgnore:
+		case IdTitleReportIgnore:
 			// nothing to do
 			break;
 
-		  case IdTitleReportAccept:
+		case IdTitleReportAccept:
 			switch (ts.AcceptTitleChangeRequest) {
-			  case IdTitleChangeRequestOff:
+			case IdTitleChangeRequestOff:
 				len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "L%s", CLocale, ts.Title);
 				break;
 
-			  case IdTitleChangeRequestAhead:
+			case IdTitleChangeRequestAhead:
 				len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "L%s %s", CLocale, cv.TitleRemote, ts.Title);
 				break;
 
-			  case IdTitleChangeRequestLast:
+			case IdTitleChangeRequestLast:
 				len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "L%s %s", CLocale, ts.Title, cv.TitleRemote);
 				break;
 
-			  default:
+			default:
 				if (cv.TitleRemote[0] == 0) {
 					len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "L%s", CLocale, ts.Title);
 				}
@@ -2558,33 +2561,33 @@ void CSSunSequence() /* Sun terminal private sequences */
 			SendOSCstr(Report, len, ST);
 			break;
 
-		  default: // IdTitleReportEmpty:
+		default: // IdTitleReportEmpty:
 			SendOSCstr("L", 0, ST);
 			break;
 		}
 		break;
 
-	  case 21: // Report window title
+	case 21: // Report window title
 		switch (ts.WindowFlag & WF_TITLEREPORT) {
-		  case IdTitleReportIgnore:
+		case IdTitleReportIgnore:
 			// nothing to do
 			break;
 
-		  case IdTitleReportAccept:
+		case IdTitleReportAccept:
 			switch (ts.AcceptTitleChangeRequest) {
-			  case IdTitleChangeRequestOff:
+			case IdTitleChangeRequestOff:
 				len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "l%s", CLocale, ts.Title);
 				break;
 
-			  case IdTitleChangeRequestAhead:
+			case IdTitleChangeRequestAhead:
 				len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "l%s %s", CLocale, cv.TitleRemote, ts.Title);
 				break;
 
-			  case IdTitleChangeRequestLast:
+			case IdTitleChangeRequestLast:
 				len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "l%s %s", CLocale, ts.Title, cv.TitleRemote);
 				break;
 
-			  default:
+			default:
 				if (cv.TitleRemote[0] == 0) {
 					len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "l%s", CLocale, ts.Title);
 				}
@@ -2595,19 +2598,19 @@ void CSSunSequence() /* Sun terminal private sequences */
 			SendOSCstr(Report, len, ST);
 			break;
 
-		  default: // IdTitleReportEmpty:
+		default: // IdTitleReportEmpty:
 			SendOSCstr("l", 0, ST);
 			break;
 		}
 		break;
 
-	  case 22: // Push Title
+	case 22: // Push Title
 		RequiredParams(2);
 		switch (Param[2]) {
-		  case 0:
-		  case 1:
-		  case 2:
-			if (ts.AcceptTitleChangeRequest && (t=malloc(sizeof(TStack))) != NULL) {
+		case 0:
+		case 1:
+		case 2:
+			if (ts.AcceptTitleChangeRequest && (t = malloc(sizeof(TStack))) != NULL) {
 				if ((t->title = _strdup(cv.TitleRemote)) != NULL) {
 					t->next = TitleStack;
 					TitleStack = t;
@@ -2620,12 +2623,12 @@ void CSSunSequence() /* Sun terminal private sequences */
 		}
 		break;
 
-	  case 23: // Pop Title
+	case 23: // Pop Title
 		RequiredParams(2);
 		switch (Param[2]) {
-		  case 0:
-		  case 1:
-		  case 2:
+		case 0:
+		case 1:
+		case 2:
 			if (ts.AcceptTitleChangeRequest && TitleStack != NULL) {
 				t = TitleStack;
 				TitleStack = t->next;
@@ -2642,19 +2645,19 @@ void CSSunSequence() /* Sun terminal private sequences */
 void CSLT(BYTE b)
 {
 	switch (b) {
-	  case 'r':
+	case 'r':
 		if (CanUseIME()) {
 			SetIMEOpenStatus(IMEstat);
 		}
 		break;
 
-	  case 's':
+	case 's':
 		if (CanUseIME()) {
 			IMEstat = GetIMEOpenStatus();
 		}
 		break;
 
-	  case 't':
+	case 't':
 		if (CanUseIME()) {
 			SetIMEOpenStatus(Param[1] == 1);
 		}
@@ -2668,7 +2671,7 @@ void CSEQ(BYTE b)
 	int len;
 
 	switch (b) {
-	  case 'c': /* Tertiary terminal report (Tertiary DA) */
+	case 'c': /* Tertiary terminal report (Tertiary DA) */
 		if (Param[1] == 0) {
 			len = _snprintf_s_l(Report, sizeof(Report), _TRUNCATE, "!|%8s", CLocale, ts.TerminalUID);
 			SendDCSstr(Report, len);
@@ -2680,31 +2683,31 @@ void CSEQ(BYTE b)
 void CSGT(BYTE b)
 {
 	switch (b) {
-	  case 'c': /* second terminal report (Secondary DA) */
+	case 'c': /* second terminal report (Secondary DA) */
 		if (Param[1] == 0) {
 			SendCSIstr(">32;331;0c", 0); /* VT382(>32) + xterm rev 331 */
 		}
 		break;
 
-	  case 'J': // IO-8256 terminal
-		if (Param[1]==3) {
+	case 'J': // IO-8256 terminal
+		if (Param[1] == 3) {
 			RequiredParams(5);
-			CheckParamVal(Param[2], NumOfLines-StatusLine);
+			CheckParamVal(Param[2], NumOfLines - StatusLine);
 			CheckParamVal(Param[3], NumOfColumns);
-			CheckParamValMax(Param[4], NumOfLines-StatusLine);
+			CheckParamValMax(Param[4], NumOfLines - StatusLine);
 			CheckParamValMax(Param[5], NumOfColumns);
 
 			if (Param[2] > Param[4] || Param[3] > Param[5]) {
 				return;
 			}
 
-			BuffEraseBox(Param[3]-1, Param[2]-1, Param[5]-1, Param[4]-1);
+			BuffEraseBox(Param[3] - 1, Param[2] - 1, Param[5] - 1, Param[4] - 1);
 		}
 		break;
 
-	  case 'K': // IO-8256 terminal
+	case 'K': // IO-8256 terminal
 		switch (Param[1]) {
-		  case 3:
+		case 3:
 			RequiredParams(3);
 			CheckParamVal(Param[2], NumOfColumns);
 			CheckParamVal(Param[3], NumOfColumns);
@@ -2713,27 +2716,27 @@ void CSGT(BYTE b)
 				return;
 			}
 
-			BuffEraseCharsInLine(Param[2]-1, Param[3]-Param[2]+1);
+			BuffEraseCharsInLine(Param[2] - 1, Param[3] - Param[2] + 1);
 			break;
 
-		  case 5:
+		case 5:
 			RequiredParams(3);
 			switch (Param[2]) {
-			  case 3:
-			  case 4:
-			  case 5:
-			  case 6: // Draw Line
+			case 3:
+			case 4:
+			case 5:
+			case 6: // Draw Line
 				BuffDrawLine(CharAttr, Param[2], Param[3]);
 				break;
 
-			  case 12: // Text color
-				if ((Param[3]>=0) && (Param[3]<=7)) {
+			case 12: // Text color
+				if ((Param[3] >= 0) && (Param[3] <= 7)) {
 					switch (Param[3]) {
-					  case 3: CharAttr.Fore = IdBlue; break;
-					  case 4: CharAttr.Fore = IdCyan; break;
-					  case 5: CharAttr.Fore = IdYellow; break;
-					  case 6: CharAttr.Fore = IdMagenta; break;
-					  default: CharAttr.Fore = Param[3]; break;
+					case 3: CharAttr.Fore = IdBlue; break;
+					case 4: CharAttr.Fore = IdCyan; break;
+					case 5: CharAttr.Fore = IdYellow; break;
+					case 6: CharAttr.Fore = IdMagenta; break;
+					default: CharAttr.Fore = Param[3]; break;
 					}
 					CharAttr.Attr2 |= Attr2Fore;
 					BuffSetCurCharAttr(CharAttr);
@@ -2789,13 +2792,13 @@ void CSQExchangeColor()		// DECSCNM / Visual Bell
 
 void CSQChangeColumnMode(int width)		// DECCOLM
 {
-	ChangeTerminalSize(width, NumOfLines-StatusLine);
+	ChangeTerminalSize(width, NumOfLines - StatusLine);
 	LRMarginMode = FALSE;
 
-	// DECCOLM Ç≈ÇÕâÊñ Ç™ÉNÉäÉAÇ≥ÇÍÇÈÇÃÇ™édól
-	// ClearOnResize Ç™ off ÇÃéûÇÕÇ±Ç±Ç≈ÉNÉäÉAÇ∑ÇÈÅB
-	// ClearOnResize Ç™ on ÇÃéûÇÕ ChangeTerminalSize() ÇåƒÇ‘Ç∆ÉNÉäÉAÇ≥ÇÍÇÈÇÃÇ≈ÅA
-	// ó]åvÇ»ÉXÉNÉçÅ[ÉãÇîÇØÇÈà◊Ç…Ç±Ç±Ç≈ÇÕÉNÉäÉAÇµÇ»Ç¢ÅB
+	// DECCOLM „Åß„ÅØÁîªÈù¢„Åå„ÇØ„É™„Ç¢„Åï„Çå„Çã„ÅÆ„Åå‰ªïÊßò
+	// ClearOnResize „Åå off „ÅÆÊôÇ„ÅØ„Åì„Åì„Åß„ÇØ„É™„Ç¢„Åô„Çã„ÄÇ
+	// ClearOnResize „Åå on „ÅÆÊôÇ„ÅØ ChangeTerminalSize() „ÇíÂëº„Å∂„Å®„ÇØ„É™„Ç¢„Åï„Çå„Çã„ÅÆ„Åß„ÄÅ
+	// ‰ΩôË®à„Å™„Çπ„ÇØ„É≠„Éº„É´„ÇíÈÅø„Åë„ÇãÁÇ∫„Å´„Åì„Åì„Åß„ÅØ„ÇØ„É™„Ç¢„Åó„Å™„ÅÑ„ÄÇ
 	if ((ts.TermFlag & TF_CLEARONRESIZE) == 0) {
 		MoveCursor(0, 0);
 		BuffClearScreen();
@@ -2807,108 +2810,108 @@ void CSQ_h_Mode() // DECSET
 {
 	int i;
 
-	for (i = 1 ; i<=NParam ; i++) {
+	for (i = 1; i <= NParam; i++) {
 		switch (Param[i]) {
-		  case 1: AppliCursorMode = TRUE; break;		// DECCKM
-		  case 3: CSQChangeColumnMode(132); break;		// DECCOLM
-		  case 5: /* Reverse Video (DECSCNM) */
+		case 1: AppliCursorMode = TRUE; break;		// DECCKM
+		case 3: CSQChangeColumnMode(132); break;		// DECCOLM
+		case 5: /* Reverse Video (DECSCNM) */
 			if (!(ts.ColorFlag & CF_REVERSEVIDEO))
 				CSQExchangeColor(); /* Exchange text/back color */
 			break;
-		  case 6: // DECOM
+		case 6: // DECOM
 			if (isCursorOnStatusLine)
-				MoveCursor(0,CursorY);
+				MoveCursor(0, CursorY);
 			else {
 				RelativeOrgMode = TRUE;
-				MoveCursor(0,CursorTop);
+				MoveCursor(0, CursorTop);
 			}
 			break;
-		  case 7: AutoWrapMode = TRUE; break;		// DECAWM
-		  case 8: AutoRepeatMode = TRUE; break;		// DECARM
-		  case 9: /* X10 Mouse Tracking */
+		case 7: AutoWrapMode = TRUE; break;		// DECAWM
+		case 8: AutoRepeatMode = TRUE; break;		// DECARM
+		case 9: /* X10 Mouse Tracking */
 			if (ts.MouseEventTracking)
 				MouseReportMode = IdMouseTrackX10;
 			break;
-		  case 12: /* att610 cursor blinking */
+		case 12: /* att610 cursor blinking */
 			if (ts.WindowFlag & WF_CURSORCHANGE) {
 				ts.NonblinkingCursor = FALSE;
 				ChangeCaret();
 			}
 			break;
-		  case 19: PrintEX = TRUE; break;		// DECPEX
-		  case 25: DispEnableCaret(TRUE); break;	// cursor on (DECTCEM)
-		  case 38: // DECTEK
-			if (ts.AutoWinSwitch>0)
+		case 19: PrintEX = TRUE; break;		// DECPEX
+		case 25: DispEnableCaret(TRUE); break;	// cursor on (DECTCEM)
+		case 38: // DECTEK
+			if (ts.AutoWinSwitch > 0)
 				ChangeEmu = IdTEK; /* Enter TEK Mode */
 			break;
-		  case 47: // Alternate Screen Buffer
+		case 47: // Alternate Screen Buffer
 			if ((ts.TermFlag & TF_ALTSCR) && !AltScr) {
 				BuffSaveScreen();
 				AltScr = TRUE;
 			}
 			break;
-		  case 59:
-			if (ts.Language==IdJapanese) {
+		case 59:
+			if (ts.Language == IdJapanese) {
 				/* kanji terminal */
 				Gn[0] = IdASCII;
 				Gn[1] = IdKatakana;
 				Gn[2] = IdKatakana;
 				Gn[3] = IdKanji;
 				Glr[0] = 0;
-				if ((ts.KanjiCode==IdJIS) &&
-				    (ts.JIS7Katakana==0))
+				if ((ts.KanjiCode == IdJIS) &&
+					(ts.JIS7Katakana == 0))
 					Glr[1] = 2;  // 8-bit katakana
 				else
 					Glr[1] = 3;
 			}
 			break;
-		  case 66: AppliKeyMode = TRUE; break;		// DECNKM
-		  case 67: ts.BSKey = IdBS; break;		// DECBKM
-		  case 69: LRMarginMode = TRUE; break;		// DECLRMM (DECVSSM)
-		  case 1000: // Mouse Tracking
+		case 66: AppliKeyMode = TRUE; break;		// DECNKM
+		case 67: ts.BSKey = IdBS; break;		// DECBKM
+		case 69: LRMarginMode = TRUE; break;		// DECLRMM (DECVSSM)
+		case 1000: // Mouse Tracking
 			if (ts.MouseEventTracking)
 				MouseReportMode = IdMouseTrackVT200;
 			break;
-		  case 1001: // Hilite Mouse Tracking
+		case 1001: // Hilite Mouse Tracking
 			if (ts.MouseEventTracking)
 				MouseReportMode = IdMouseTrackVT200Hl;
 			break;
-		  case 1002: // Button-Event Mouse Tracking
+		case 1002: // Button-Event Mouse Tracking
 			if (ts.MouseEventTracking)
 				MouseReportMode = IdMouseTrackBtnEvent;
 			break;
-		  case 1003: // Any-Event Mouse Tracking
+		case 1003: // Any-Event Mouse Tracking
 			if (ts.MouseEventTracking)
 				MouseReportMode = IdMouseTrackAllEvent;
 			break;
-		  case 1004: // Focus Report
+		case 1004: // Focus Report
 			if (ts.MouseEventTracking)
 				FocusReportMode = TRUE;
 			break;
-		  case 1005: // Extended Mouse Tracking (UTF-8)
+		case 1005: // Extended Mouse Tracking (UTF-8)
 			if (ts.MouseEventTracking)
 				MouseReportExtMode = IdMouseTrackExtUTF8;
 			break;
-		  case 1006: // Extended Mouse Tracking (SGR)
+		case 1006: // Extended Mouse Tracking (SGR)
 			if (ts.MouseEventTracking)
 				MouseReportExtMode = IdMouseTrackExtSGR;
 			break;
-		  case 1015: // Extended Mouse Tracking (rxvt-unicode)
+		case 1015: // Extended Mouse Tracking (rxvt-unicode)
 			if (ts.MouseEventTracking)
 				MouseReportExtMode = IdMouseTrackExtURXVT;
 			break;
-		  case 1047: // Alternate Screen Buffer
+		case 1047: // Alternate Screen Buffer
 			if ((ts.TermFlag & TF_ALTSCR) && !AltScr) {
 				BuffSaveScreen();
 				AltScr = TRUE;
 			}
 			break;
-		  case 1048: // Save Cursor Position (Alternate Screen Buffer)
+		case 1048: // Save Cursor Position (Alternate Screen Buffer)
 			if (ts.TermFlag & TF_ALTSCR) {
 				SaveCursor();
 			}
 			break;
-		  case 1049: // Alternate Screen Buffer
+		case 1049: // Alternate Screen Buffer
 			if ((ts.TermFlag & TF_ALTSCR) && !AltScr) {
 				SaveCursor();
 				BuffSaveScreen();
@@ -2916,27 +2919,27 @@ void CSQ_h_Mode() // DECSET
 				AltScr = TRUE;
 			}
 			break;
-		  case 2004: // Bracketed Paste Mode
+		case 2004: // Bracketed Paste Mode
 			BracketedPaste = TRUE;
 			break;
-		  case 7727: // mintty Application Escape Mode
+		case 7727: // mintty Application Escape Mode
 			AppliEscapeMode = 1;
 			break;
-		  case 7786: // Wheel to Cursor translation
+		case 7786: // Wheel to Cursor translation
 			if (ts.TranslateWheelToCursor) {
 				AcceptWheelToCursor = TRUE;
 			}
 			break;
-		  case 8200: // ClearThenHome
+		case 8200: // ClearThenHome
 			ClearThenHome = TRUE;
 			break;
-		  case 14001: // NetTerm mouse mode
+		case 14001: // NetTerm mouse mode
 			if (ts.MouseEventTracking)
 				MouseReportMode = IdMouseTrackNetTerm;
 			break;
-		  case 14002: // test Application Escape Mode 2
-		  case 14003: // test Application Escape Mode 3
-		  case 14004: // test Application Escape Mode 4
+		case 14002: // test Application Escape Mode 2
+		case 14003: // test Application Escape Mode 3
+		case 14004: // test Application Escape Mode 4
 			AppliEscapeMode = Param[i] - 14000;
 			break;
 		}
@@ -2946,25 +2949,25 @@ void CSQ_h_Mode() // DECSET
 void CSQ_i_Mode()		// DECMC
 {
 	switch (Param[1]) {
-	  case 1:
+	case 1:
 		if (ts.TermFlag&TF_PRINTERCTRL) {
 			OpenPrnFile();
 			BuffDumpCurrentLine(LF);
-			if (! AutoPrintMode)
+			if (!AutoPrintMode)
 				ClosePrnFile();
 		}
 		break;
-	  /* auto print mode off */
-	  case 4:
+		/* auto print mode off */
+	case 4:
 		if (AutoPrintMode) {
 			ClosePrnFile();
 			AutoPrintMode = FALSE;
 		}
 		break;
-	  /* auto print mode on */
-	  case 5:
+		/* auto print mode on */
+	case 5:
 		if (ts.TermFlag&TF_PRINTERCTRL) {
-			if (! AutoPrintMode) {
+			if (!AutoPrintMode) {
 				OpenPrnFile();
 				AutoPrintMode = TRUE;
 			}
@@ -2977,88 +2980,88 @@ void CSQ_l_Mode()		// DECRST
 {
 	int i;
 
-	for (i = 1 ; i <= NParam ; i++) {
+	for (i = 1; i <= NParam; i++) {
 		switch (Param[i]) {
-		  case 1: AppliCursorMode = FALSE; break;	// DECCKM
-		  case 3: CSQChangeColumnMode(80); break;	// DECCOLM
-		  case 5: /* Normal Video (DECSCNM) */
+		case 1: AppliCursorMode = FALSE; break;	// DECCKM
+		case 3: CSQChangeColumnMode(80); break;	// DECCOLM
+		case 5: /* Normal Video (DECSCNM) */
 			if (ts.ColorFlag & CF_REVERSEVIDEO)
 				CSQExchangeColor(); /* Exchange text/back color */
 			break;
-		  case 6: // DECOM
+		case 6: // DECOM
 			if (isCursorOnStatusLine)
-				MoveCursor(0,CursorY);
+				MoveCursor(0, CursorY);
 			else {
 				RelativeOrgMode = FALSE;
-				MoveCursor(0,0);
+				MoveCursor(0, 0);
 			}
 			break;
-		  case 7: AutoWrapMode = FALSE; break;		// DECAWM
-		  case 8: AutoRepeatMode = FALSE; break;	// DECARM
-		  case 9: MouseReportMode = IdMouseTrackNone; break; /* X10 Mouse Tracking */
-		  case 12: /* att610 cursor blinking */
+		case 7: AutoWrapMode = FALSE; break;		// DECAWM
+		case 8: AutoRepeatMode = FALSE; break;	// DECARM
+		case 9: MouseReportMode = IdMouseTrackNone; break; /* X10 Mouse Tracking */
+		case 12: /* att610 cursor blinking */
 			if (ts.WindowFlag & WF_CURSORCHANGE) {
 				ts.NonblinkingCursor = TRUE;
 				ChangeCaret();
 			}
 			break;
-		  case 19: PrintEX = FALSE; break;		// DECPEX
-		  case 25: DispEnableCaret(FALSE); break;	// cursor off (DECTCEM)
-		  case 47: // Alternate Screen Buffer
+		case 19: PrintEX = FALSE; break;		// DECPEX
+		case 25: DispEnableCaret(FALSE); break;	// cursor off (DECTCEM)
+		case 47: // Alternate Screen Buffer
 			if ((ts.TermFlag & TF_ALTSCR) && AltScr) {
 				BuffRestoreScreen();
 				AltScr = FALSE;
 			}
 			break;
-		  case 59:
-			if (ts.Language==IdJapanese) {
+		case 59:
+			if (ts.Language == IdJapanese) {
 				/* katakana terminal */
 				Gn[0] = IdASCII;
 				Gn[1] = IdKatakana;
 				Gn[2] = IdKatakana;
 				Gn[3] = IdKanji;
 				Glr[0] = 0;
-				if ((ts.KanjiCode==IdJIS) &&
-				    (ts.JIS7Katakana==0))
+				if ((ts.KanjiCode == IdJIS) &&
+					(ts.JIS7Katakana == 0))
 					Glr[1] = 2;	// 8-bit katakana
 				else
 					Glr[1] = 3;
 			}
 			break;
-		  case 66: AppliKeyMode = FALSE; break;		// DECNKM
-		  case 67: ts.BSKey = IdDEL; break;		// DECBKM
-		  case 69: // DECLRMM (DECVSSM)
+		case 66: AppliKeyMode = FALSE; break;		// DECNKM
+		case 67: ts.BSKey = IdDEL; break;		// DECBKM
+		case 69: // DECLRMM (DECVSSM)
 			LRMarginMode = FALSE;
 			CursorLeftM = 0;
 			CursorRightM = NumOfColumns - 1;
 			break;
-		  case 1000: // Mouse Tracking
-		  case 1001: // Hilite Mouse Tracking
-		  case 1002: // Button-Event Mouse Tracking
-		  case 1003: // Any-Event Mouse Tracking
+		case 1000: // Mouse Tracking
+		case 1001: // Hilite Mouse Tracking
+		case 1002: // Button-Event Mouse Tracking
+		case 1003: // Any-Event Mouse Tracking
 			MouseReportMode = IdMouseTrackNone;
 			break;
-		  case 1004: // Focus Report
+		case 1004: // Focus Report
 			FocusReportMode = FALSE;
 			break;
-		  case 1005: // Extended Mouse Tracking (UTF-8)
-		  case 1006: // Extended Mouse Tracking (SGR)
-		  case 1015: // Extended Mouse Tracking (rxvt-unicode)
+		case 1005: // Extended Mouse Tracking (UTF-8)
+		case 1006: // Extended Mouse Tracking (SGR)
+		case 1015: // Extended Mouse Tracking (rxvt-unicode)
 			MouseReportExtMode = IdMouseTrackExtNone;
 			break;
-		  case 1047: // Alternate Screen Buffer
+		case 1047: // Alternate Screen Buffer
 			if ((ts.TermFlag & TF_ALTSCR) && AltScr) {
 				BuffClearScreen();
 				BuffRestoreScreen();
 				AltScr = FALSE;
 			}
 			break;
-		  case 1048: // Save Cursor Position (Alternate Screen Buffer)
+		case 1048: // Save Cursor Position (Alternate Screen Buffer)
 			if (ts.TermFlag & TF_ALTSCR) {
 				RestoreCursor();
 			}
 			break;
-		  case 1049: // Alternate Screen Buffer
+		case 1049: // Alternate Screen Buffer
 			if ((ts.TermFlag & TF_ALTSCR) && AltScr) {
 				BuffClearScreen();
 				BuffRestoreScreen();
@@ -3066,24 +3069,24 @@ void CSQ_l_Mode()		// DECRST
 				RestoreCursor();
 			}
 			break;
-		  case 2004: // Bracketed Paste Mode
+		case 2004: // Bracketed Paste Mode
 			BracketedPaste = FALSE;
 			break;
-		  case 7727: // mintty Application Escape Mode
+		case 7727: // mintty Application Escape Mode
 			AppliEscapeMode = 0;
 			break;
-		  case 7786: // Wheel to Cursor translation
+		case 7786: // Wheel to Cursor translation
 			AcceptWheelToCursor = FALSE;
 			break;
-		  case 8200: // ClearThenHome
+		case 8200: // ClearThenHome
 			ClearThenHome = FALSE;
 			break;
-		  case 14001: // NetTerm mouse mode
+		case 14001: // NetTerm mouse mode
 			MouseReportMode = IdMouseTrackNone;
 			break;
-		  case 14002: // test Application Escape Mode 2
-		  case 14003: // test Application Escape Mode 3
-		  case 14004: // test Application Escape Mode 4
+		case 14002: // test Application Escape Mode 2
+		case 14003: // test Application Escape Mode 3
+		case 14004: // test Application Escape Mode 4
 			AppliEscapeMode = 0;
 			break;
 		}
@@ -3093,8 +3096,8 @@ void CSQ_l_Mode()		// DECRST
 void CSQ_n_Mode()		// DECDSR
 {
 	switch (Param[1]) {
-	  case 53:
-	  case 55:
+	case 53:
+	case 55:
 		/* Locator Device Status Report -> Ready */
 		SendCSIstr("?50n", 0);
 		break;
@@ -3104,12 +3107,12 @@ void CSQ_n_Mode()		// DECDSR
 void CSQuest(BYTE b)
 {
 	switch (b) {
-	  case 'J': CSQSelScreenErase(); break;	// DECSED
-	  case 'K': CSQSelLineErase(); break;	// DECSEL
-	  case 'h': CSQ_h_Mode(); break;	// DECSET
-	  case 'i': CSQ_i_Mode(); break;	// DECMC
-	  case 'l': CSQ_l_Mode(); break;	// DECRST
-	  case 'n': CSQ_n_Mode(); break;	// DECDSR
+	case 'J': CSQSelScreenErase(); break;	// DECSED
+	case 'K': CSQSelLineErase(); break;	// DECSEL
+	case 'h': CSQ_h_Mode(); break;	// DECSET
+	case 'i': CSQ_i_Mode(); break;	// DECMC
+	case 'l': CSQ_l_Mode(); break;	// DECRST
+	case 'n': CSQ_n_Mode(); break;	// DECDSR
 	}
 }
 
@@ -3128,7 +3131,7 @@ void SoftReset()
 	if (isCursorOnStatusLine)
 		MoveToMainScreen();
 	CursorTop = 0;
-	CursorBottom = NumOfLines-1-StatusLine;
+	CursorBottom = NumOfLines - 1 - StatusLine;
 	CursorLeftM = 0;
 	CursorRightM = NumOfColumns - 1;
 	ResetCharSet();
@@ -3148,7 +3151,7 @@ void SoftReset()
 void CSExc(BYTE b)
 {
 	switch (b) {
-	  case 'p':
+	case 'p':
 		/* Software reset */
 		SoftReset();
 		break;
@@ -3158,8 +3161,8 @@ void CSExc(BYTE b)
 void CSDouble(BYTE b)
 {
 	switch (b) {
-	  case 'p': // DECSCL
-		/* Select terminal mode (software reset) */
+	case 'p': // DECSCL
+	  /* Select terminal mode (software reset) */
 		RequiredParams(2);
 
 		SoftReset();
@@ -3179,18 +3182,18 @@ void CSDouble(BYTE b)
 			Send8BitMode = TRUE;
 		break;
 
-	  case 'q': // DECSCA
+	case 'q': // DECSCA
 		switch (Param[1]) {
-		  case 0:
-		  case 2:
+		case 0:
+		case 2:
 			CharAttr.Attr2 &= ~Attr2Protect;
 			BuffSetCurCharAttr(CharAttr);
 			break;
-		  case 1:
+		case 1:
 			CharAttr.Attr2 |= Attr2Protect;
 			BuffSetCurCharAttr(CharAttr);
 			break;
-		  default:
+		default:
 			/* nothing to do */
 			break;
 		}
@@ -3205,35 +3208,35 @@ void CSDolRequestMode() // DECRQM
 	int len, resp = 0;
 
 	switch (Prv) {
-	  case 0: /* ANSI Mode */
+	case 0: /* ANSI Mode */
 		resp = 4;
 		pp = "";
 		switch (Param[1]) {
-		  case 2:	// KAM
+		case 2:	// KAM
 			if (KeybEnabled)
 				resp = 2;
 			else
 				resp = 1;
 			break;
-		  case 4:	// IRM
+		case 4:	// IRM
 			if (InsertMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 12:	// SRM
+		case 12:	// SRM
 			if (ts.LocalEcho)
 				resp = 2;
 			else
 				resp = 1;
 			break;
-		  case 20:	// LNM
+		case 20:	// LNM
 			if (LFMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 33:	// WYSTCURM
+		case 33:	// WYSTCURM
 			if (ts.NonblinkingCursor)
 				resp = 1;
 			else
@@ -3241,7 +3244,7 @@ void CSDolRequestMode() // DECRQM
 			if ((ts.WindowFlag & WF_CURSORCHANGE) == 0)
 				resp += 2;
 			break;
-		  case 34:	// WYULCURM
+		case 34:	// WYULCURM
 			if (ts.CursorShape == IdHCur)
 				resp = 1;
 			else
@@ -3252,46 +3255,46 @@ void CSDolRequestMode() // DECRQM
 		}
 		break;
 
-	  case '?': /* DEC Mode */
+	case '?': /* DEC Mode */
 		pp = "?";
 		switch (Param[1]) {
-		  case 1:	// DECCKM
+		case 1:	// DECCKM
 			if (AppliCursorMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 3:	// DECCOLM
+		case 3:	// DECCOLM
 			if (NumOfColumns == 132)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 5:	// DECSCNM
+		case 5:	// DECSCNM
 			if (ts.ColorFlag & CF_REVERSEVIDEO)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 6:	// DECOM
+		case 6:	// DECOM
 			if (RelativeOrgMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 7:	// DECAWM
+		case 7:	// DECAWM
 			if (AutoWrapMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 8:	// DECARM
+		case 8:	// DECARM
 			if (AutoRepeatMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 9:	// XT_MSE_X10 -- X10 Mouse Tracking
+		case 9:	// XT_MSE_X10 -- X10 Mouse Tracking
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportMode == IdMouseTrackX10)
@@ -3299,7 +3302,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 12:	// XT_CBLINK -- att610 cursor blinking
+		case 12:	// XT_CBLINK -- att610 cursor blinking
 			if (ts.NonblinkingCursor)
 				resp = 2;
 			else
@@ -3307,22 +3310,22 @@ void CSDolRequestMode() // DECRQM
 			if ((ts.WindowFlag & WF_CURSORCHANGE) == 0)
 				resp += 2;
 			break;
-		  case 19:	// DECPEX
+		case 19:	// DECPEX
 			if (PrintEX)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 25:	// DECTCEM
+		case 25:	// DECTCEM
 			if (IsCaretEnabled())
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 38:	// DECTEK
+		case 38:	// DECTEK
 			resp = 4;
 			break;
-		  case 47:	// XT_ALTSCRN -- Alternate Screen / (DECGRPM)
+		case 47:	// XT_ALTSCRN -- Alternate Screen / (DECGRPM)
 			if ((ts.TermFlag & TF_ALTSCR) == 0)
 				resp = 4;
 			else if (AltScr)
@@ -3330,33 +3333,33 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 59:	// DECKKDM
-			if (ts.Language!=IdJapanese)
+		case 59:	// DECKKDM
+			if (ts.Language != IdJapanese)
 				resp = 0;
 			else if ((ts.KanjiCode == IdJIS) && (!ts.JIS7Katakana))
 				resp = 4;
 			else
 				resp = 3;
 			break;
-		  case 66:	// DECNKM
+		case 66:	// DECNKM
 			if (AppliKeyMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 67:	// DECBKM
-			if (ts.BSKey==IdBS)
+		case 67:	// DECBKM
+			if (ts.BSKey == IdBS)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 69:	// DECRQM
+		case 69:	// DECRQM
 			if (LRMarginMode)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case	1000:	// XT_MSE_X11
+		case	1000:	// XT_MSE_X11
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportMode == IdMouseTrackVT200)
@@ -3364,7 +3367,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1001:	// XT_MSE_HL
+		case 1001:	// XT_MSE_HL
 #if 0
 			if (!ts.MouseEventTracking)
 				resp = 4;
@@ -3376,7 +3379,7 @@ void CSDolRequestMode() // DECRQM
 			resp = 4;
 #endif
 			break;
-		  case 1002:	// XT_MSE_BTN
+		case 1002:	// XT_MSE_BTN
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportMode == IdMouseTrackBtnEvent)
@@ -3384,7 +3387,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1003:	// XT_MSE_ANY
+		case 1003:	// XT_MSE_ANY
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportMode == IdMouseTrackAllEvent)
@@ -3392,7 +3395,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1004:	// XT_MSE_WIN
+		case 1004:	// XT_MSE_WIN
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (FocusReportMode)
@@ -3400,7 +3403,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1005:	// XT_MSE_UTF
+		case 1005:	// XT_MSE_UTF
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportExtMode == IdMouseTrackExtUTF8)
@@ -3408,7 +3411,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1006:	// XT_MSE_SGR
+		case 1006:	// XT_MSE_SGR
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportExtMode == IdMouseTrackExtSGR)
@@ -3416,7 +3419,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1015:	// urxvt-style extended mouse tracking
+		case 1015:	// urxvt-style extended mouse tracking
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportExtMode == IdMouseTrackExtURXVT)
@@ -3424,7 +3427,7 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1047:	// XT_ALTS_47
+		case 1047:	// XT_ALTS_47
 			if ((ts.TermFlag & TF_ALTSCR) == 0)
 				resp = 4;
 			else if (AltScr)
@@ -3432,13 +3435,13 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 1048:
+		case 1048:
 			if ((ts.TermFlag & TF_ALTSCR) == 0)
 				resp = 4;
 			else
 				resp = 1;
 			break;
-		  case 1049:	// XT_EXTSCRN
+		case 1049:	// XT_EXTSCRN
 			if ((ts.TermFlag & TF_ALTSCR) == 0)
 				resp = 4;
 			else if (AltScr)
@@ -3446,19 +3449,19 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 2004:	// RL_BRACKET
+		case 2004:	// RL_BRACKET
 			if (BracketedPaste)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 7727:	// MinTTY Application Escape Mode
+		case 7727:	// MinTTY Application Escape Mode
 			if (AppliEscapeMode == 1)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 7786:	// MinTTY Mousewheel reporting
+		case 7786:	// MinTTY Mousewheel reporting
 			if (!ts.TranslateWheelToCursor)
 				resp = 4;
 			else if (AcceptWheelToCursor)
@@ -3466,13 +3469,13 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 8200:	// ClearThenHome
+		case 8200:	// ClearThenHome
 			if (ClearThenHome)
 				resp = 1;
 			else
 				resp = 2;
 			break;
-		  case 14001:	// NetTerm Mouse Reporting (TT)
+		case 14001:	// NetTerm Mouse Reporting (TT)
 			if (!ts.MouseEventTracking)
 				resp = 4;
 			else if (MouseReportMode == IdMouseTrackNetTerm)
@@ -3480,9 +3483,9 @@ void CSDolRequestMode() // DECRQM
 			else
 				resp = 2;
 			break;
-		  case 14002:	// test Application Escape Mode 2
-		  case 14003:	// test Application Escape Mode 3
-		  case 14004:	// test Application Escape Mode 4
+		case 14002:	// test Application Escape Mode 2
+		case 14003:	// test Application Escape Mode 3
+		case 14004:	// test Application Escape Mode 4
 			if (AppliEscapeMode == Param[1] - 14000)
 				resp = 1;
 			else
@@ -3503,16 +3506,16 @@ void CSDol(BYTE b)
 	mask = DefCharAttr;
 
 	switch (b) {
-	  case 'p': // DECRQM
+	case 'p': // DECRQM
 		CSDolRequestMode();
 		break;
 
-	  case 'r': // DECCARA
-	  case 't': // DECRARA
+	case 'r': // DECCARA
+	case 't': // DECRARA
 		RequiredParams(4);
-		CheckParamVal(Param[1], NumOfLines-StatusLine);
+		CheckParamVal(Param[1], NumOfLines - StatusLine);
 		CheckParamVal(Param[2], NumOfColumns);
-		CheckParamValMax(Param[3], NumOfLines-StatusLine);
+		CheckParamValMax(Param[3], NumOfLines - StatusLine);
 		CheckParamValMax(Param[4], NumOfColumns);
 
 		if (Param[1] > Param[3] || Param[2] > Param[4]) {
@@ -3529,7 +3532,7 @@ void CSDol(BYTE b)
 				Param[3] = CursorBottom + 1;
 			}
 
-			// TODO: ç∂âEÉ}Å[ÉWÉìÇÃÉ`ÉFÉbÉNÇçsÇ§ÅB
+			// TODO: Â∑¶Âè≥„Éû„Éº„Ç∏„É≥„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ„ÇíË°å„ÅÜ„ÄÇ
 		}
 
 		ParseSGRParams(&attr, &mask, 5);
@@ -3539,31 +3542,31 @@ void CSDol(BYTE b)
 			attr.Attr2 &= Attr2ColorMask;
 			mask.Attr2 &= Attr2ColorMask;
 			if (RectangleMode) {
-				BuffChangeAttrBox(Param[2]-1, Param[1]-1, Param[4]-1, Param[3]-1, &attr, &mask);
+				BuffChangeAttrBox(Param[2] - 1, Param[1] - 1, Param[4] - 1, Param[3] - 1, &attr, &mask);
 			}
 			else {
-				BuffChangeAttrStream(Param[2]-1, Param[1]-1, Param[4]-1, Param[3]-1, &attr, &mask);
+				BuffChangeAttrStream(Param[2] - 1, Param[1] - 1, Param[4] - 1, Param[3] - 1, &attr, &mask);
 			}
 		}
 		else { // DECRARA
 			attr.Attr &= AttrSgrMask;
 			if (RectangleMode) {
-			    BuffChangeAttrBox(Param[2]-1, Param[1]-1, Param[4]-1, Param[3]-1, &attr, NULL);
+				BuffChangeAttrBox(Param[2] - 1, Param[1] - 1, Param[4] - 1, Param[3] - 1, &attr, NULL);
 			}
 			else {
-			    BuffChangeAttrStream(Param[2]-1, Param[1]-1, Param[4]-1, Param[3]-1, &attr, NULL);
+				BuffChangeAttrStream(Param[2] - 1, Param[1] - 1, Param[4] - 1, Param[3] - 1, &attr, NULL);
 			}
 		}
 		break;
 
-	  case 'v': // DECCRA
+	case 'v': // DECCRA
 		RequiredParams(8);
-		CheckParamVal(Param[1], NumOfLines-StatusLine);		// Src Y-start
+		CheckParamVal(Param[1], NumOfLines - StatusLine);		// Src Y-start
 		CheckParamVal(Param[2], NumOfColumns);			// Src X-start
-		CheckParamValMax(Param[3], NumOfLines-StatusLine);	// Src Y-end
+		CheckParamValMax(Param[3], NumOfLines - StatusLine);	// Src Y-end
 		CheckParamValMax(Param[4], NumOfColumns);		// Src X-end
 		CheckParamVal(Param[5], 1);				// Src Page
-		CheckParamVal(Param[6], NumOfLines-StatusLine);		// Dest Y
+		CheckParamVal(Param[6], NumOfLines - StatusLine);		// Dest Y
 		CheckParamVal(Param[7], NumOfColumns);			// Dest X
 		CheckParamVal(Param[8], 1);				// Dest Page
 
@@ -3588,21 +3591,21 @@ void CSDol(BYTE b)
 				Param[3] = Param[1] + CursorBottom - Param[6] + 1;
 			}
 
-			// TODO: ç∂âEÉ}Å[ÉWÉìÇÃÉ`ÉFÉbÉNÇçsÇ§ÅB
+			// TODO: Â∑¶Âè≥„Éû„Éº„Ç∏„É≥„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ„ÇíË°å„ÅÜ„ÄÇ
 		}
 
-		// TODO: 1 origin Ç…Ç»Ç¡ÇƒÇ¢ÇÈÅB0 origin Ç…íºÇ∑ÅB
+		// TODO: 1 origin „Å´„Å™„Å£„Å¶„ÅÑ„Çã„ÄÇ0 origin „Å´Áõ¥„Åô„ÄÇ
 		BuffCopyBox(Param[2], Param[1], Param[4], Param[3], Param[5], Param[7], Param[6], Param[8]);
 		break;
 
-	  case 'x': // DECFRA
+	case 'x': // DECFRA
 		RequiredParams(5);
 		if (Param[1] < 32 || (Param[1] > 127 && Param[1] < 160) || Param[1] > 255) {
 			return;
 		}
-		CheckParamVal(Param[2], NumOfLines-StatusLine);
+		CheckParamVal(Param[2], NumOfLines - StatusLine);
 		CheckParamVal(Param[3], NumOfColumns);
-		CheckParamValMax(Param[4], NumOfLines-StatusLine);
+		CheckParamValMax(Param[4], NumOfLines - StatusLine);
 		CheckParamValMax(Param[5], NumOfColumns);
 
 		if (Param[2] > Param[4] || Param[3] > Param[5]) {
@@ -3619,18 +3622,18 @@ void CSDol(BYTE b)
 				Param[4] = CursorBottom + 1;
 			}
 
-			// TODO: ç∂âEÉ}Å[ÉWÉìÇÃÉ`ÉFÉbÉNÇçsÇ§ÅB
+			// TODO: Â∑¶Âè≥„Éû„Éº„Ç∏„É≥„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ„ÇíË°å„ÅÜ„ÄÇ
 		}
 
-		BuffFillBox(Param[1], Param[3]-1, Param[2]-1, Param[5]-1, Param[4]-1);
+		BuffFillBox(Param[1], Param[3] - 1, Param[2] - 1, Param[5] - 1, Param[4] - 1);
 		break;
 
-	  case 'z': // DECERA
-	  case '{': // DECSERA
+	case 'z': // DECERA
+	case '{': // DECSERA
 		RequiredParams(4);
-		CheckParamVal(Param[1], NumOfLines-StatusLine);
+		CheckParamVal(Param[1], NumOfLines - StatusLine);
 		CheckParamVal(Param[2], NumOfColumns);
-		CheckParamValMax(Param[3], NumOfLines-StatusLine);
+		CheckParamValMax(Param[3], NumOfLines - StatusLine);
 		CheckParamValMax(Param[4], NumOfColumns);
 
 		if (Param[1] > Param[3] || Param[2] > Param[4]) {
@@ -3647,30 +3650,30 @@ void CSDol(BYTE b)
 				Param[3] = CursorBottom + 1;
 			}
 
-			// TODO: ç∂âEÉ}Å[ÉWÉìÇÃÉ`ÉFÉbÉNÇçsÇ§ÅB
+			// TODO: Â∑¶Âè≥„Éû„Éº„Ç∏„É≥„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ„ÇíË°å„ÅÜ„ÄÇ
 		}
 
 		if (b == 'z') {
-			BuffEraseBox(Param[2]-1, Param[1]-1, Param[4]-1, Param[3]-1);
+			BuffEraseBox(Param[2] - 1, Param[1] - 1, Param[4] - 1, Param[3] - 1);
 		}
 		else {
-			BuffSelectiveEraseBox(Param[2]-1, Param[1]-1, Param[4]-1, Param[3]-1);
+			BuffSelectiveEraseBox(Param[2] - 1, Param[1] - 1, Param[4] - 1, Param[3] - 1);
 		}
 		break;
 
-	  case '}': // DECSASD
+	case '}': // DECSASD
 		if ((ts.TermFlag & TF_ENABLESLINE) == 0 || !StatusLine) {
 			return;
 		}
 
 		switch (Param[1]) {
-		  case 0:
+		case 0:
 			if (isCursorOnStatusLine) {
 				MoveToMainScreen();
 			}
 			break;
 
-		  case 1:
+		case 1:
 			if (!isCursorOnStatusLine) {
 				MoveToStatusLine();
 			}
@@ -3678,17 +3681,17 @@ void CSDol(BYTE b)
 		}
 		break;
 
-	  case '~': // DECSSDT
-		if ((ts.TermFlag & TF_ENABLESLINE)==0) {
+	case '~': // DECSSDT
+		if ((ts.TermFlag & TF_ENABLESLINE) == 0) {
 			return;
 		}
 
 		switch (Param[1]) {
-		  case 0:
-		  case 1:
+		case 0:
+		case 1:
 			HideStatusLine();
 			break;
-		  case 2:
+		case 2:
 			if (!StatusLine) {
 				ShowStatusLine(1); // show
 			}
@@ -3701,7 +3704,7 @@ void CSDol(BYTE b)
 void CSQDol(BYTE b)
 {
 	switch (b) {
-	  case 'p':
+	case 'p':
 		CSDolRequestMode();
 		break;
 	}
@@ -3711,7 +3714,7 @@ void CSQuote(BYTE b)
 {
 	int i, x, y;
 	switch (b) {
-	  case 'w': // Enable Filter Rectangle (DECEFR)
+	case 'w': // Enable Filter Rectangle (DECEFR)
 		if (MouseReportMode == IdMouseTrackDECELR) {
 			RequiredParams(4);
 			if (DecLocatorFlag & DecLocatorPixel) {
@@ -3723,10 +3726,10 @@ void CSQuote(BYTE b)
 				x++;
 				y++;
 			}
-			FilterTop    = (Param[1]==0)? y : Param[1];
-			FilterLeft   = (Param[2]==0)? x : Param[2];
-			FilterBottom = (Param[3]==0)? y : Param[3];
-			FilterRight  = (Param[4]==0)? x : Param[4];
+			FilterTop = (Param[1] == 0) ? y : Param[1];
+			FilterLeft = (Param[2] == 0) ? x : Param[2];
+			FilterBottom = (Param[3] == 0) ? y : Param[3];
+			FilterRight = (Param[4] == 0) ? x : Param[4];
 			if (FilterTop > FilterBottom) {
 				i = FilterTop; FilterTop = FilterBottom; FilterBottom = i;
 			}
@@ -3738,20 +3741,20 @@ void CSQuote(BYTE b)
 		}
 		break;
 
-	  case 'z': // Enable DEC Locator reporting (DECELR)
+	case 'z': // Enable DEC Locator reporting (DECELR)
 		switch (Param[1]) {
-		  case 0:
+		case 0:
 			if (MouseReportMode == IdMouseTrackDECELR) {
 				MouseReportMode = IdMouseTrackNone;
 			}
 			break;
-		  case 1:
+		case 1:
 			if (ts.MouseEventTracking) {
 				MouseReportMode = IdMouseTrackDECELR;
 				DecLocatorFlag &= ~DecLocatorOneShot;
 			}
 			break;
-		  case 2:
+		case 2:
 			if (ts.MouseEventTracking) {
 				MouseReportMode = IdMouseTrackDECELR;
 				DecLocatorFlag |= DecLocatorOneShot;
@@ -3766,29 +3769,29 @@ void CSQuote(BYTE b)
 		}
 		break;
 
-	  case '{': // Select Locator Events (DECSLE)
-		for (i=1; i<=NParam; i++) {
+	case '{': // Select Locator Events (DECSLE)
+		for (i = 1; i <= NParam; i++) {
 			switch (Param[i]) {
-			  case 0:
+			case 0:
 				DecLocatorFlag &= ~(DecLocatorButtonUp | DecLocatorButtonDown | DecLocatorFiltered);
 				break;
-			  case 1:
+			case 1:
 				DecLocatorFlag |= DecLocatorButtonDown;
 				break;
-			  case 2:
+			case 2:
 				DecLocatorFlag &= ~DecLocatorButtonDown;
 				break;
-			  case 3:
+			case 3:
 				DecLocatorFlag |= DecLocatorButtonUp;
 				break;
-			  case 4:
+			case 4:
 				DecLocatorFlag &= ~DecLocatorButtonUp;
 				break;
 			}
 		}
 		break;
 
-	  case '|': // Request Locator Position (DECRQLP)
+	case '|': // Request Locator Position (DECRQLP)
 		DecLocatorReport(IdMouseEventCurStat, 0);
 		break;
 	}
@@ -3796,35 +3799,35 @@ void CSQuote(BYTE b)
 
 void CSSpace(BYTE b) {
 	switch (b) {
-	  case 'q': // DECSCUSR
+	case 'q': // DECSCUSR
 		if (ts.WindowFlag & WF_CURSORCHANGE) {
 			switch (Param[1]) {
-			  case 0:
-			  case 1:
+			case 0:
+			case 1:
 				ts.CursorShape = IdBlkCur;
 				ts.NonblinkingCursor = FALSE;
 				break;
-			  case 2:
+			case 2:
 				ts.CursorShape = IdBlkCur;
 				ts.NonblinkingCursor = TRUE;
 				break;
-			  case 3:
+			case 3:
 				ts.CursorShape = IdHCur;
 				ts.NonblinkingCursor = FALSE;
 				break;
-			  case 4:
+			case 4:
 				ts.CursorShape = IdHCur;
 				ts.NonblinkingCursor = TRUE;
 				break;
-			  case 5:
+			case 5:
 				ts.CursorShape = IdVCur;
 				ts.NonblinkingCursor = FALSE;
 				break;
-			  case 6:
+			case 6:
 				ts.CursorShape = IdVCur;
 				ts.NonblinkingCursor = TRUE;
 				break;
-			  default:
+			default:
 				return;
 			}
 			ChangeCaret();
@@ -3836,13 +3839,13 @@ void CSSpace(BYTE b) {
 void CSAster(BYTE b)
 {
 	switch (b) {
-	  case 'x': // DECSACE
+	case 'x': // DECSACE
 		switch (Param[1]) {
-		  case 0:
-		  case 1:
+		case 0:
+		case 1:
 			RectangleMode = FALSE;
 			break;
-		  case 2:
+		case 2:
 			RectangleMode = TRUE;
 			break;
 		}
@@ -3854,18 +3857,18 @@ void PrnParseCS(BYTE b) // printer mode
 {
 	ParseMode = ModeFirst;
 	switch (ICount) {
-	  /* no intermediate char */
-	  case 0:
+		/* no intermediate char */
+	case 0:
 		switch (Prv) {
-		/* no private parameter */
-		  case 0:
+			/* no private parameter */
+		case 0:
 			switch (b) {
-			  case 'i':
-				if (Param[1]==4) {
+			case 'i':
+				if (Param[1] == 4) {
 					PrinterMode = FALSE;
 					// clear prn buff
-					WriteToPrnFile(0,FALSE);
-					if (! AutoPrintMode)
+					WriteToPrnFile(0, FALSE);
+					if (!AutoPrintMode)
 						ClosePrnFile();
 					return;
 				}
@@ -3874,11 +3877,11 @@ void PrnParseCS(BYTE b) // printer mode
 			break;
 		}
 		break;
-	  /* one intermediate char */
-	  case 1: break;
+		/* one intermediate char */
+	case 1: break;
 	} /* of case Icount */
 
-	WriteToPrnFile(b,TRUE);
+	WriteToPrnFile(b, TRUE);
 }
 
 void ParseCS(BYTE b) /* b is the final char */
@@ -3889,92 +3892,92 @@ void ParseCS(BYTE b) /* b is the final char */
 	}
 
 	switch (ICount) {
-	  case 0: /* no intermediate char */
+	case 0: /* no intermediate char */
 		switch (Prv) {
-		  case 0: /* no private parameter */
+		case 0: /* no private parameter */
 			switch (b) {
-			// ISO/IEC 6429 / ECMA-48 Sequence
-			  case '@': CSInsertCharacter(); break;   // ICH
-			  case 'A': CSCursorUp(TRUE); break;      // CUU
-			  case 'B': CSCursorDown(TRUE); break;    // CUD
-			  case 'C': CSCursorRight(TRUE); break;   // CUF
-			  case 'D': CSCursorLeft(TRUE); break;    // CUB
-			  case 'E': CSCursorDown1(); break;       // CNL
-			  case 'F': CSCursorUp1(); break;         // CPL
-			  case 'G': CSMoveToColumnN(); break;     // CHA
-			  case 'H': CSMoveToXY(); break;          // CUP
-			  case 'I': CSForwardTab(); break;        // CHT
-			  case 'J': CSScreenErase(); break;       // ED
-			  case 'K': CSLineErase(); break;         // EL
-			  case 'L': CSInsertLine(); break;        // IL
-			  case 'M': CSDeleteNLines(); break;      // DL
+				// ISO/IEC 6429 / ECMA-48 Sequence
+			case '@': CSInsertCharacter(); break;   // ICH
+			case 'A': CSCursorUp(TRUE); break;      // CUU
+			case 'B': CSCursorDown(TRUE); break;    // CUD
+			case 'C': CSCursorRight(TRUE); break;   // CUF
+			case 'D': CSCursorLeft(TRUE); break;    // CUB
+			case 'E': CSCursorDown1(); break;       // CNL
+			case 'F': CSCursorUp1(); break;         // CPL
+			case 'G': CSMoveToColumnN(); break;     // CHA
+			case 'H': CSMoveToXY(); break;          // CUP
+			case 'I': CSForwardTab(); break;        // CHT
+			case 'J': CSScreenErase(); break;       // ED
+			case 'K': CSLineErase(); break;         // EL
+			case 'L': CSInsertLine(); break;        // IL
+			case 'M': CSDeleteNLines(); break;      // DL
 //			  case 'N': break;                        // EF   -- Not support
 //			  case 'O': break;                        // EA   -- Not support
-			  case 'P': CSDeleteCharacter(); break;   // DCH
+			case 'P': CSDeleteCharacter(); break;   // DCH
 //			  case 'Q': break;                        // SEE  -- Not support
 //			  case 'R': break;                        // CPR  -- Report only, ignore.
-			  case 'S': CSScrollUp(); break;          // SU
-			  case 'T': CSScrollDown(); break;        // SD
+			case 'S': CSScrollUp(); break;          // SU
+			case 'T': CSScrollDown(); break;        // SD
 //			  case 'U': break;                        // NP   -- Not support
 //			  case 'V': break;                        // PP   -- Not support
 //			  case 'W': break;                        // CTC  -- Not support
-			  case 'X': CSEraseCharacter(); break;    // ECH
+			case 'X': CSEraseCharacter(); break;    // ECH
 //			  case 'Y': break;                        // CVT  -- Not support
-			  case 'Z': CSBackwardTab(); break;       // CBT
+			case 'Z': CSBackwardTab(); break;       // CBT
 //			  case '[': break;                        // SRS  -- Not support
 //			  case '\\': break;                       // PTX  -- Not support
 //			  case ']': break;                        // SDS  -- Not support
 //			  case '^': break;                        // SIMD -- Not support
-			  case '`': CSMoveToColumnN(); break;     // HPA
-			  case 'a': CSCursorRight(FALSE); break;  // HPR
+			case '`': CSMoveToColumnN(); break;     // HPA
+			case 'a': CSCursorRight(FALSE); break;  // HPR
 //			  case 'b': break;                        // REP  -- Not support
-			  case 'c': AnswerTerminalType(); break;  // DA
-			  case 'd': CSMoveToLineN(); break;       // VPA
-			  case 'e': CSCursorDown(FALSE); break;   // VPR
-			  case 'f': CSMoveToXY(); break;          // HVP
-			  case 'g': CSDeleteTabStop(); break;     // TBC
-			  case 'h': CS_h_Mode(); break;           // SM
-			  case 'i': CS_i_Mode(); break;           // MC
-			  case 'j': CSCursorLeft(FALSE); break;   // HPB
-			  case 'k': CSCursorUp(FALSE); break;     // VPB
-			  case 'l': CS_l_Mode(); break;           // RM
-			  case 'm': CSSetAttr(); break;           // SGR
-			  case 'n': CS_n_Mode(); break;           // DSR
+			case 'c': AnswerTerminalType(); break;  // DA
+			case 'd': CSMoveToLineN(); break;       // VPA
+			case 'e': CSCursorDown(FALSE); break;   // VPR
+			case 'f': CSMoveToXY(); break;          // HVP
+			case 'g': CSDeleteTabStop(); break;     // TBC
+			case 'h': CS_h_Mode(); break;           // SM
+			case 'i': CS_i_Mode(); break;           // MC
+			case 'j': CSCursorLeft(FALSE); break;   // HPB
+			case 'k': CSCursorUp(FALSE); break;     // VPB
+			case 'l': CS_l_Mode(); break;           // RM
+			case 'm': CSSetAttr(); break;           // SGR
+			case 'n': CS_n_Mode(); break;           // DSR
 //			  case 'o': break;                        // DAQ  -- Not support
 
 			// Private Sequence
-			  case 'r': CSSetScrollRegion(); break;   // DECSTBM
-			  case 's':
+			case 'r': CSSetScrollRegion(); break;   // DECSTBM
+			case 's':
 				if (LRMarginMode)
 					CSSetLRScrollRegion();    // DECSLRM
 				else
 					SaveCursor();             // SCP (Save cursor (ANSI.SYS/SCO?))
 				break;
-			  case 't': CSSunSequence(); break;       // DECSLPP / Window manipulation(dtterm?)
-			  case 'u': RestoreCursor(); break;       // RCP (Restore cursor (ANSI.SYS/SCO))
+			case 't': CSSunSequence(); break;       // DECSLPP / Window manipulation(dtterm?)
+			case 'u': RestoreCursor(); break;       // RCP (Restore cursor (ANSI.SYS/SCO))
 			}
 			break; /* end of case Prv=0 */
-		  case '<': CSLT(b); break;    /* private parameter = '<' */
-		  case '=': CSEQ(b); break;    /* private parameter = '=' */
-		  case '>': CSGT(b); break;    /* private parameter = '>' */
-		  case '?': CSQuest(b); break; /* private parameter = '?' */
+		case '<': CSLT(b); break;    /* private parameter = '<' */
+		case '=': CSEQ(b); break;    /* private parameter = '=' */
+		case '>': CSGT(b); break;    /* private parameter = '>' */
+		case '?': CSQuest(b); break; /* private parameter = '?' */
 		} /* end of switch (Prv) */
 		break; /* end of no intermediate char */
-	  case 1: /* one intermediate char */
+	case 1: /* one intermediate char */
 		switch (Prv) {
-		  case 0:
+		case 0:
 			switch (IntChar[1]) {
-			  case ' ': CSSpace(b); break;  /* intermediate char = ' ' */
-			  case '!': CSExc(b); break;    /* intermediate char = '!' */
-			  case '"': CSDouble(b); break; /* intermediate char = '"' */
-			  case '$': CSDol(b); break;    /* intermediate char = '$' */
-			  case '*': CSAster(b); break;  /* intermediate char = '*' */
-			  case '\'': CSQuote(b); break; /* intermediate char = '\'' */
+			case ' ': CSSpace(b); break;  /* intermediate char = ' ' */
+			case '!': CSExc(b); break;    /* intermediate char = '!' */
+			case '"': CSDouble(b); break; /* intermediate char = '"' */
+			case '$': CSDol(b); break;    /* intermediate char = '$' */
+			case '*': CSAster(b); break;  /* intermediate char = '*' */
+			case '\'': CSQuote(b); break; /* intermediate char = '\'' */
 			}
 			break; /* end of case Prv=0 */
-		  case '?':
+		case '?':
 			switch (IntChar[1]) {
-			  case '$': CSQDol(b); break;    /* intermediate char = '$' */
+			case '$': CSQDol(b); break;    /* intermediate char = '$' */
 			}
 			break; /* end of case Prv=0 */
 		} /* end of switch (Prv) */
@@ -3986,19 +3989,19 @@ void ParseCS(BYTE b) /* b is the final char */
 
 void ControlSequence(BYTE b)
 {
-	if ((b<=US) || (b>=0x80) && (b<=0x9F))
+	if ((b <= US) || (b >= 0x80) && (b <= 0x9F))
 		ParseControl(b); /* ctrl char */
-	else if ((b>=0x40) && (b<=0x7E))
+	else if ((b >= 0x40) && (b <= 0x7E))
 		ParseCS(b); /* terminate char */
 	else {
 		if (PrinterMode)
-			WriteToPrnFile(b,FALSE);
+			WriteToPrnFile(b, FALSE);
 
-		if ((b>=0x20) && (b<=0x2F)) { /* intermediate char */
-			if (ICount<IntCharMax) ICount++;
+		if ((b >= 0x20) && (b <= 0x2F)) { /* intermediate char */
+			if (ICount < IntCharMax) ICount++;
 			IntChar[ICount] = b;
 		}
-		else if ((b>=0x30) && (b<=0x39)) { /* parameter value */
+		else if ((b >= 0x30) && (b <= 0x39)) { /* parameter value */
 #define ParamIncr(p, b) \
 	do { \
 		unsigned int ptmp; \
@@ -4019,24 +4022,24 @@ void ControlSequence(BYTE b)
 				ParamIncr(Param[NParam], b);
 			}
 		}
-		else if (b==0x3A) { /* ':' Subparameter delimiter */
+		else if (b == 0x3A) { /* ':' Subparameter delimiter */
 			if (NSParam[NParam] < NSParamMax) {
 				NSParam[NParam]++;
 				SubParam[NParam][NSParam[NParam]] = 0;
 			}
 		}
-		else if (b==0x3B) { /* ';' Parameter delimiter */
+		else if (b == 0x3B) { /* ';' Parameter delimiter */
 			if (NParam < NParamMax) {
 				NParam++;
 				Param[NParam] = 0;
 				NSParam[NParam] = 0;
 			}
 		}
-		else if ((b>=0x3C) && (b<=0x3F)) { /* private char */
+		else if ((b >= 0x3C) && (b <= 0x3F)) { /* private char */
 			if (FirstPrm) Prv = b;
 		}
-		else if (b>0xA0) {
-			ParseMode=ModeFirst;
+		else if (b > 0xA0) {
+			ParseMode = ModeFirst;
 			ParseFirst(b);
 		}
 	}
@@ -4045,7 +4048,7 @@ void ControlSequence(BYTE b)
 
 int CheckUTF8Seq(BYTE b, int utf8_stat)
 {
-	if (ts.Language == IdUtf8 || (ts.Language==IdJapanese && (ts.KanjiCode==IdUTF8 || ts.KanjiCode==IdUTF8m))) {
+	if (ts.Language == IdUtf8 || (ts.Language == IdJapanese && (ts.KanjiCode == IdUTF8 || ts.KanjiCode == IdUTF8m))) {
 		if (utf8_stat > 0) {
 			if (b >= 0x80 && b < 0xc0) {
 				utf8_stat -= 1;
@@ -4074,13 +4077,13 @@ void IgnoreString(BYTE b)
 {
 	static int utf8_stat = 0;
 
-	if ((ESCFlag && (b=='\\')) ||
-	    (b<=US && b!=ESC && b!=HT) ||
-	    (b==ST && ts.KanjiCode!=IdSJIS && utf8_stat == 0)) {
+	if ((ESCFlag && (b == '\\')) ||
+		(b <= US && b != ESC && b != HT) ||
+		(b == ST && ts.KanjiCode != IdSJIS && utf8_stat == 0)) {
 		ParseMode = ModeFirst;
 	}
 
-	if (b==ESC) {
+	if (b == ESC) {
 		ESCFlag = TRUE;
 	}
 	else {
@@ -4097,20 +4100,20 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 	int tmp = 0;
 
 	switch (StrBuff[0]) {
-	  case ' ':
+	case ' ':
 		switch (StrBuff[1]) {
-		  case 'q': // DECSCUSR
+		case 'q': // DECSCUSR
 			switch (ts.CursorShape) {
-			  case IdBlkCur:
+			case IdBlkCur:
 				tmp = 1;
 				break;
-			  case IdHCur:
+			case IdHCur:
 				tmp = 3;
 				break;
-			  case IdVCur:
+			case IdVCur:
 				tmp = 5;
 				break;
-			  default:
+			default:
 				tmp = 1;
 			}
 			if (ts.NonblinkingCursor) {
@@ -4119,9 +4122,9 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d q", CLocale, tmp);
 		}
 		break;
-	  case '"':
+	case '"':
 		switch (StrBuff[1]) {
-		  case 'p': // DECSCL
+		case 'p': // DECSCL
 			if (VTlevel > 1 && Send8BitMode) {
 				len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r6%d;0\"p", CLocale, VTlevel);
 			}
@@ -4130,7 +4133,7 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 			}
 			break;
 
-		  case 'q': // DECSCA
+		case 'q': // DECSCA
 			if (CharAttr.Attr2 & Attr2Protect) {
 				len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r1\"q", CLocale);
 			}
@@ -4140,14 +4143,14 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 			break;
 		}
 		break;
-	  case '*':
+	case '*':
 		switch (StrBuff[1]) {
-		  case 'x': // DECSACE
-			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d*x", CLocale, RectangleMode?2:0);
+		case 'x': // DECSACE
+			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d*x", CLocale, RectangleMode ? 2 : 0);
 			break;
 		}
 		break;
-	  case 'm':	// SGR
+	case 'm':	// SGR
 		if (StrBuff[1] == 0) {
 			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r0", CLocale);
 			if (CharAttr.Attr & AttrBold) {
@@ -4173,13 +4176,13 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 				}
 				else if (color <= 15) {
 					if (ts.ColorFlag & CF_AIXTERM16) {
-						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";9%d", CLocale, color-8);
+						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";9%d", CLocale, color - 8);
 					}
 					else if (ts.ColorFlag & CF_XTERM256) {
 						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";38;5;%d", CLocale, color);
 					}
 					else if (ts.ColorFlag & CF_PCBOLD16) {
-						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";3%d", CLocale, color-8);
+						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";3%d", CLocale, color - 8);
 					}
 				}
 				else if (ts.ColorFlag & CF_XTERM256) {
@@ -4196,13 +4199,13 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 				}
 				else if (color <= 15) {
 					if (ts.ColorFlag & CF_AIXTERM16) {
-						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";10%d", CLocale, color-8);
+						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";10%d", CLocale, color - 8);
 					}
 					else if (ts.ColorFlag & CF_XTERM256) {
 						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";48;5;%d", CLocale, color);
 					}
 					else if (ts.ColorFlag & CF_PCBOLD16) {
-						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";4%d", CLocale, color-8);
+						len += _snprintf_s_l(&RepStr[len], sizeof(RepStr) - len, _TRUNCATE, ";4%d", CLocale, color - 8);
 					}
 				}
 				else if (ts.ColorFlag & CF_XTERM256) {
@@ -4213,14 +4216,14 @@ static void RequestStatusString(const unsigned char *StrBuff, int StrLen)	// DEC
 			RepStr[len] = 0;
 		}
 		break;
-	  case 'r':	// DECSTBM
+	case 'r':	// DECSTBM
 		if (StrBuff[1] == 0) {
-			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d;%dr", CLocale, CursorTop+1, CursorBottom+1);
+			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d;%dr", CLocale, CursorTop + 1, CursorBottom + 1);
 		}
 		break;
-	  case 's':	// DECSLRM
+	case 's':	// DECSLRM
 		if (StrBuff[1] == 0) {
-			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d;%ds", CLocale, CursorLeftM+1, CursorRightM+1);
+			len = _snprintf_s_l(RepStr, sizeof(RepStr), _TRUNCATE, "1$r%d;%ds", CLocale, CursorLeftM + 1, CursorRightM + 1);
 		}
 		break;
 	}
@@ -4248,11 +4251,11 @@ int toHexStr(unsigned char *buff, int buffsize, unsigned char *str)
 
 	len = strlen(str);
 
-	if (buffsize < len*2) {
+	if (buffsize < len * 2) {
 		return -1;
 	}
 
-	for (i=0; i<len; i++) {
+	for (i = 0; i < len; i++) {
 		c = str[i] >> 4;
 		if (c <= 9) {
 			c += '0';
@@ -4306,7 +4309,7 @@ static int TermcapString(unsigned char *buff, int buffsize, unsigned char *capna
 		}
 		buff[len++] = '=';
 
-		if ((l = toHexStr(&buff[len], buffsize-len, capval)) < 0) {
+		if ((l = toHexStr(&buff[len], buffsize - len, capval)) < 0) {
 			return 0;
 		}
 		len += l;
@@ -4326,7 +4329,7 @@ static void RequestTermcapString(unsigned char *StrBuff, int StrLen)	// xterm ex
 	RepStr[2] = 'r';
 	replen = 3;
 
-	for (i=0; i<StrLen; i++) {
+	for (i = 0; i < StrLen; i++) {
 		if (StrBuff[i] == ';') {
 			if (replen >= sizeof(RepStr)) {
 				caplen = 0;
@@ -4337,7 +4340,7 @@ static void RequestTermcapString(unsigned char *StrBuff, int StrLen)	// xterm ex
 			}
 			if (caplen > 0 && caplen < sizeof(CapName)) {
 				CapName[caplen] = 0;
-				len = TermcapString(&RepStr[replen], sizeof(RepStr)-replen, CapName);
+				len = TermcapString(&RepStr[replen], sizeof(RepStr) - replen, CapName);
 				replen += len;
 				caplen = 0;
 				if (len == 0) {
@@ -4349,8 +4352,8 @@ static void RequestTermcapString(unsigned char *StrBuff, int StrLen)	// xterm ex
 				break;
 			}
 		}
-		else if (i+1 < StrLen && isxdigit(StrBuff[i]) && isxdigit(StrBuff[i+1])
-		  && caplen < sizeof(CapName)-1) {
+		else if (i + 1 < StrLen && isxdigit(StrBuff[i]) && isxdigit(StrBuff[i + 1])
+			&& caplen < sizeof(CapName) - 1) {
 			if (isdigit(StrBuff[i])) {
 				CapName[caplen] = (StrBuff[i] - '0') * 16;
 			}
@@ -4377,7 +4380,7 @@ static void RequestTermcapString(unsigned char *StrBuff, int StrLen)	// xterm ex
 			RepStr[replen++] = ';';
 		}
 		CapName[caplen] = 0;
-		len = TermcapString(&RepStr[replen], sizeof(RepStr)-replen, CapName);
+		len = TermcapString(&RepStr[replen], sizeof(RepStr) - replen, CapName);
 		replen += len;
 	}
 
@@ -4389,15 +4392,15 @@ static void RequestTermcapString(unsigned char *StrBuff, int StrLen)	// xterm ex
 
 static void ParseDCS(BYTE Cmd, unsigned char *StrBuff, int len) {
 	switch (ICount) {
-	  case 0:
+	case 0:
 		break;
-	  case 1:
+	case 1:
 		switch (IntChar[1]) {
-		  case '!':
+		case '!':
 			if (Cmd == '{') { // DECSTUI
-				if (! (ts.TermFlag & TF_LOCKTUID)) {
+				if (!(ts.TermFlag & TF_LOCKTUID)) {
 					int i;
-					for (i=0; i<8 && isxdigit(StrBuff[i]); i++) {
+					for (i = 0; i < 8 && isxdigit(StrBuff[i]); i++) {
 						if (islower(StrBuff[i])) {
 							StrBuff[i] = toupper(StrBuff[i]);
 						}
@@ -4408,21 +4411,21 @@ static void ParseDCS(BYTE Cmd, unsigned char *StrBuff, int len) {
 				}
 			}
 			break;
-		  case '$':
-			if (Cmd == 'q')  { // DECRQSS
+		case '$':
+			if (Cmd == 'q') { // DECRQSS
 				RequestStatusString(StrBuff, len);
 			}
 			break;
-		  case '+':
+		case '+':
 			if (Cmd == 'q') { // Request termcap/terminfo string (xterm)
 				RequestTermcapString(StrBuff, len);
 			}
 			break;
-		  default:
+		default:
 			break;
 		}
 		break;
-	  default:
+	default:
 		break;
 	}
 }
@@ -4437,7 +4440,7 @@ void DeviceControl(BYTE b)
 	static int utf8_stat = 0;
 	static BYTE Cmd;
 
-	if ((ESCFlag && (b=='\\')) || (b==ST && ts.KanjiCode!=IdSJIS && utf8_stat == 0)) {
+	if ((ESCFlag && (b == '\\')) || (b == ST && ts.KanjiCode != IdSJIS && utf8_stat == 0)) {
 		if (DcsParseMode == ModeDcsString) {
 			StrBuff[StrLen] = 0;
 			ParseDCS(Cmd, StrBuff, StrLen);
@@ -4450,7 +4453,7 @@ void DeviceControl(BYTE b)
 		return;
 	}
 
-	if (b==ESC) {
+	if (b == ESC) {
 		ESCFlag = TRUE;
 		utf8_stat = 0;
 		return;
@@ -4462,25 +4465,25 @@ void DeviceControl(BYTE b)
 	utf8_stat = CheckUTF8Seq(b, utf8_stat);
 
 	switch (DcsParseMode) {
-	  case ModeDcsFirst:
-		if (b<=US) {
+	case ModeDcsFirst:
+		if (b <= US) {
 			ParseControl(b);
 		}
-		else if ((b>=0x20) && (b<=0x2F)) {
-			if (ICount<IntCharMax) ICount++;
+		else if ((b >= 0x20) && (b <= 0x2F)) {
+			if (ICount < IntCharMax) ICount++;
 			IntChar[ICount] = b;
 		}
-		else if ((b>=0x30) && (b<=0x39)) {
-			Param[NParam] = Param[NParam]*10 + b - 0x30;
+		else if ((b >= 0x30) && (b <= 0x39)) {
+			Param[NParam] = Param[NParam] * 10 + b - 0x30;
 		}
-		else if (b==0x3B) {
+		else if (b == 0x3B) {
 			if (NParam < NParamMax) {
 				NParam++;
 				Param[NParam] = 0;
 			}
 		}
-		else if ((b>=0x40) && (b<=0x7E)) {
-			if (ICount == 0 && b=='|') {
+		else if ((b >= 0x40) && (b <= 0x7E)) {
+			if (ICount == 0 && b == '|') {
 				ParseMode = ModeDCUserKey;
 				if (Param[1] < 1) ClearUserKey();
 				WaitKeyId = TRUE;
@@ -4498,14 +4501,14 @@ void DeviceControl(BYTE b)
 		}
 		break;
 
-	  case ModeDcsString:
+	case ModeDcsString:
 		if (b <= US && b != HT && b != CR) {
 			ESCFlag = FALSE;
 			ParseMode = ModeFirst;
 			DcsParseMode = ModeDcsFirst;
 			StrLen = 0;
 		}
-		else if (StrLen < sizeof(StrBuff)-1) {
+		else if (StrLen < sizeof(StrBuff) - 1) {
 			StrBuff[StrLen++] = b;
 		}
 		break;
@@ -4516,14 +4519,14 @@ void DCUserKey(BYTE b)
 {
 	static int utf8_stat = 0;
 
-	if (ESCFlag && (b=='\\') || (b==ST && ts.KanjiCode!=IdSJIS && utf8_stat == 0)) {
-		if (! WaitKeyId) DefineUserKey(NewKeyId,NewKeyStr,NewKeyLen);
+	if (ESCFlag && (b == '\\') || (b == ST && ts.KanjiCode != IdSJIS && utf8_stat == 0)) {
+		if (!WaitKeyId) DefineUserKey(NewKeyId, NewKeyStr, NewKeyLen);
 		ESCFlag = FALSE;
 		ParseMode = ModeFirst;
 		return;
 	}
 
-	if (b==ESC) {
+	if (b == ESC) {
 		ESCFlag = TRUE;
 		return;
 	}
@@ -4532,19 +4535,19 @@ void DCUserKey(BYTE b)
 	utf8_stat = CheckUTF8Seq(b, utf8_stat);
 
 	if (WaitKeyId) {
-		if ((b>=0x30) && (b<=0x39)) {
-			if (NewKeyId<1000)
-				NewKeyId = NewKeyId*10 + b - 0x30;
+		if ((b >= 0x30) && (b <= 0x39)) {
+			if (NewKeyId < 1000)
+				NewKeyId = NewKeyId * 10 + b - 0x30;
 		}
-		else if (b==0x2F) {
+		else if (b == 0x2F) {
 			WaitKeyId = FALSE;
 			WaitHi = TRUE;
 			NewKeyLen = 0;
 		}
 	}
 	else {
-		if (b==0x3B) {
-			DefineUserKey(NewKeyId,NewKeyStr,NewKeyLen);
+		if (b == 0x3B) {
+			DefineUserKey(NewKeyId, NewKeyStr, NewKeyLen);
 			WaitKeyId = TRUE;
 			NewKeyId = 0;
 		}
@@ -4567,7 +4570,7 @@ void DCUserKey(BYTE b)
 BOOL XsParseColor(char *colspec, COLORREF *color)
 {
 	unsigned int r, g, b;
-//	double dr, dg, db;
+	//	double dr, dg, db;
 
 	r = g = b = 255;
 
@@ -4577,62 +4580,62 @@ BOOL XsParseColor(char *colspec, COLORREF *color)
 
 	if (_strnicmp(colspec, "rgb:", 4) == 0) {
 		switch (strlen(colspec)) {
-		  case  9:	// rgb:R/G/B
+		case  9:	// rgb:R/G/B
 			if (sscanf(colspec, "rgb:%1x/%1x/%1x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			r *= 17; g *= 17; b *= 17;
 			break;
-		  case 12:	// rgb:RR/GG/BB
+		case 12:	// rgb:RR/GG/BB
 			if (sscanf(colspec, "rgb:%2x/%2x/%2x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			break;
-		  case 15:	// rgb:RRR/GGG/BBB
+		case 15:	// rgb:RRR/GGG/BBB
 			if (sscanf(colspec, "rgb:%3x/%3x/%3x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			r >>= 4; g >>= 4; b >>= 4;
 			break;
-		  case 18:	// rgb:RRRR/GGGG/BBBB
+		case 18:	// rgb:RRRR/GGGG/BBBB
 			if (sscanf(colspec, "rgb:%4x/%4x/%4x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			r >>= 8; g >>= 8; b >>= 8;
 			break;
-		  default:
+		default:
 			return FALSE;
 		}
 	}
-//	else if (_strnicmp(colspec, "rgbi:", 5) == 0) {
-//		; /* nothing to do */
-//	}
+	//	else if (_strnicmp(colspec, "rgbi:", 5) == 0) {
+	//		; /* nothing to do */
+	//	}
 	else if (colspec[0] == '#') {
 		switch (strlen(colspec)) {
-		  case  4:	// #RGB
+		case  4:	// #RGB
 			if (sscanf(colspec, "#%1x%1x%1x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			r <<= 4; g <<= 4; b <<= 4;
 			break;
-		  case  7:	// #RRGGBB
+		case  7:	// #RRGGBB
 			if (sscanf(colspec, "#%2x%2x%2x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			break;
-		  case 10:	// #RRRGGGBBB
+		case 10:	// #RRRGGGBBB
 			if (sscanf(colspec, "#%3x%3x%3x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			r >>= 4; g >>= 4; b >>= 4;
 			break;
-		  case 13:	// #RRRRGGGGBBBB
+		case 13:	// #RRRRGGGGBBBB
 			if (sscanf(colspec, "#%4x%4x%4x", &r, &g, &b) != 3) {
 				return FALSE;
 			}
 			r >>= 8; g >>= 8; b >>= 8;
 			break;
-		  default:
+		default:
 			return FALSE;
 		}
 	}
@@ -4651,65 +4654,65 @@ BOOL XsParseColor(char *colspec, COLORREF *color)
 unsigned int XtColor2TTColor(int mode, unsigned int xt_color) {
 	unsigned int colornum = CS_UNSPEC;
 
-	switch ((mode>=100) ? mode-100 : mode) {
-	  case 4:
+	switch ((mode >= 100) ? mode - 100 : mode) {
+	case 4:
 		switch (xt_color) {
-		  case 256:
+		case 256:
 			colornum = CS_VT_BOLDFG;
 			break;
-		  case 257:
+		case 257:
 			// Underline -- not supported.
 			// colornum = CS_VT_UNDERFG;
 			break;
-		  case 258:
+		case 258:
 			colornum = CS_VT_BLINKFG;
 			break;
-		  case 259:
+		case 259:
 			colornum = CS_VT_REVERSEBG;
 			break;
-		  case CS_UNSPEC:
+		case CS_UNSPEC:
 			if (mode == 104) {
 				colornum = CS_ANSICOLOR_ALL;
 			}
 			break;
-		  default:
+		default:
 			if (xt_color <= 255) {
 				colornum = xt_color;
 			}
 		}
 		break;
-	  case 5:
+	case 5:
 		switch (xt_color) {
-		  case 0:
+		case 0:
 			colornum = CS_VT_BOLDFG;
 			break;
-		  case 1:
+		case 1:
 			// Underline -- not supported.
 			// colornum = CS_VT_UNDERFG;
 			break;
-		  case 2:
+		case 2:
 			colornum = CS_VT_BLINKFG;
 			break;
-		  case 3:
+		case 3:
 			colornum = CS_VT_REVERSEBG;
 			break;
-		  case CS_UNSPEC:
+		case CS_UNSPEC:
 			if (mode == 105) {
 				colornum = CS_SP_ALL;
 			}
 			break;
 		}
 		break;
-	  case 10:
+	case 10:
 		colornum = CS_VT_NORMALFG;
 		break;
-	  case 11:
+	case 11:
 		colornum = CS_VT_NORMALBG;
 		break;
-	  case 15:
+	case 15:
 		colornum = CS_TEK_FG;
 		break;
-	  case 16:
+	case 16:
 		colornum = CS_TEK_BG;
 		break;
 	}
@@ -4728,14 +4731,14 @@ void XsProcColor(int mode, unsigned int ColorNumber, char *ColorSpec, BYTE TermC
 		if (strcmp(ColorSpec, "?") == 0) {
 			color = DispGetColor(colornum);
 			if (mode == 4 || mode == 5) {
-				len =_snprintf_s_l(StrBuff, sizeof(StrBuff), _TRUNCATE,
+				len = _snprintf_s_l(StrBuff, sizeof(StrBuff), _TRUNCATE,
 					"%d;%d;rgb:%04x/%04x/%04x", CLocale, mode, ColorNumber,
-					GetRValue(color)*257, GetGValue(color)*257, GetBValue(color)*257);
+					GetRValue(color) * 257, GetGValue(color) * 257, GetBValue(color) * 257);
 			}
 			else {
-				len =_snprintf_s_l(StrBuff, sizeof(StrBuff), _TRUNCATE,
+				len = _snprintf_s_l(StrBuff, sizeof(StrBuff), _TRUNCATE,
 					"%d;rgb:%04x/%04x/%04x", CLocale, mode,
-					GetRValue(color)*257, GetGValue(color)*257, GetBValue(color)*257);
+					GetRValue(color) * 257, GetGValue(color) * 257, GetBValue(color) * 257);
 			}
 			SendOSCstr(StrBuff, len, TermChar);
 		}
@@ -4760,13 +4763,13 @@ void XsProcClipboard(PCHAR buff)
 	}
 
 	if (*p++ == ';') {
-		if (*p == '?' && *(p+1) == 0) { // Read access
+		if (*p == '?' && *(p + 1) == 0) { // Read access
 			if (ts.CtrlFlag & CSF_CBREAD) {
 				if (ts.NotifyClipboardAccess) {
 					get_lang_msg("MSG_CBACCESS_TITLE", notify_title, sizeof(notify_title),
-					             "Clipboard Access", ts.UILanguageFile);
+						"Clipboard Access", ts.UILanguageFile);
 					get_lang_msg("MSG_CBACCESS_READ", notify_buff, sizeof(notify_buff),
-					             "Remote host reads clipboard contents.", ts.UILanguageFile);
+						"Remote host reads clipboard contents.", ts.UILanguageFile);
 					NotifyInfoMessage(&cv, notify_buff, notify_title);
 				}
 				strncpy_s(hdr, sizeof(hdr), "\033]52;", _TRUNCATE);
@@ -4776,9 +4779,9 @@ void XsProcClipboard(PCHAR buff)
 			}
 			else if (ts.NotifyClipboardAccess) {
 				get_lang_msg("MSG_CBACCESS_REJECT_TITLE", notify_title, sizeof(notify_title),
-				             "Rejected Clipboard Access", ts.UILanguageFile);
+					"Rejected Clipboard Access", ts.UILanguageFile);
 				get_lang_msg("MSG_CBACCESS_READ_REJECT", notify_buff, sizeof(notify_buff),
-				             "Reject clipboard read access from remote.", ts.UILanguageFile);
+					"Reject clipboard read access from remote.", ts.UILanguageFile);
 				NotifyWarnMessage(&cv, notify_buff, notify_title);
 			}
 		}
@@ -4807,9 +4810,9 @@ void XsProcClipboard(PCHAR buff)
 
 			if (ts.NotifyClipboardAccess) {
 				get_lang_msg("MSG_CBACCESS_TITLE", notify_title, sizeof(notify_title),
-				             "Clipboard Access", ts.UILanguageFile);
+					"Clipboard Access", ts.UILanguageFile);
 				get_lang_msg("MSG_CBACCESS_WRITE", ts.UIMsg, sizeof(ts.UIMsg),
-				             "Remote host wirtes clipboard.", ts.UILanguageFile);
+					"Remote host wirtes clipboard.", ts.UILanguageFile);
 				_snprintf_s(notify_buff, sizeof(notify_buff), _TRUNCATE, "%s\n--\n%s", ts.UIMsg, cbbuff);
 				NotifyInfoMessage(&cv, notify_buff, notify_title);
 			}
@@ -4833,9 +4836,9 @@ void XsProcClipboard(PCHAR buff)
 		}
 		else if (ts.NotifyClipboardAccess) {
 			get_lang_msg("MSG_CBACCESS_REJECT_TITLE", notify_title, sizeof(notify_title),
-			             "Rejected Clipboard Access", ts.UILanguageFile);
+				"Rejected Clipboard Access", ts.UILanguageFile);
 			get_lang_msg("MSG_CBACCESS_WRITE_REJECT", notify_buff, sizeof(notify_buff),
-			             "Reject clipboard write access from remote.", ts.UILanguageFile);
+				"Reject clipboard write access from remote.", ts.UILanguageFile);
 			NotifyWarnMessage(&cv, notify_buff, notify_title);
 		}
 	}
@@ -4870,7 +4873,7 @@ void XSequence(BYTE b)
 	else if (b == BEL) {
 		TermChar = BEL;
 	}
-	else if (b==ST && Accept8BitCtrl && !(ts.Language==IdJapanese && ts.KanjiCode==IdSJIS) && utf8_stat==0) {
+	else if (b == ST && Accept8BitCtrl && !(ts.Language == IdJapanese && ts.KanjiCode == IdSJIS) && utf8_stat == 0) {
 		TermChar = ST;
 	}
 
@@ -4880,22 +4883,22 @@ void XSequence(BYTE b)
 				StrBuff[StrLen] = '\0';
 			}
 			else {
-				StrBuff[StrBuffSize-1] = '\0';
+				StrBuff[StrBuffSize - 1] = '\0';
 			}
 		}
 		switch (Param[1]) {
-		  case 0: /* Change window title and icon name */
-		  case 1: /* Change icon name */
-		  case 2: /* Change window title */
+		case 0: /* Change window title and icon name */
+		case 1: /* Change icon name */
+		case 2: /* Change window title */
 			if (StrBuff && ts.AcceptTitleChangeRequest) {
 				strncpy_s(cv.TitleRemote, sizeof(cv.TitleRemote), StrBuff, _TRUNCATE);
-				// (2006.6.15 maya) É^ÉCÉgÉãÇ…ìnÇ∑ï∂éöóÒÇSJISÇ…ïœä∑
+				// (2006.6.15 maya) „Çø„Ç§„Éà„É´„Å´Ê∏°„ÅôÊñáÂ≠óÂàó„ÇíSJIS„Å´Â§âÊèõ
 				ConvertToCP932(cv.TitleRemote, sizeof(cv.TitleRemote));
 				ChangeTitle();
 			}
 			break;
-		  case 4: /* Change/Query color palette */
-		  case 5: /* Change/Query special color */
+		case 4: /* Change/Query color palette */
+		case 5: /* Change/Query special color */
 			if (StrBuff) {
 				color_num = 0;
 				color_spec = NULL;
@@ -4905,7 +4908,7 @@ void XSequence(BYTE b)
 							color_num = color_num * 10 + *p - '0';
 						}
 						else if (*p == ';') {
-							color_spec = p+1;
+							color_spec = p + 1;
 						}
 						else {
 							break;
@@ -4925,16 +4928,16 @@ void XSequence(BYTE b)
 				}
 			}
 			break;
-		  case 10: /* Change/Query VT-Window foreground color */
-		  case 11: /* Change/Query VT-Window background color */
-		  case 12: /* Change/Query VT-Window cursor color */
-		  case 13: /* Change/Query mouse cursor foreground color */
-		  case 14: /* Change/Query mouse cursor background color */
-		  case 15: /* Change/Query Tek-Window foreground color */
-		  case 16: /* Change/Query Tek-Window foreground color */
-		  case 17: /* Change/Query highlight background color */
-		  case 18: /* Change/Query Tek-Window cursor color */
-		  case 19: /* Change/Query highlight foreground color */
+		case 10: /* Change/Query VT-Window foreground color */
+		case 11: /* Change/Query VT-Window background color */
+		case 12: /* Change/Query VT-Window cursor color */
+		case 13: /* Change/Query mouse cursor foreground color */
+		case 14: /* Change/Query mouse cursor background color */
+		case 15: /* Change/Query Tek-Window foreground color */
+		case 16: /* Change/Query Tek-Window foreground color */
+		case 17: /* Change/Query highlight background color */
+		case 18: /* Change/Query Tek-Window cursor color */
+		case 19: /* Change/Query highlight foreground color */
 			if (StrBuff) {
 				color_num = Param[1];
 				color_spec = StrBuff;
@@ -4943,19 +4946,19 @@ void XSequence(BYTE b)
 						*p = '\0';
 						XsProcColor(color_num, 0, color_spec, TermChar);
 						color_num++;
-						color_spec = p+1;
+						color_spec = p + 1;
 					}
 				}
 				XsProcColor(color_num, 0, color_spec, TermChar);
 			}
 			break;
-		  case 52: /* Manipulate Clipboard data */
+		case 52: /* Manipulate Clipboard data */
 			if (StrBuff) {
 				XsProcClipboard(StrBuff);
 			}
 			break;
-		  case 104: /* Reset color palette */
-		  case 105: /* Reset special color */
+		case 104: /* Reset color palette */
+		case 105: /* Reset special color */
 			if (HasParamStr) {
 				if (StrBuff) {
 					color_num = 0;
@@ -4980,16 +4983,16 @@ void XSequence(BYTE b)
 				DispResetColor(XtColor2TTColor(Param[1], CS_UNSPEC));
 			}
 			break;
-		  case 110: /* Reset VT-Window foreground color */
-		  case 111: /* Reset VT-Window background color */
-		  case 112: /* Reset VT-Window cursor color */
-		  case 113: /* Reset mouse cursor foreground color */
-		  case 114: /* Reset mouse cursor background color */
-		  case 115: /* Reset Tek-Window foreground color */
-		  case 116: /* Reset Tek-Window foreground color */
-		  case 117: /* Reset highlight background color */
-		  case 118: /* Reset Tek-Window cursor color */
-		  case 119: /* Reset highlight foreground color */
+		case 110: /* Reset VT-Window foreground color */
+		case 111: /* Reset VT-Window background color */
+		case 112: /* Reset VT-Window cursor color */
+		case 113: /* Reset mouse cursor foreground color */
+		case 114: /* Reset mouse cursor background color */
+		case 115: /* Reset Tek-Window foreground color */
+		case 116: /* Reset Tek-Window foreground color */
+		case 117: /* Reset highlight background color */
+		case 118: /* Reset Tek-Window cursor color */
+		case 119: /* Reset highlight foreground color */
 			DispResetColor(XtColor2TTColor(Param[1], CS_UNSPEC));
 			if (HasParamStr && StrBuff) {
 				color_num = 0;
@@ -5047,7 +5050,7 @@ void XSequence(BYTE b)
 
 			p = realloc(StrBuff, new_size);
 			if (p == NULL) {
-				if (StrBuff==NULL) {
+				if (StrBuff == NULL) {
 					StrBuffSize = 0;
 					ParseMode = ModeIgnore;
 					HasParamStr = FALSE;
@@ -5081,7 +5084,7 @@ void XSequence(BYTE b)
 void DLESeen(BYTE b)
 {
 	ParseMode = ModeFirst;
-	if (((ts.FTFlag & FT_BPAUTO)!=0) && (b=='B'))
+	if (((ts.FTFlag & FT_BPAUTO) != 0) && (b == 'B'))
 		BPStart(IdBPAuto); /* Auto B-Plus activation */
 	ChangeEmu = -1;
 }
@@ -5099,7 +5102,7 @@ void CANSeen(BYTE b)
 		}
 		else {
 			if (state == 2) {
-				if (b =='0') { // ZRQINIT
+				if (b == '0') { // ZRQINIT
 					/* Auto ZMODEM activation (Receive) */
 					ZMODEMStart(IdZAutoR);
 				}
@@ -5123,32 +5126,32 @@ BOOL CheckKanji(BYTE b)
 {
 	BOOL Check;
 
-	if (ts.Language!=IdJapanese)
+	if (ts.Language != IdJapanese)
 		return FALSE;
 
 	ConvJIS = FALSE;
 
-	if (ts.KanjiCode==IdSJIS ||
-	   (ts.FallbackToCP932 && (ts.KanjiCode==IdUTF8 || ts.KanjiCode==IdUTF8m))) {
-		if ((0x80<b) && (b<0xa0) || (0xdf<b) && (b<0xfd)) {
+	if (ts.KanjiCode == IdSJIS ||
+		(ts.FallbackToCP932 && (ts.KanjiCode == IdUTF8 || ts.KanjiCode == IdUTF8m))) {
+		if ((0x80 < b) && (b < 0xa0) || (0xdf < b) && (b < 0xfd)) {
 			Fallbacked = TRUE;
 			return TRUE; // SJIS kanji
 		}
-		if ((0xa1<=b) && (b<=0xdf)) {
+		if ((0xa1 <= b) && (b <= 0xdf)) {
 			return FALSE; // SJIS katakana
 		}
 	}
 
-	if ((b>=0x21) && (b<=0x7e)) {
-		Check = (Gn[Glr[0]]==IdKanji);
+	if ((b >= 0x21) && (b <= 0x7e)) {
+		Check = (Gn[Glr[0]] == IdKanji);
 		ConvJIS = Check;
 	}
-	else if ((b>=0xA1) && (b<=0xFE)) {
-		Check = (Gn[Glr[1]]==IdKanji);
-		if (ts.KanjiCode==IdEUC) {
+	else if ((b >= 0xA1) && (b <= 0xFE)) {
+		Check = (Gn[Glr[1]] == IdKanji);
+		if (ts.KanjiCode == IdEUC) {
 			Check = TRUE;
 		}
-		else if (ts.KanjiCode==IdJIS && ((ts.TermFlag & TF_FIXEDJIS)!=0) && (ts.JIS7Katakana==0)) {
+		else if (ts.KanjiCode == IdJIS && ((ts.TermFlag & TF_FIXEDJIS) != 0) && (ts.JIS7Katakana == 0)) {
 			Check = FALSE; // 8-bit katakana
 		}
 		ConvJIS = Check;
@@ -5163,11 +5166,11 @@ BOOL CheckKanji(BYTE b)
 BOOL CheckKorean(BYTE b)
 {
 	BOOL Check;
-	if (ts.Language!=IdKorean)
+	if (ts.Language != IdKorean)
 		return FALSE;
 
 	if (ts.KanjiCode == IdSJIS) {
-		if ((0xA1<=b) && (b<=0xFE)) {
+		if ((0xA1 <= b) && (b <= 0xFE)) {
 			Check = TRUE;
 		}
 		else {
@@ -5183,20 +5186,20 @@ BOOL ParseFirstJP(BYTE b)
 //  (actually allways returns TRUE)
 {
 	if (KanjiIn) {
-		if ((! ConvJIS) && (0x3F<b) && (b<0xFD) ||
-		      ConvJIS && ( (0x20<b) && (b<0x7f) ||
-		                   (0xa0<b) && (b<0xff) ))
+		if ((!ConvJIS) && (0x3F < b) && (b < 0xFD) ||
+			ConvJIS && ((0x20 < b) && (b < 0x7f) ||
+			(0xa0 < b) && (b < 0xff)))
 		{
 			PutKanji(b);
 			KanjiIn = FALSE;
 			return TRUE;
 		}
-		else if ((ts.TermFlag & TF_CTRLINKANJI)==0) {
+		else if ((ts.TermFlag & TF_CTRLINKANJI) == 0) {
 			KanjiIn = FALSE;
 		}
-		else if ((b==CR) && Wrap) {
+		else if ((b == CR) && Wrap) {
 			CarriageReturn(FALSE);
-			LineFeed(LF,FALSE);
+			LineFeed(LF, FALSE);
 			Wrap = FALSE;
 		}
 	}
@@ -5223,16 +5226,16 @@ BOOL ParseFirstJP(BYTE b)
 		return TRUE;
 	}
 
-	if (b<=US) {
+	if (b <= US) {
 		ParseControl(b);
 	}
-	else if (b==0x20) {
+	else if (b == 0x20) {
 		PutChar(b);
 	}
-	else if ((b>=0x21) && (b<=0x7E)) {
+	else if ((b >= 0x21) && (b <= 0x7E)) {
 		if (EUCsupIn) {
 			EUCcount--;
-			EUCsupIn = (EUCcount==0);
+			EUCsupIn = (EUCcount == 0);
 			return TRUE;
 		}
 
@@ -5242,13 +5245,13 @@ BOOL ParseFirstJP(BYTE b)
 		}
 		PutChar(b);
 	}
-	else if (b==0x7f) {
+	else if (b == 0x7f) {
 		return TRUE;
 	}
-	else if ((b>=0x80) && (b<=0x8D)) {
+	else if ((b >= 0x80) && (b <= 0x8D)) {
 		ParseControl(b);
 	}
-	else if (b==0x8E) { // SS2
+	else if (b == 0x8E) { // SS2
 		switch (ts.KanjiCode) {
 		case IdEUC:
 			if (ts.ISO2022Flag & ISO2022_SS2) {
@@ -5263,7 +5266,7 @@ BOOL ParseFirstJP(BYTE b)
 			ParseControl(b);
 		}
 	}
-	else if (b==0x8F) { // SS3
+	else if (b == 0x8F) { // SS3
 		switch (ts.KanjiCode) {
 		case IdEUC:
 			if (ts.ISO2022Flag & ISO2022_SS3) {
@@ -5279,25 +5282,25 @@ BOOL ParseFirstJP(BYTE b)
 			ParseControl(b);
 		}
 	}
-	else if ((b>=0x90) && (b<=0x9F)) {
+	else if ((b >= 0x90) && (b <= 0x9F)) {
 		ParseControl(b);
 	}
-	else if (b==0xA0) {
+	else if (b == 0xA0) {
 		PutChar(0x20);
 	}
-	else if ((b>=0xA1) && (b<=0xFE)) {
+	else if ((b >= 0xA1) && (b <= 0xFE)) {
 		if (EUCsupIn) {
 			EUCcount--;
-			EUCsupIn = (EUCcount==0);
+			EUCsupIn = (EUCcount == 0);
 			return TRUE;
 		}
 
 		if ((Gn[Glr[1]] != IdASCII) ||
-		    (ts.KanjiCode==IdEUC) && EUCkanaIn ||
-		    (ts.KanjiCode==IdSJIS) ||
-		    (ts.KanjiCode==IdJIS) &&
-		    (ts.JIS7Katakana==0) &&
-		    ((ts.TermFlag & TF_FIXEDJIS)!=0))
+			(ts.KanjiCode == IdEUC) && EUCkanaIn ||
+			(ts.KanjiCode == IdSJIS) ||
+			(ts.KanjiCode == IdJIS) &&
+			(ts.JIS7Katakana == 0) &&
+			((ts.TermFlag & TF_FIXEDJIS) != 0))
 			PutChar(b);	// katakana
 		else {
 			if (Gn[Glr[1]] == IdASCII) {
@@ -5319,20 +5322,20 @@ BOOL ParseFirstKR(BYTE b)
 //  (actually allways returns TRUE)
 {
 	if (KanjiIn) {
-		if ((0x41<=b) && (b<=0x5A) ||
-		    (0x61<=b) && (b<=0x7A) ||
-		    (0x81<=b) && (b<=0xFE))
+		if ((0x41 <= b) && (b <= 0x5A) ||
+			(0x61 <= b) && (b <= 0x7A) ||
+			(0x81 <= b) && (b <= 0xFE))
 		{
 			PutKanji(b);
 			KanjiIn = FALSE;
 			return TRUE;
 		}
-		else if ((ts.TermFlag & TF_CTRLINKANJI)==0) {
+		else if ((ts.TermFlag & TF_CTRLINKANJI) == 0) {
 			KanjiIn = FALSE;
 		}
-		else if ((b==CR) && Wrap) {
+		else if ((b == CR) && Wrap) {
 			CarriageReturn(FALSE);
-			LineFeed(LF,FALSE);
+			LineFeed(LF, FALSE);
 			Wrap = FALSE;
 		}
 	}
@@ -5343,28 +5346,28 @@ BOOL ParseFirstKR(BYTE b)
 		return TRUE;
 	}
 
-	if (b<=US) {
+	if (b <= US) {
 		ParseControl(b);
 	}
-	else if (b==0x20) {
+	else if (b == 0x20) {
 		PutChar(b);
 	}
-	else if ((b>=0x21) && (b<=0x7E)) {
-//		if (Gn[Glr[0]] == IdKatakana) {
-//			b = b | 0x80;
-//		}
+	else if ((b >= 0x21) && (b <= 0x7E)) {
+		//		if (Gn[Glr[0]] == IdKatakana) {
+		//			b = b | 0x80;
+		//		}
 		PutChar(b);
 	}
-	else if (b==0x7f) {
+	else if (b == 0x7f) {
 		return TRUE;
 	}
-	else if ((0x80<=b) && (b<=0x9F)) {
+	else if ((0x80 <= b) && (b <= 0x9F)) {
 		ParseControl(b);
 	}
-	else if (b==0xA0) {
+	else if (b == 0xA0) {
 		PutChar(0x20);
 	}
-	else if ((b>=0xA1) && (b<=0xFE)) {
+	else if ((b >= 0xA1) && (b <= 0xFE)) {
 		if (Gn[Glr[1]] == IdASCII) {
 			b = b & 0x7f;
 		}
@@ -5390,17 +5393,21 @@ static void ParseASCII(BYTE b)
 		return;
 	}
 
-	if (b<=US) {
+	if (b <= US) {
 		ParseControl(b);
-	} else if ((b>=0x20) && (b<=0x7E)) {
+	}
+	else if ((b >= 0x20) && (b <= 0x7E)) {
 		//Kanji = 0;
 		//PutKanji(b);
 		PutChar(b);
-	} else if ((b==0x8E) || (b==0x8F)) {
+	}
+	else if ((b == 0x8E) || (b == 0x8F)) {
 		PutChar('?');
-	} else if ((b>=0x80) && (b<=0x9F)) {
+	}
+	else if ((b >= 0x80) && (b <= 0x9F)) {
 		ParseControl(b);
-	} else if (b>=0xA0) {
+	}
+	else if (b >= 0xA0) {
 		//Kanji = 0;
 		//PutKanji(b);
 		PutChar(b);
@@ -5420,13 +5427,13 @@ static void ParseASCII(BYTE b)
 #include "uni_combining.map"
 
 static unsigned short GetPrecomposedChar(int start_index, unsigned short first_code, unsigned short code,
-										 const combining_map_t *table, int tmax)
+	const combining_map_t *table, int tmax)
 {
 	unsigned short result = 0;
 	int i;
 
-	for (i = start_index ; i < tmax ; i++) {
-		if (table[i].first_code != first_code) { // 1ï∂éöñ⁄Ç™àŸÇ»ÇÈÇ»ÇÁÅAà»ç~ÇÕÇ‡Ç§í≤Ç◊Ç»Ç≠ÇƒÇÊÇ¢ÅB
+	for (i = start_index; i < tmax; i++) {
+		if (table[i].first_code != first_code) { // 1ÊñáÂ≠óÁõÆ„ÅåÁï∞„Å™„Çã„Å™„Çâ„ÄÅ‰ª•Èôç„ÅØ„ÇÇ„ÅÜË™ø„Åπ„Å™„Åè„Å¶„Çà„ÅÑ„ÄÇ
 			break;
 		}
 
@@ -5452,7 +5459,8 @@ static int GetIndexOfCombiningFirstCode(unsigned short code, const combining_map
 		mid = (low + high) / 2;
 		if (table[mid].first_code < code) {
 			low = mid + 1;
-		} else {
+		}
+		else {
 			high = mid;
 		}
 	}
@@ -5467,7 +5475,7 @@ static int GetIndexOfCombiningFirstCode(unsigned short code, const combining_map
 	return (index);
 }
 
-// unicode(UTF-16,wchar_t)ÇÉoÉbÉtÉ@Ç÷èëÇ´çûÇﬁ
+// unicode(UTF-16,wchar_t)„Çí„Éê„ÉÉ„Éï„Ç°„Å∏Êõ∏„ÅçËæº„ÇÄ
 static void UnicodeToCP932(unsigned int code)
 {
 	wchar_t wchar = (wchar_t)code;
@@ -5475,7 +5483,7 @@ static void UnicodeToCP932(unsigned int code)
 	char mbchar[2];
 	unsigned short cset;
 
-	// UnicodeÇ©ÇÁDECì¡éÍï∂éöÇ÷ÇÃÉ}ÉbÉsÉìÉO
+	// Unicode„Åã„ÇâDECÁâπÊÆäÊñáÂ≠ó„Å∏„ÅÆ„Éû„ÉÉ„Éî„É≥„Ç∞
 	if (ts.UnicodeDecSpMapping) {
 		cset = ConvertUnicode(wchar, mapUnicodeSymbolToDecSp, MAPSIZE(mapUnicodeSymbolToDecSp));
 		if (((cset >> 8) & ts.UnicodeDecSpMapping) != 0) {
@@ -5484,13 +5492,13 @@ static void UnicodeToCP932(unsigned int code)
 		}
 	}
 
-	// Unicode -> ì‡ïîÉRÅ[Éh(ts.CodePage)Ç÷ïœä∑ÇµÇƒèoóÕ
+	// Unicode -> ÂÜÖÈÉ®„Ç≥„Éº„Éâ(ts.CodePage)„Å∏Â§âÊèõ„Åó„Å¶Âá∫Âäõ
 	ret = WideCharToMultiByte(ts.CodePage, 0, &wchar, 1, mbchar, 2, NULL, NULL);
 	switch (ret) {
 	case 0:
 		if (ts.CodePage == 932) {
 			// CP932
-			// U+301CÇ»Ç«ÇÕïœä∑Ç≈Ç´Ç»Ç¢ÅBUnicode -> Shift_JISÇ÷ïœä∑ÇµÇƒÇ›ÇÈÅB
+			// U+301C„Å™„Å©„ÅØÂ§âÊèõ„Åß„Åç„Å™„ÅÑ„ÄÇUnicode -> Shift_JIS„Å∏Â§âÊèõ„Åó„Å¶„Åø„Çã„ÄÇ
 			cset = ConvertUnicode(code, mapUnicodeToSJIS, MAPSIZE(mapUnicodeToSJIS));
 			if (cset != 0) {
 				Kanji = cset & 0xff00;
@@ -5515,7 +5523,7 @@ static void UnicodeToCP932(unsigned int code)
 	}
 }
 
-// UTF-8Ç≈éÛêMÉfÅ[É^ÇèàóùÇ∑ÇÈ
+// UTF-8„ÅßÂèó‰ø°„Éá„Éº„Çø„ÇíÂá¶ÁêÜ„Åô„Çã
 // returns TRUE if b is processed
 //  (actually allways returns TRUE)
 static BOOL ParseFirstUTF8(BYTE b, int proc_combining)
@@ -5534,8 +5542,8 @@ static BOOL ParseFirstUTF8(BYTE b, int proc_combining)
 	}
 
 	if ((b & 0x80) != 0x80 || ((b & 0xe0) == 0x80 && count == 0)) {
-		// 1ÉoÉCÉgñ⁄Ç®ÇÊÇ—2ÉoÉCÉgñ⁄Ç™ASCIIÇÃèÍçáÇÕÅAÇ∑Ç◊ÇƒASCIIèoóÕÇ∆Ç∑ÇÈÅB
-		// 1ÉoÉCÉgñ⁄Ç™C1êßå‰ï∂éö(0x80-0x9f)ÇÃèÍçáÇ‡ìØólÅB
+		// 1„Éê„Ç§„ÉàÁõÆ„Åä„Çà„Å≥2„Éê„Ç§„ÉàÁõÆ„ÅåASCII„ÅÆÂ†¥Âêà„ÅØ„ÄÅ„Åô„Åπ„Å¶ASCIIÂá∫Âäõ„Å®„Åô„Çã„ÄÇ
+		// 1„Éê„Ç§„ÉàÁõÆ„ÅåC1Âà∂Âæ°ÊñáÂ≠ó(0x80-0x9f)„ÅÆÂ†¥Âêà„ÇÇÂêåÊßò„ÄÇ
 		if (count == 0 || count == 1) {
 			if (proc_combining == 1 && can_combining == 1) {
 				UnicodeToCP932(first_code);
@@ -5557,7 +5565,7 @@ static BOOL ParseFirstUTF8(BYTE b, int proc_combining)
 		return TRUE;
 	}
 
-	// 2ÉoÉCÉgÉRÅ[ÉhÇÃèÍçá
+	// 2„Éê„Ç§„Éà„Ç≥„Éº„Éâ„ÅÆÂ†¥Âêà
 	if ((buf[0] & 0xe0) == 0xc0) {
 		if ((buf[1] & 0xc0) == 0x80) {
 
@@ -5585,7 +5593,7 @@ static BOOL ParseFirstUTF8(BYTE b, int proc_combining)
 
 	if ((buf[0] & 0xf0) == 0xe0 &&
 		(buf[1] & 0xc0) == 0x80 &&
-		(buf[2] & 0xc0) == 0x80) { // 3ÉoÉCÉgÉRÅ[ÉhÇÃèÍçá
+		(buf[2] & 0xc0) == 0x80) { // 3„Éê„Ç§„Éà„Ç≥„Éº„Éâ„ÅÆÂ†¥Âêà
 
 		// UTF-8 BOM(Byte Order Mark)
 		if (buf[0] == 0xef && buf[1] == 0xbb && buf[2] == 0xbf) {
@@ -5599,26 +5607,28 @@ static BOOL ParseFirstUTF8(BYTE b, int proc_combining)
 		if (proc_combining == 1) {
 			if (can_combining == 0) {
 				if ((first_code_index = GetIndexOfCombiningFirstCode(
-						code, mapCombiningToPrecomposed, MAPSIZE(mapCombiningToPrecomposed)
-						)) != -1) {
+					code, mapCombiningToPrecomposed, MAPSIZE(mapCombiningToPrecomposed)
+				)) != -1) {
 					can_combining = 1;
 					first_code = code;
 					count = 0;
 					return (TRUE);
 				}
-			} else {
+			}
+			else {
 				can_combining = 0;
 				cset = GetPrecomposedChar(first_code_index, first_code, code, mapCombiningToPrecomposed, MAPSIZE(mapCombiningToPrecomposed));
 				if (cset != 0) { // success
 					code = cset;
 
-				} else { // error
-					// 2Ç¬ÇﬂÇÃï∂éöÇ™îºë˜ì_ÇÃ1ï∂éöñ⁄Ç…ëäìñÇ∑ÇÈèÍçáÇÕÅAçƒìxåüçıÇë±ÇØÇÈÅB(2005.10.15 yutaka)
+				}
+				else { // error
+				 // 2„Å§„ÇÅ„ÅÆÊñáÂ≠ó„ÅåÂçäÊøÅÁÇπ„ÅÆ1ÊñáÂ≠óÁõÆ„Å´Áõ∏ÂΩì„Åô„ÇãÂ†¥Âêà„ÅØ„ÄÅÂÜçÂ∫¶Ê§úÁ¥¢„ÇíÁ∂ö„Åë„Çã„ÄÇ(2005.10.15 yutaka)
 					if ((first_code_index = GetIndexOfCombiningFirstCode(
-							code, mapCombiningToPrecomposed, MAPSIZE(mapCombiningToPrecomposed)
-							)) != -1) {
+						code, mapCombiningToPrecomposed, MAPSIZE(mapCombiningToPrecomposed)
+					)) != -1) {
 
-						// 1Ç¬ÇﬂÇÃï∂éöÇÕÇªÇÃÇ‹Ç‹èoóÕÇ∑ÇÈ
+						// 1„Å§„ÇÅ„ÅÆÊñáÂ≠ó„ÅØ„Åù„ÅÆ„Åæ„ÅæÂá∫Âäõ„Åô„Çã
 						UnicodeToCP932(first_code);
 
 						can_combining = 1;
@@ -5637,7 +5647,7 @@ static BOOL ParseFirstUTF8(BYTE b, int proc_combining)
 
 		UnicodeToCP932(code);
 
-skip:
+	skip:
 		count = 0;
 
 	}
@@ -5650,7 +5660,7 @@ skip:
 		(buf[1] & 0xc0) == 0x80 &&
 		(buf[2] & 0xc0) == 0x80 &&
 		(buf[2] & 0xc0) == 0x80)
-	{	// 4ÉoÉCÉgÉRÅ[ÉhÇÃèÍçá
+	{	// 4„Éê„Ç§„Éà„Ç≥„Éº„Éâ„ÅÆÂ†¥Âêà
 		code = ((buf[0] & 0x07) << 18);
 		code |= ((buf[1] & 0x3f) << 12);
 		code |= ((buf[2] & 0x3f) << 6);
@@ -5659,7 +5669,8 @@ skip:
 		UnicodeToCP932(code);
 		count = 0;
 		return TRUE;
-	} else {
+	}
+	else {
 		ParseASCII(buf[0]);
 		ParseASCII(buf[1]);
 		ParseASCII(buf[2]);
@@ -5674,8 +5685,8 @@ skip:
 BOOL ParseFirstRus(BYTE b)
 // returns if b is processed
 {
-	if (b>=128) {
-		b = RussConv(ts.RussHost,ts.RussClient,b);
+	if (b >= 128) {
+		b = RussConv(ts.RussHost, ts.RussClient, b);
 		PutChar(b);
 		return TRUE;
 	}
@@ -5685,50 +5696,50 @@ BOOL ParseFirstRus(BYTE b)
 void ParseFirst(BYTE b)
 {
 	switch (ts.Language) {
-	  case IdUtf8:
+	case IdUtf8:
 		ParseFirstUTF8(b, ts.KanjiCode == IdUTF8m);
 		return;
 
-	  case IdJapanese:
+	case IdJapanese:
 		switch (ts.KanjiCode) {
-		  case IdUTF8:
+		case IdUTF8:
 			if (ParseFirstUTF8(b, 0)) {
 				return;
 			}
 			break;
-		  case IdUTF8m:
+		case IdUTF8m:
 			if (ParseFirstUTF8(b, 1)) {
 				return;
 			}
 			break;
-		  default:
-			if (ParseFirstJP(b))  {
+		default:
+			if (ParseFirstJP(b)) {
 				return;
 			}
 		}
 		break;
 
-	  case IdKorean:
+	case IdKorean:
 		switch (ts.KanjiCode) {
-		  case IdUTF8:
+		case IdUTF8:
 			if (ParseFirstUTF8(b, 0)) {
 				return;
 			}
 			break;
-		  case IdUTF8m:
+		case IdUTF8m:
 			if (ParseFirstUTF8(b, 1)) {
 				return;
 			}
 			break;
-		  default:
-			if (ParseFirstKR(b))  {
+		default:
+			if (ParseFirstKR(b)) {
 				return;
 			}
 		}
 		break;
 
 
-	  case IdRussian:
+	case IdRussian:
 		if (ParseFirstRus(b)) {
 			return;
 		}
@@ -5741,13 +5752,13 @@ void ParseFirst(BYTE b)
 		return;
 	}
 
-	if (b<=US)
+	if (b <= US)
 		ParseControl(b);
-	else if ((b>=0x20) && (b<=0x7E))
+	else if ((b >= 0x20) && (b <= 0x7E))
 		PutChar(b);
-	else if ((b>=0x80) && (b<=0x9F))
+	else if ((b >= 0x80) && (b <= 0x9F))
 		ParseControl(b);
-	else if (b>=0xA0)
+	else if (b >= 0xA0)
 		PutChar(b);
 }
 
@@ -5756,12 +5767,12 @@ int VTParse()
 	BYTE b;
 	int c;
 
-	c = CommRead1Byte(&cv,&b);
+	c = CommRead1Byte(&cv, &b);
 
-	if (c==0) return 0;
+	if (c == 0) return 0;
 
 	CaretOff();
-	UpdateCaretPosition(FALSE);	// îÒÉAÉNÉeÉBÉuÇÃèÍçáÇÃÇ›çƒï`âÊÇ∑ÇÈ
+	UpdateCaretPosition(FALSE);	// Èùû„Ç¢„ÇØ„ÉÜ„Ç£„Éñ„ÅÆÂ†¥Âêà„ÅÆ„ÅøÂÜçÊèèÁîª„Åô„Çã
 
 	ChangeEmu = 0;
 
@@ -5770,8 +5781,8 @@ int VTParse()
 
 	LockBuffer();
 
-	while ((c>0) && (ChangeEmu==0)) {
-		if (DebugFlag!=DEBUG_FLAG_NONE)
+	while ((c > 0) && (ChangeEmu == 0)) {
+		if (DebugFlag != DEBUG_FLAG_NONE)
 			PutDebugChar(b);
 		else {
 			switch (ParseMode) {
@@ -5813,8 +5824,8 @@ int VTParse()
 
 		PrevCharacter = b;		// memorize previous character for AUTO CR/LF-receive mode
 
-		if (ChangeEmu==0)
-			c = CommRead1Byte(&cv,&b);
+		if (ChangeEmu == 0)
+			c = CommRead1Byte(&cv, &b);
 	}
 
 	BuffUpdateScroll();
@@ -5849,7 +5860,7 @@ BOOL DecLocatorReport(int Event, int Button) {
 	if (DecLocatorFlag & DecLocatorPixel) {
 		x = LastX + 1;
 		y = LastY + 1;
-		DispConvScreenToWin(NumOfColumns+1, NumOfLines+1, &MaxX, &MaxY);
+		DispConvScreenToWin(NumOfColumns + 1, NumOfLines + 1, &MaxX, &MaxY);
 		if (x < 1 || x > MaxX || y < 1 || y > MaxY) {
 			x = -1;
 		}
@@ -5874,13 +5885,13 @@ BOOL DecLocatorReport(int Event, int Button) {
 
 	case IdMouseEventBtnDown:
 		if (DecLocatorFlag & DecLocatorButtonDown) {
-			len = MakeLocatorReportStr(buff, sizeof(buff), Button*2+2, x, y);
+			len = MakeLocatorReportStr(buff, sizeof(buff), Button * 2 + 2, x, y);
 		}
 		break;
 
 	case IdMouseEventBtnUp:
 		if (DecLocatorFlag & DecLocatorButtonUp) {
-			len = MakeLocatorReportStr(buff, sizeof(buff), Button*2+3, x, y);
+			len = MakeLocatorReportStr(buff, sizeof(buff), Button * 2 + 3, x, y);
 		}
 		break;
 
@@ -5916,7 +5927,7 @@ int MakeMouseReportStr(char *buff, size_t buffsize, int mb, int x, int y) {
 	case IdMouseTrackExtNone:
 		if (x >= MOUSE_POS_LIMIT) x = MOUSE_POS_LIMIT;
 		if (y >= MOUSE_POS_LIMIT) y = MOUSE_POS_LIMIT;
-		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "M%c%c%c", CLocale, mb+32, x+32, y+32);
+		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "M%c%c%c", CLocale, mb + 32, x + 32, y + 32);
 		break;
 
 	case IdMouseTrackExtUTF8:
@@ -5942,15 +5953,15 @@ int MakeMouseReportStr(char *buff, size_t buffsize, int mb, int x, int y) {
 			tmpy[1] = y & 0x3f | 0x80;
 			tmpy[2] = 0;
 		}
-		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "M%c%s%s", CLocale, mb+32, tmpx, tmpy);
+		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "M%c%s%s", CLocale, mb + 32, tmpx, tmpy);
 		break;
 
 	case IdMouseTrackExtSGR:
-		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "<%d;%d;%d%c", CLocale, mb&0x7f, x, y, (mb&0x80)?'m':'M');
+		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "<%d;%d;%d%c", CLocale, mb & 0x7f, x, y, (mb & 0x80) ? 'm' : 'M');
 		break;
 
 	case IdMouseTrackExtURXVT:
-		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "%d;%d;%dM", CLocale, mb+32, x, y);
+		return _snprintf_s_l(buff, buffsize, _TRUNCATE, "%d;%d;%dM", CLocale, mb + 32, x, y);
 		break;
 	}
 	buff[0] = 0;
@@ -5966,10 +5977,10 @@ BOOL MouseReport(int Event, int Button, int Xpos, int Ypos) {
 
 	switch (Event) {
 	case IdMouseEventBtnDown:
-		ButtonStat |= (8>>(Button+1));
+		ButtonStat |= (8 >> (Button + 1));
 		break;
 	case IdMouseEventBtnUp:
-		ButtonStat &= ~(8>>(Button+1));
+		ButtonStat &= ~(8 >> (Button + 1));
 		break;
 	}
 	LastX = Xpos;
@@ -6007,7 +6018,7 @@ BOOL MouseReport(int Event, int Button, int Xpos, int Ypos) {
 	if (AltKey())
 		modifier |= 16;
 
-	modifier = (ShiftKey()?4:0) | (AltKey()?8:0) | (ControlKey()?16:0);
+	modifier = (ShiftKey() ? 4 : 0) | (AltKey() ? 8 : 0) | (ControlKey() ? 16 : 0);
 
 	switch (Event) {
 	case IdMouseEventBtnDown:
@@ -6077,7 +6088,7 @@ BOOL MouseReport(int Event, int Button, int Xpos, int Ypos) {
 			len = MakeMouseReportStr(Report, sizeof Report, LastButton | modifier | 32, x, y);
 			LastSendX = x;
 			LastSendY = y;
-		break;
+			break;
 
 		case IdMouseTrackVT200Hl: /* not supported yet */
 		case IdMouseTrackX10:     /* nothing to do */
@@ -6118,7 +6129,8 @@ void FocusReport(BOOL focus) {
 	if (focus) {
 		// Focus In
 		SendCSIstr("I", 0);
-	} else {
+	}
+	else {
 		// Focus Out
 		SendCSIstr("O", 0);
 	}
@@ -6152,13 +6164,13 @@ void RingBell(int type) {
 		}
 
 		switch (ts.Beep) {
-		  case IdBeepOff:
+		case IdBeepOff:
 			/* nothing to do */
 			break;
-		  case IdBeepOn:
+		case IdBeepOn:
 			MessageBeep(0);
 			break;
-		  case IdBeepVisual:
+		case IdBeepVisual:
 			VisualBell();
 			break;
 		}

@@ -1,4 +1,4 @@
-/*
+Ôªø/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2005-2019 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* TERATERM.EXE, variables, flags related to VT win and TEK win */
+ /* TERATERM.EXE, variables, flags related to VT win and TEK win */
 
 #include "teraterm.h"
 #include "tttypes.h"
@@ -64,14 +64,14 @@ int SerialNo;
 
 void VTActivate()
 {
-  ActiveWin = IdVT;
-  ShowWindow(HVTWin, SW_SHOWNORMAL);
-  SetFocus(HVTWin);
+	ActiveWin = IdVT;
+	ShowWindow(HVTWin, SW_SHOWNORMAL);
+	SetFocus(HVTWin);
 }
 
 
-// É^ÉCÉg?ÉoÅ[ÇÃCP932Ç÷ÇÃïœä∑ÇçsÇ§
-// åªç›ÅASJISÅAEUCÇÃÇ›Ç…ëŒ?ÅB
+// „Çø„Ç§„Éà?„Éê„Éº„ÅÆCP932„Å∏„ÅÆÂ§âÊèõ„ÇíË°å„ÅÜ
+// ÁèæÂú®„ÄÅSJIS„ÄÅEUC„ÅÆ„Åø„Å´ÂØæ?„ÄÇ
 // (2005.3.13 yutaka)
 void ConvertToCP932(char *str, int destlen)
 {
@@ -86,10 +86,10 @@ void ConvertToCP932(char *str, int destlen)
 	WORD word;
 
 	if (strcmp(ts.Locale, DEFAULT_LOCALE) == 0) {
-		for (i = 0 ; i < len ; i++) {
+		for (i = 0; i < len; i++) {
 			b = str[i];
 			if (IS_SJIS(b) || IS_EUC(b)) {
-				word = b<<8;
+				word = b << 8;
 
 				if (i == len - 1) {
 					*c++ = b;
@@ -101,27 +101,33 @@ void ConvertToCP932(char *str, int destlen)
 				i++;
 
 				if (ts.KanjiCode == IdSJIS) {
-					// SJISÇÕÇªÇÃÇ‹Ç‹CP932Ç∆ÇµÇƒèoóÕÇ∑ÇÈ
+					// SJIS„ÅØ„Åù„ÅÆ„Åæ„ÅæCP932„Å®„Åó„Å¶Âá∫Âäõ„Åô„Çã
 
-				} else if (ts.KanjiCode == IdEUC) {
+				}
+				else if (ts.KanjiCode == IdEUC) {
 					// EUC -> SJIS
 					word &= ~0x8080;
 					word = JIS2SJIS(word);
 
-				} else if (ts.KanjiCode == IdJIS) {
+				}
+				else if (ts.KanjiCode == IdJIS) {
 
-				} else if (ts.KanjiCode == IdUTF8) {
+				}
+				else if (ts.KanjiCode == IdUTF8) {
 
-				} else if (ts.KanjiCode == IdUTF8m) {
+				}
+				else if (ts.KanjiCode == IdUTF8m) {
 
-				} else {
+				}
+				else {
 
 				}
 
 				*c++ = word >> 8;
 				*c++ = word & 0xff;
 
-			} else {
+			}
+			else {
 				*c++ = b;
 			}
 		}
@@ -131,13 +137,13 @@ void ConvertToCP932(char *str, int destlen)
 	}
 }
 
-// ÉL?ÉvÉV??ÇÃïœçX
+// „Ç≠?„Éó„Ç∑??„ÅÆÂ§âÊõ¥
 //
-// (2005.2.19 yutaka) format ID=13ÇÃêVãKí«â¡ÅACOM5à»è„ÇÃï\é¶Ç…ëŒ?
-// (2005.3.13 yutaka) É^ÉCÉg?ÇÃSJISÇ÷ÇÃïœä∑Åiì˙ñ{åÍÅjÇí«â¡
-// (2006.6.15 maya)   ts.KanjiCodeÇ™EUCÇæÇ∆ÅASJISÇ≈Ç‡EUCÇ∆ÇµÇƒ
-//                    ïœä∑ÇµÇƒÇµÇ‹Ç§ÇÃÇ≈ÅAÇ±Ç±Ç≈ÇÕïœä∑ÇµÇ»Ç¢
-// (2007.7.19 maya)   TCP É|Å[Égî‘? Ç∆ ÉV?ÉA?É|Å[ÉgÇÃÉ{Å[?Å[ÉgÇÃï\é¶Ç…ëŒ?
+// (2005.2.19 yutaka) format ID=13„ÅÆÊñ∞Ë¶èËøΩÂä†„ÄÅCOM5‰ª•‰∏ä„ÅÆË°®Á§∫„Å´ÂØæ?
+// (2005.3.13 yutaka) „Çø„Ç§„Éà?„ÅÆSJIS„Å∏„ÅÆÂ§âÊèõÔºàÊó•Êú¨Ë™ûÔºâ„ÇíËøΩÂä†
+// (2006.6.15 maya)   ts.KanjiCode„ÅåEUC„Å†„Å®„ÄÅSJIS„Åß„ÇÇEUC„Å®„Åó„Å¶
+//                    Â§âÊèõ„Åó„Å¶„Åó„Åæ„ÅÜ„ÅÆ„Åß„ÄÅ„Åì„Åì„Åß„ÅØÂ§âÊèõ„Åó„Å™„ÅÑ
+// (2007.7.19 maya)   TCP „Éù„Éº„ÉàÁï™? „Å® „Ç∑?„Ç¢?„Éù„Éº„Éà„ÅÆ„Éú„Éº?„Éº„Éà„ÅÆË°®Á§∫„Å´ÂØæ?
 /*
  *  TitleFormat
  *    0 0 0 0 0 0 (2)
@@ -150,7 +156,7 @@ void ConvertToCP932(char *str, int destlen)
  */
 void ChangeTitle()
 {
-	char TempTitle[HostNameMaxLength + TitleBuffSize * 2 + 1]; // ÉoÉbÉtÉ@ägí£
+	char TempTitle[HostNameMaxLength + TitleBuffSize * 2 + 1]; // „Éê„ÉÉ„Éï„Ç°Êã°Âºµ
 	char TempTitleWithRemote[TitleBuffSize * 2];
 
 	if (Connecting || !cv.Ready || strlen(cv.TitleRemote) == 0) {
@@ -158,17 +164,17 @@ void ChangeTitle()
 		strncpy_s(TempTitle, sizeof(TempTitle), ts.Title, _TRUNCATE);
 	}
 	else {
-		// ??Å[ÉgÇ©ÇÁÇÃÉ^ÉCÉg?Çï Ç…àµÇ§ (2008.11.1 maya)
+		// ??„Éº„Éà„Åã„Çâ„ÅÆ„Çø„Ç§„Éà?„ÇíÂà•„Å´Êâ±„ÅÜ (2008.11.1 maya)
 		if (ts.AcceptTitleChangeRequest == IdTitleChangeRequestOff) {
 			strncpy_s(TempTitleWithRemote, sizeof(TempTitleWithRemote), ts.Title, _TRUNCATE);
 		}
 		else if (ts.AcceptTitleChangeRequest == IdTitleChangeRequestAhead) {
 			_snprintf_s(TempTitleWithRemote, sizeof(TempTitleWithRemote), _TRUNCATE,
-			            "%s %s", cv.TitleRemote, ts.Title);
+				"%s %s", cv.TitleRemote, ts.Title);
 		}
 		else if (ts.AcceptTitleChangeRequest == IdTitleChangeRequestLast) {
 			_snprintf_s(TempTitleWithRemote, sizeof(TempTitleWithRemote), _TRUNCATE,
-			            "%s %s", ts.Title, cv.TitleRemote);
+				"%s %s", ts.Title, cv.TitleRemote);
 		}
 		else {
 			strncpy_s(TempTitleWithRemote, sizeof(TempTitleWithRemote), cv.TitleRemote, _TRUNCATE);
@@ -176,20 +182,20 @@ void ChangeTitle()
 		strncpy_s(TempTitle, sizeof(TempTitle), TempTitleWithRemote, _TRUNCATE);
 	}
 
-	if ((ts.TitleFormat & 1)!=0)
+	if ((ts.TitleFormat & 1) != 0)
 	{ // host name
-		strncat_s(TempTitle,sizeof(TempTitle), " - ",_TRUNCATE);
+		strncat_s(TempTitle, sizeof(TempTitle), " - ", _TRUNCATE);
 		if (Connecting) {
 			get_lang_msg("DLG_MAIN_TITLE_CONNECTING", ts.UIMsg, sizeof(ts.UIMsg), "[connecting...]", ts.UILanguageFile);
-			strncat_s(TempTitle,sizeof(TempTitle),ts.UIMsg,_TRUNCATE);
+			strncat_s(TempTitle, sizeof(TempTitle), ts.UIMsg, _TRUNCATE);
 		}
-		else if (! cv.Ready) {
+		else if (!cv.Ready) {
 			get_lang_msg("DLG_MAIN_TITLE_DISCONNECTED", ts.UIMsg, sizeof(ts.UIMsg), "[disconnected]", ts.UILanguageFile);
-			strncat_s(TempTitle,sizeof(TempTitle),ts.UIMsg,_TRUNCATE);
+			strncat_s(TempTitle, sizeof(TempTitle), ts.UIMsg, _TRUNCATE);
 		}
-		else if (cv.PortType==IdSerial)
+		else if (cv.PortType == IdSerial)
 		{
-			// COM5 overÇ…ëŒ?
+			// COM5 over„Å´ÂØæ?
 			char str[24]; // COMxxxx:xxxxxxxxxxbps
 			if (ts.TitleFormat & 32) {
 				_snprintf_s(str, sizeof(str), _TRUNCATE, "COM%d:%ubps", ts.ComPort, ts.Baud);
@@ -200,7 +206,8 @@ void ChangeTitle()
 
 			if (ts.TitleFormat & 8) {
 				_snprintf_s(TempTitle, sizeof(TempTitle), _TRUNCATE, "%s - %s", str, TempTitleWithRemote);
-			} else {
+			}
+			else {
 				strncat_s(TempTitle, sizeof(TempTitle), str, _TRUNCATE);
 			}
 		}
@@ -236,68 +243,68 @@ void ChangeTitle()
 		}
 	}
 
-	if ((ts.TitleFormat & 2)!=0)
+	if ((ts.TitleFormat & 2) != 0)
 	{ // serial no.
 		char Num[11];
-		strncat_s(TempTitle,sizeof(TempTitle)," (",_TRUNCATE);
-		_snprintf_s(Num,sizeof(Num),_TRUNCATE,"%u",SerialNo);
-		strncat_s(TempTitle,sizeof(TempTitle),Num,_TRUNCATE);
-		strncat_s(TempTitle,sizeof(TempTitle),")",_TRUNCATE);
+		strncat_s(TempTitle, sizeof(TempTitle), " (", _TRUNCATE);
+		_snprintf_s(Num, sizeof(Num), _TRUNCATE, "%u", SerialNo);
+		strncat_s(TempTitle, sizeof(TempTitle), Num, _TRUNCATE);
+		strncat_s(TempTitle, sizeof(TempTitle), ")", _TRUNCATE);
 	}
 
-	if ((ts.TitleFormat & 4)!=0) // VT
-		strncat_s(TempTitle,sizeof(TempTitle)," VT",_TRUNCATE);
+	if ((ts.TitleFormat & 4) != 0) // VT
+		strncat_s(TempTitle, sizeof(TempTitle), " VT", _TRUNCATE);
 
-	SetWindowText(HVTWin,TempTitle);
+	SetWindowText(HVTWin, TempTitle);
 
-	if (HTEKWin!=0)
+	if (HTEKWin != 0)
 	{
-		if ((ts.TitleFormat & 4)!=0) // TEK
+		if ((ts.TitleFormat & 4) != 0) // TEK
 		{
-			strncat_s(TempTitle,sizeof(TempTitle)," TEK",_TRUNCATE);
+			strncat_s(TempTitle, sizeof(TempTitle), " TEK", _TRUNCATE);
 		}
-		SetWindowText(HTEKWin,TempTitle);
+		SetWindowText(HTEKWin, TempTitle);
 	}
 }
 
 void SwitchMenu()
 {
-  HWND H1, H2;
+	HWND H1, H2;
 
-  if (ActiveWin==IdVT)
-  {
-    H1 = HTEKWin;
-    H2 = HVTWin;
-  }
-  else {
-    H1 = HVTWin;
-    H2 = HTEKWin;
-  }
+	if (ActiveWin == IdVT)
+	{
+		H1 = HTEKWin;
+		H2 = HVTWin;
+	}
+	else {
+		H1 = HVTWin;
+		H2 = HTEKWin;
+	}
 
-  if (H1!=0)
-    PostMessage(H1,WM_USER_CHANGEMENU,0,0);
-  if (H2!=0)
-    PostMessage(H2,WM_USER_CHANGEMENU,0,0);
+	if (H1 != 0)
+		PostMessage(H1, WM_USER_CHANGEMENU, 0, 0);
+	if (H2 != 0)
+		PostMessage(H2, WM_USER_CHANGEMENU, 0, 0);
 }
 
 void SwitchTitleBar()
 {
-  HWND H1, H2;
+	HWND H1, H2;
 
-  if (ActiveWin==IdVT)
-  {
-    H1 = HTEKWin;
-    H2 = HVTWin;
-  }
-  else {
-    H1 = HVTWin;
-    H2 = HTEKWin;
-  }
+	if (ActiveWin == IdVT)
+	{
+		H1 = HTEKWin;
+		H2 = HVTWin;
+	}
+	else {
+		H1 = HVTWin;
+		H2 = HTEKWin;
+	}
 
-  if (H1!=0)
-    PostMessage(H1,WM_USER_CHANGETBAR,0,0);
-  if (H2!=0)
-    PostMessage(H2,WM_USER_CHANGETBAR,0,0);
+	if (H1 != 0)
+		PostMessage(H1, WM_USER_CHANGETBAR, 0, 0);
+	if (H2 != 0)
+		PostMessage(H2, WM_USER_CHANGETBAR, 0, 0);
 }
 
 HMODULE LoadHomeDLL(const char *DLLname)

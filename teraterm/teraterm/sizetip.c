@@ -1,4 +1,4 @@
-// Import from PuTTY 0.60 windows/sizetip.c
+Ôªø// Import from PuTTY 0.60 windows/sizetip.c
 /*
  * PuTTY is copyright 1997-2004 Simon Tatham.
  *
@@ -26,33 +26,33 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-/*
- * Copyright (C) 2008-2018 TeraTerm Project
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ /*
+  * Copyright (C) 2008-2018 TeraTerm Project
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+  * are met:
+  *
+  * 1. Redistributions of source code must retain the above copyright
+  *    notice, this list of conditions and the following disclaimer.
+  * 2. Redistributions in binary form must reproduce the above copyright
+  *    notice, this list of conditions and the following disclaimer in the
+  *    documentation and/or other materials provided with the distribution.
+  * 3. The name of the author may not be used to endorse or promote products
+  *    derived from this software without specific prior written permission.
+  *
+  * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY EXPRESS OR
+  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
 
 #include "teraterm.h"
 #include "tttypes.h"
@@ -62,9 +62,9 @@
 #include <windows.h>
 #include <stdio.h>
 
-//
-// ÉäÉTÉCÉYÉcÅ[ÉãÉ`ÉbÉv (based on PuTTY sizetip.c)
-//
+  //
+  // „É™„Çµ„Ç§„Ç∫„ÉÑ„Éº„É´„ÉÅ„ÉÉ„Éó (based on PuTTY sizetip.c)
+  //
 static ATOM tip_class = 0;
 static HFONT tip_font;
 static COLORREF tip_bg;
@@ -73,76 +73,76 @@ static HWND tip_wnd = NULL;
 static int tip_enabled = 0;
 
 static LRESULT CALLBACK SizeTipWndProc(HWND hWnd, UINT nMsg,
-                                       WPARAM wParam, LPARAM lParam)
+	WPARAM wParam, LPARAM lParam)
 {
 
 	switch (nMsg) {
-		case WM_ERASEBKGND:
-			return TRUE;
+	case WM_ERASEBKGND:
+		return TRUE;
 
-		case WM_PAINT:
-			{
-				HBRUSH hbr;
-				HGDIOBJ holdbr;
-				RECT cr;
-				int wtlen;
-				LPTSTR wt;
-				HDC hdc;
+	case WM_PAINT:
+	{
+		HBRUSH hbr;
+		HGDIOBJ holdbr;
+		RECT cr;
+		int wtlen;
+		LPTSTR wt;
+		HDC hdc;
 
-				PAINTSTRUCT ps;
-				hdc = BeginPaint(hWnd, &ps);
+		PAINTSTRUCT ps;
+		hdc = BeginPaint(hWnd, &ps);
 
-				SelectObject(hdc, tip_font);
-				SelectObject(hdc, GetStockObject(BLACK_PEN));
+		SelectObject(hdc, tip_font);
+		SelectObject(hdc, GetStockObject(BLACK_PEN));
 
-				hbr = CreateSolidBrush(tip_bg);
-				holdbr = SelectObject(hdc, hbr);
+		hbr = CreateSolidBrush(tip_bg);
+		holdbr = SelectObject(hdc, hbr);
 
-				GetClientRect(hWnd, &cr);
-				Rectangle(hdc, cr.left, cr.top, cr.right, cr.bottom);
+		GetClientRect(hWnd, &cr);
+		Rectangle(hdc, cr.left, cr.top, cr.right, cr.bottom);
 
-				wtlen = GetWindowTextLength(hWnd);
-				wt = (LPTSTR) malloc((wtlen + 1) * sizeof(TCHAR));
-				GetWindowText(hWnd, wt, wtlen + 1);
+		wtlen = GetWindowTextLength(hWnd);
+		wt = (LPTSTR)malloc((wtlen + 1) * sizeof(TCHAR));
+		GetWindowText(hWnd, wt, wtlen + 1);
 
-				SetTextColor(hdc, tip_text);
-				SetBkColor(hdc, tip_bg);
+		SetTextColor(hdc, tip_text);
+		SetBkColor(hdc, tip_bg);
 
-				TextOut(hdc, cr.left + 3, cr.top + 3, wt, wtlen);
+		TextOut(hdc, cr.left + 3, cr.top + 3, wt, wtlen);
 
-				free(wt);
+		free(wt);
 
-				SelectObject(hdc, holdbr);
-				DeleteObject(hbr);
+		SelectObject(hdc, holdbr);
+		DeleteObject(hbr);
 
-				EndPaint(hWnd, &ps);
-			}
-			return 0;
+		EndPaint(hWnd, &ps);
+	}
+	return 0;
 
-		case WM_NCHITTEST:
-			return HTTRANSPARENT;
+	case WM_NCHITTEST:
+		return HTTRANSPARENT;
 
-		case WM_DESTROY:
-			DeleteObject(tip_font);
-			tip_font = NULL;
-			break;
+	case WM_DESTROY:
+		DeleteObject(tip_font);
+		tip_font = NULL;
+		break;
 
-		case WM_SETTEXT:
-			{
-				LPCTSTR str = (LPCTSTR) lParam;
-				SIZE sz;
-				HDC hdc = CreateCompatibleDC(NULL);
+	case WM_SETTEXT:
+	{
+		LPCTSTR str = (LPCTSTR)lParam;
+		SIZE sz;
+		HDC hdc = CreateCompatibleDC(NULL);
 
-				SelectObject(hdc, tip_font);
-				GetTextExtentPoint32(hdc, str, strlen(str), &sz);
+		SelectObject(hdc, tip_font);
+		GetTextExtentPoint32(hdc, str, strlen(str), &sz);
 
-				SetWindowPos(hWnd, NULL, 0, 0, sz.cx + 6, sz.cy + 6,
-				             SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-				InvalidateRect(hWnd, NULL, FALSE);
+		SetWindowPos(hWnd, NULL, 0, 0, sz.cx + 6, sz.cy + 6,
+			SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+		InvalidateRect(hWnd, NULL, FALSE);
 
-				DeleteDC(hdc);
-			}
-			break;
+		DeleteDC(hdc);
+	}
+	break;
 	}
 
 	return DefWindowProc(hWnd, nMsg, wParam, lParam);
@@ -218,7 +218,7 @@ void UpdateSizeTip(HWND src, int cx, int cy)
 		iy = wr.top - sz.cy;
 
 		if (HasMultiMonitorSupport()) {
-			// É}ÉãÉ`ÉÇÉjÉ^Ç™ÉTÉ|Å[ÉgÇ≥ÇÍÇƒÇ¢ÇÈèÍçá
+			// „Éû„É´„ÉÅ„É¢„Éã„Çø„Åå„Çµ„Éù„Éº„Éà„Åï„Çå„Å¶„ÅÑ„ÇãÂ†¥Âêà
 			POINT p;
 			MONITORINFO mi;
 
@@ -229,11 +229,11 @@ void UpdateSizeTip(HWND src, int cx, int cy)
 
 			if (hm == NULL) {
 #if 1
-				// ÉcÅ[ÉãÉ`ÉbÉvÇ™ÉXÉNÉäÅ[ÉìÇ©ÇÁÇÕÇ›èoÇµÇƒÇ¢ÇÈèÍçáÇÕÉ}ÉEÉXÇÃÇ†ÇÈÉÇÉjÉ^Ç…ï\é¶Ç∑ÇÈ
+				// „ÉÑ„Éº„É´„ÉÅ„ÉÉ„Éó„Åå„Çπ„ÇØ„É™„Éº„É≥„Åã„Çâ„ÅØ„ÅøÂá∫„Åó„Å¶„ÅÑ„ÇãÂ†¥Âêà„ÅØ„Éû„Ç¶„Çπ„ÅÆ„ÅÇ„Çã„É¢„Éã„Çø„Å´Ë°®Á§∫„Åô„Çã
 				GetCursorPos(&p);
 				hm = MonitorFromPoint(p, MONITOR_DEFAULTTONEAREST);
 #else
-				// ÉcÅ[ÉãÉ`ÉbÉvÇ™ÉXÉNÉäÅ[ÉìÇ©ÇÁÇÕÇ›èoÇµÇƒÇ¢ÇÈèÍçáÇÕç≈Ç‡ãﬂÇ¢ÉÇÉjÉ^Ç…ï\é¶Ç∑ÇÈ
+				// „ÉÑ„Éº„É´„ÉÅ„ÉÉ„Éó„Åå„Çπ„ÇØ„É™„Éº„É≥„Åã„Çâ„ÅØ„ÅøÂá∫„Åó„Å¶„ÅÑ„ÇãÂ†¥Âêà„ÅØÊúÄ„ÇÇËøë„ÅÑ„É¢„Éã„Çø„Å´Ë°®Á§∫„Åô„Çã
 				hm = MonitorFromPoint(p, MONITOR_DEFAULTTONEAREST);
 #endif
 			}
@@ -248,7 +248,7 @@ void UpdateSizeTip(HWND src, int cx, int cy)
 			}
 		}
 		else {
-			// É}ÉãÉ`ÉÇÉjÉ^Ç™ÉTÉ|Å[ÉgÇ≥ÇÍÇƒÇ¢Ç»Ç¢èÍçá
+			// „Éû„É´„ÉÅ„É¢„Éã„Çø„Åå„Çµ„Éù„Éº„Éà„Åï„Çå„Å¶„ÅÑ„Å™„ÅÑÂ†¥Âêà
 			if (ix < 16) {
 				ix = 16;
 			}
@@ -266,7 +266,8 @@ void UpdateSizeTip(HWND src, int cx, int cy)
 
 		ShowWindow(tip_wnd, SW_SHOWNOACTIVATE);
 
-	} else {
+	}
+	else {
 
 		/* Tip already exists, just set the text */
 

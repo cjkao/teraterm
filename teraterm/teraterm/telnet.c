@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (C) 1994-1998 T. Teranishi
  * (C) 2007-2017 TeraTerm Project
  * All rights reserved.
@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* TERATERM.EXE, TELNET routines */
+ /* TERATERM.EXE, TELNET routines */
 
 #include "teraterm.h"
 #include "tttypes.h"
@@ -45,8 +45,8 @@
 
 int TelStatus;
 
-enum OptStatus {No, Yes, WantNo, WantYes};
-enum OptQue {Empty, Opposite};
+enum OptStatus { No, Yes, WantNo, WantYes };
+enum OptQue { Empty, Opposite };
 
 typedef struct {
 	BOOL Accept;
@@ -56,8 +56,8 @@ typedef struct {
 typedef TelOpt *PTelOpt;
 
 typedef struct {
-	TelOpt MyOpt[MaxTelOpt+1];
-	TelOpt HisOpt[MaxTelOpt+1];
+	TelOpt MyOpt[MaxTelOpt + 1];
+	TelOpt HisOpt[MaxTelOpt + 1];
 	BYTE SubOptBuff[51];
 	int SubOptCount;
 	BOOL SubOptIAC;
@@ -77,7 +77,7 @@ void DefaultTelRec()
 {
 	int i;
 
-	for (i=0 ; i <= MaxTelOpt ; i++) {
+	for (i = 0; i <= MaxTelOpt; i++) {
 		tr.MyOpt[i].Accept = FALSE;
 		tr.MyOpt[i].Status = No;
 		tr.MyOpt[i].Que = Empty;
@@ -151,7 +151,7 @@ void TelWriteLog(PCHAR Buf, int C)
 	int i;
 
 	_lwrite(tr.LogFile, "\015\012>", 3);
-	for (i = 0 ; i<= C-1 ; i++)
+	for (i = 0; i <= C - 1; i++)
 		TelWriteLog1(Buf[i]);
 }
 
@@ -255,10 +255,10 @@ void ParseTelSB(BYTE b)
 		switch (b) {
 		case SE:
 			if (tr.SubOptCount <= 1) {
-				// ƒpƒ‰ƒ[ƒ^‚È‚µ‚Ì Sub Option ‚Í–³‚¢‚ÆŽv‚í‚ê‚é‚Ì‚Å‚±‚±‚Å‚Í‚¶‚­
+				// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãªã—ã® Sub Option ã¯ç„¡ã„ã¨æ€ã‚ã‚Œã‚‹ã®ã§ã“ã“ã§ã¯ã˜ã
 				tr.SubOptCount = 0;
 				TelStatus = TelIdle;
-				return ;
+				return;
 			}
 
 			switch (tr.SubOptBuff[0]) {
@@ -266,7 +266,7 @@ void ParseTelSB(BYTE b)
 				if ((tr.MyOpt[TERMTYPE].Status == Yes) && (tr.SubOptBuff[1] == 1)) {
 					_snprintf_s(TmpStr, sizeof(TmpStr), _TRUNCATE, "%c%c%c%c%s%c%c",
 						IAC, SB, TERMTYPE, 0, ts.TermType, IAC, SE);
-					// 4 ƒoƒCƒg–Ú‚É 0 ‚ª“ü‚é‚Ì‚ÅA‚¸‚ç‚µ‚Ä’·‚³‚ð‚Æ‚é
+					// 4 ãƒã‚¤ãƒˆç›®ã« 0 ãŒå…¥ã‚‹ã®ã§ã€ãšã‚‰ã—ã¦é•·ã•ã‚’ã¨ã‚‹
 					i = strlen(TmpStr + 4) + 4;
 					CommRawOut(&cv, TmpStr, i);
 
@@ -277,8 +277,8 @@ void ParseTelSB(BYTE b)
 
 			case NAWS:
 				if ( /* (tr.HisOpt[NAWS].Status == Yes) && */ (tr.SubOptCount >= 5)) {
-					tr.WinSize.x = tr.SubOptBuff[1]*256 + tr.SubOptBuff[2];
-					tr.WinSize.y = tr.SubOptBuff[3]*256 + tr.SubOptBuff[4];
+					tr.WinSize.x = tr.SubOptBuff[1] * 256 + tr.SubOptBuff[2];
+					tr.WinSize.y = tr.SubOptBuff[3] * 256 + tr.SubOptBuff[4];
 					tr.ChangeWinSize = TRUE;
 				}
 				break;
@@ -288,7 +288,7 @@ void ParseTelSB(BYTE b)
 					_snprintf_s(TmpStr, sizeof(TmpStr), _TRUNCATE,
 						"%c%c%c%c%d,%d%c%c", IAC, SB, TERMSPEED, 0,
 						ts.TerminalInputSpeed, ts.TerminalOutputSpeed, IAC, SE);
-					// 4 ƒoƒCƒg–Ú‚É 0 ‚ª“ü‚é‚Ì‚ÅA‚¸‚ç‚µ‚Ä’·‚³‚ð‚Æ‚é
+					// 4 ãƒã‚¤ãƒˆç›®ã« 0 ãŒå…¥ã‚‹ã®ã§ã€ãšã‚‰ã—ã¦é•·ã•ã‚’ã¨ã‚‹
 					i = strlen(TmpStr + 4) + 4;
 					CommRawOut(&cv, TmpStr, i);
 
@@ -300,22 +300,22 @@ void ParseTelSB(BYTE b)
 
 			tr.SubOptCount = 0;
 			TelStatus = TelIdle;
-			return ;
+			return;
 
 		case IAC:
 			/*
-			 * ˜A‘±‚µ‚½ IAC ‚Í’l‚ª 255 ‚Ìƒf[ƒ^‚Æ‚µ‚Äˆµ‚¤
-			 * ŠÖ”‚ÌÅŒã‚Ì•”•ª‚Å SubOptBuff ‚Éƒf[ƒ^‚ª’Ç‰Á‚³‚ê‚é‚Ì‚ÅA
-			 * ‚±‚±‚Å‚Í‰½‚às‚í‚È‚¢
+			 * é€£ç¶šã—ãŸ IAC ã¯å€¤ãŒ 255 ã®ãƒ‡ãƒ¼ã‚¿ã¨ã—ã¦æ‰±ã†
+			 * é–¢æ•°ã®æœ€å¾Œã®éƒ¨åˆ†ã§ SubOptBuff ã«ãƒ‡ãƒ¼ã‚¿ãŒè¿½åŠ ã•ã‚Œã‚‹ã®ã§ã€
+			 * ã“ã“ã§ã¯ä½•ã‚‚è¡Œã‚ãªã„
 			 */
 			break;
 
 		default:
 			/*
-			 * ƒTƒuƒIƒvƒVƒ‡ƒ“’†‚É‘¼‚Ì TELNET ƒRƒ}ƒ“ƒh‚ª—ˆ‚½ê‡‚Ìˆµ‚¢‚Í
-			 * Œˆ‚Ü‚Á‚Ä‚¢‚È‚¢B‚Æ‚è‚ ‚¦‚¸ƒf[ƒ^‚Æ‚µ‚Ä’Ç‰Á‚µ‚Ä‚¨‚­B
+			 * ã‚µãƒ–ã‚ªãƒ—ã‚·ãƒ§ãƒ³ä¸­ã«ä»–ã® TELNET ã‚³ãƒžãƒ³ãƒ‰ãŒæ¥ãŸå ´åˆã®æ‰±ã„ã¯
+			 * æ±ºã¾ã£ã¦ã„ãªã„ã€‚ã¨ã‚Šã‚ãˆãšãƒ‡ãƒ¼ã‚¿ã¨ã—ã¦è¿½åŠ ã—ã¦ãŠãã€‚
 			 */
-			if (tr.SubOptCount >= sizeof(tr.SubOptBuff)-1) {
+			if (tr.SubOptCount >= sizeof(tr.SubOptBuff) - 1) {
 				tr.SubOptCount = 0;
 				TelStatus = TelIdle;
 				return;
@@ -326,12 +326,12 @@ void ParseTelSB(BYTE b)
 			}
 		}
 	}
-	else if (b==IAC) {
+	else if (b == IAC) {
 		tr.SubOptIAC = TRUE;
 		return;
 	}
 
-	if (tr.SubOptCount >= sizeof(tr.SubOptBuff)-1) {
+	if (tr.SubOptCount >= sizeof(tr.SubOptBuff) - 1) {
 		tr.SubOptCount = 0;
 		tr.SubOptIAC = FALSE;
 		TelStatus = TelIdle;
@@ -548,12 +548,12 @@ void ParseTelDo(BYTE b)
 		break;
 
 	case NAWS:
-		if (tr.MyOpt[NAWS].Status==Yes)
+		if (tr.MyOpt[NAWS].Status == Yes)
 			SendWinSize();
 		break;
 
 	case SGA:
-		if (tr.MyOpt[SGA].Status==Yes)
+		if (tr.MyOpt[SGA].Status == Yes)
 			cv.TelLineMode = FALSE;
 		break;
 	}
@@ -621,9 +621,9 @@ void ParseTel(BOOL *Size, int *nx, int *ny)
 
 	c = CommReadRawByte(&cv, &b);
 
-	while ((c>0) && (cv.TelMode)) {
+	while ((c > 0) && (cv.TelMode)) {
 		if (tr.LogFile) {
-			if (TelStatus==TelIAC) {
+			if (TelStatus == TelIAC) {
 				_lwrite(tr.LogFile, "\015\012<", 3);
 				TelWriteLog1(0xff);
 			}
@@ -633,13 +633,13 @@ void ParseTel(BOOL *Size, int *nx, int *ny)
 		tr.ChangeWinSize = FALSE;
 
 		switch (TelStatus) {
-			case TelIAC: ParseTelIAC(b); break;
-			case TelSB: ParseTelSB(b); break;
-			case TelWill: ParseTelWill(b); break;
-			case TelWont: ParseTelWont(b); break;
-			case TelDo: ParseTelDo(b); break;
-			case TelDont: ParseTelDont(b); break;
-			case TelNop: TelStatus = TelIdle; break;
+		case TelIAC: ParseTelIAC(b); break;
+		case TelSB: ParseTelSB(b); break;
+		case TelWill: ParseTelWill(b); break;
+		case TelWont: ParseTelWont(b); break;
+		case TelDo: ParseTelDo(b); break;
+		case TelDont: ParseTelDont(b); break;
+		case TelNop: TelStatus = TelIdle; break;
 		}
 		if (TelStatus == TelIdle) cv.TelMode = FALSE;
 
@@ -661,12 +661,12 @@ void TelEnableHisOpt(BYTE b)
 			break;
 
 		case WantNo:
-			if (tr.HisOpt[b].Que==Empty)
+			if (tr.HisOpt[b].Que == Empty)
 				tr.HisOpt[b].Que = Opposite;
 			break;
 
 		case WantYes:
-			if (tr.HisOpt[b].Que==Opposite)
+			if (tr.HisOpt[b].Que == Opposite)
 				tr.HisOpt[b].Que = Empty;
 			break;
 		}
@@ -683,12 +683,12 @@ void TelDisableHisOpt(BYTE b)
 			break;
 
 		case WantNo:
-			if (tr.HisOpt[b].Que==Opposite)
+			if (tr.HisOpt[b].Que == Opposite)
 				tr.HisOpt[b].Que = Empty;
 			break;
 
 		case WantYes:
-			if (tr.HisOpt[b].Que==Empty)
+			if (tr.HisOpt[b].Que == Empty)
 				tr.HisOpt[b].Que = Opposite;
 			break;
 		}
@@ -705,12 +705,12 @@ void TelEnableMyOpt(BYTE b)
 			break;
 
 		case WantNo:
-			if (tr.MyOpt[b].Que==Empty)
+			if (tr.MyOpt[b].Que == Empty)
 				tr.MyOpt[b].Que = Opposite;
 			break;
 
 		case WantYes:
-			if (tr.MyOpt[b].Que==Opposite)
+			if (tr.MyOpt[b].Que == Opposite)
 				tr.MyOpt[b].Que = Empty;
 			break;
 		}
@@ -727,12 +727,12 @@ void TelDisableMyOpt(BYTE b)
 			break;
 
 		case WantNo:
-			if (tr.MyOpt[b].Que==Opposite)
+			if (tr.MyOpt[b].Que == Opposite)
 				tr.MyOpt[b].Que = Empty;
 			break;
 
 		case WantYes:
-			if (tr.MyOpt[b].Que==Empty)
+			if (tr.MyOpt[b].Que == Empty)
 				tr.MyOpt[b].Que = Opposite;
 			break;
 		}
@@ -741,8 +741,8 @@ void TelDisableMyOpt(BYTE b)
 
 void TelInformWinSize(int nx, int ny)
 {
-	if ((tr.MyOpt[NAWS].Status==Yes) &&
-	    (nx != tr.WinSize.x || ny != tr.WinSize.y))
+	if ((tr.MyOpt[NAWS].Status == Yes) &&
+		(nx != tr.WinSize.x || ny != tr.WinSize.y))
 	{
 		tr.WinSize.x = nx;
 		tr.WinSize.y = ny;
@@ -776,7 +776,7 @@ void TelSendBreak()
 
 void TelChangeEcho()
 {
-	if (ts.LocalEcho==0)
+	if (ts.LocalEcho == 0)
 		TelEnableHisOpt(ECHO);
 	else
 		TelDisableHisOpt(ECHO);
@@ -820,7 +820,7 @@ static LRESULT CALLBACK telnet_heartbeat_dlg_proc(HWND hWnd, UINT msg, WPARAM wp
 		break;
 
 	case WM_CLOSE:
-		// closeƒ{ƒ^ƒ“‚ª‰Ÿ‰º‚³‚ê‚Ä‚à window ‚ª•Â‚¶‚È‚¢‚æ‚¤‚É‚·‚éB
+		// closeãƒœã‚¿ãƒ³ãŒæŠ¼ä¸‹ã•ã‚Œã¦ã‚‚ window ãŒé–‰ã˜ãªã„ã‚ˆã†ã«ã™ã‚‹ã€‚
 		return TRUE;
 
 	case WM_DESTROY:
@@ -857,9 +857,9 @@ void TelStartKeepAliveThread() {
 	if (ts.TelKeepAliveInterval > 0) {
 		nop_interval = ts.TelKeepAliveInterval;
 
-	// ƒ‚[ƒhƒŒƒXƒ_ƒCƒAƒƒO‚ð’Ç‰Á (2007.12.26 yutaka)
-	keepalive_dialog = CreateDialog(hInst, MAKEINTRESOURCE(IDD_BROADCAST_DIALOG),
-	                                HVTWin, (DLGPROC)telnet_heartbeat_dlg_proc);
+		// ãƒ¢ãƒ¼ãƒ‰ãƒ¬ã‚¹ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’è¿½åŠ  (2007.12.26 yutaka)
+		keepalive_dialog = CreateDialog(hInst, MAKEINTRESOURCE(IDD_BROADCAST_DIALOG),
+			HVTWin, (DLGPROC)telnet_heartbeat_dlg_proc);
 
 		keepalive_thread = (HANDLE)_beginthreadex(NULL, 0, TelKeepAliveThread, NULL, 0, &tid);
 		if (keepalive_thread == (HANDLE)-1) {
@@ -880,7 +880,7 @@ void TelStopKeepAliveThread() {
 }
 
 void TelUpdateKeepAliveInterval() {
-	if (cv.Open && cv.TelFlag && ts.TCPPort==ts.TelPort) {
+	if (cv.Open && cv.TelFlag && ts.TCPPort == ts.TelPort) {
 		if (ts.TelKeepAliveInterval > 0 && keepalive_thread == (HANDLE)-1)
 			TelStartKeepAliveThread();
 		else if (ts.TelKeepAliveInterval == 0 && keepalive_thread != (HANDLE)-1)
